@@ -1,0 +1,126 @@
+name: Publish to WordPress.org
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate the tagged release and prepare artifacts without publishing
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-org-zeropress-static
+  cancel-in-progress: false
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      tag: ${{ steps.prepare.outputs.tag }}
+      commit: ${{ steps.prepare.outputs.commit }}
+      artifact_id: ${{ steps.artifact.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install local SVN test tools
+        run: |
+          if ! command -v svn >/dev/null || ! command -v svnadmin >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes subversion
+          fi
+      - name: Test release checks
+        run: python3 -m unittest discover -s .github/tests -v
+      - name: Validate tag, versions and changelog; prepare one release payload
+        id: prepare
+        run: python3 .github/scripts/wordpress-release.py prepare --require-tag --output "$RUNNER_TEMP/wordpress-release"
+      - name: Check PHP syntax (minimum supported PHP)
+        run: |
+          docker run --rm --network none \
+            --mount "type=bind,src=$RUNNER_TEMP/wordpress-release/payload,dst=/plugin,readonly" \
+            php:8.2-cli sh -eu -c 'find /plugin -type f -name "*.php" -print0 | xargs -0 -n 1 php -l'
+      - name: Retain the validated payload, ZIP and checksums
+        id: artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: wordpress-release-${{ steps.prepare.outputs.tag }}
+          path: ${{ runner.temp }}/wordpress-release/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Record validation result
+        env:
+          RELEASE_TAG: ${{ steps.prepare.outputs.tag }}
+          RELEASE_COMMIT: ${{ steps.prepare.outputs.commit }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          printf 'Validated %s at %s. Dry run: %s.\n' "$RELEASE_TAG" "$RELEASE_COMMIT" "$DRY_RUN" >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    needs: validate
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-24.04
+    environment: wordpress-publish
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.validate.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          artifact-ids: ${{ needs.validate.outputs.artifact_id }}
+          path: ${{ runner.temp }}/wordpress-release
+          merge-multiple: true
+      - name: Recheck artifact against the validated Git commit
+        run: python3 .github/scripts/wordpress-release.py verify-package --output "$RUNNER_TEMP/wordpress-release"
+      - name: Install SVN client
+        run: |
+          if ! command -v svn >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes subversion
+          fi
+      - name: Check WordPress.org version and existing release files
+        id: svn
+        run: python3 .github/scripts/wordpress-release.py svn-status --output "$RUNNER_TEMP/wordpress-release"
+      - name: Publish the validated payload to WordPress.org SVN
+        id: deploy
+        if: steps.svn.outputs.exists == 'false'
+        continue-on-error: true # A lost response is resolved by the mandatory read-back below.
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: zeropress-static
+          VERSION: ${{ needs.validate.outputs.version }}
+          BUILD_DIR: ${{ runner.temp }}/wordpress-release/payload
+        with:
+          generate-zip: false
+      - name: Confirm SVN tag paths and SHA-256 hashes
+        id: confirmed
+        run: python3 .github/scripts/wordpress-release.py verify-svn --output "$RUNNER_TEMP/wordpress-release"
+      - name: Publish or repair GitHub Release installation assets
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/wordpress-release.py github-release --output "$RUNNER_TEMP/wordpress-release"
+      - name: Record publication result
+        env:
+          RELEASE_TAG: ${{ needs.validate.outputs.tag }}
+          RELEASE_COMMIT: ${{ needs.validate.outputs.commit }}
+          SVN_REVISION: ${{ steps.confirmed.outputs.svn_revision }}
+          RELEASE_URL: ${{ steps.release.outputs.release_url }}
+        run: |
+          printf 'Verified %s at %s against WordPress.org SVN revision %s.\n\nGitHub Release: %s\n\nComplete any WordPress.org release confirmation. Directory ZIP generation and update propagation may finish later.\n' \
+            "$RELEASE_TAG" "$RELEASE_COMMIT" "$SVN_REVISION" "$RELEASE_URL" >> "$GITHUB_STEP_SUMMARY"

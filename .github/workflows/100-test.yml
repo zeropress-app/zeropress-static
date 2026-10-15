@@ -1,0 +1,36 @@
+name: Test release files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Install local SVN test tools
+        run: |
+          if ! command -v svn >/dev/null || ! command -v svnadmin >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes subversion
+          fi
+      - name: Test release checks
+        run: python3 -m unittest discover -s .github/tests -v
+      - name: Prepare committed plugin files
+        run: python3 .github/scripts/wordpress-release.py prepare --output "$RUNNER_TEMP/wordpress-release"
+      - name: Check PHP syntax (minimum supported PHP)
+        run: |
+          docker run --rm --network none \
+            --mount "type=bind,src=$RUNNER_TEMP/wordpress-release/payload,dst=/plugin,readonly" \
+            php:8.2-cli sh -eu -c 'find /plugin -type f -name "*.php" -print0 | xargs -0 -n 1 php -l'
