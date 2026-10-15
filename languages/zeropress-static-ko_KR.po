@@ -1,0 +1,725 @@
+msgid ""
+msgstr "Project-Id-Version: ZeroPress Static 0.7.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: ko_KR\nPlural-Forms: nplurals=1; plural=0;\n"
+
+msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
+msgstr "GitHub 브랜치 규칙이 직접 발행을 거부했습니다. 저장소 규칙을 확인하세요."
+
+msgid "A GitHub token is already registered. Reload this page to manage it."
+msgstr "GitHub 토큰이 이미 등록되어 있습니다. 페이지를 새로고침하여 관리하세요."
+
+msgid "A GitHub token is registered."
+msgstr "GitHub 토큰이 등록되어 있습니다."
+
+msgid "A Turnstile Secret Key is registered."
+msgstr "Turnstile Secret Key가 등록되어 있습니다."
+
+msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
+msgstr "선택한 WordPress 메뉴를 사용할 수 없습니다. 설정을 새로고침하고 메뉴를 다시 선택하세요."
+
+msgid "A source media prefix has conflicting destinations."
+msgstr "동일한 미디어 원본 prefix에 서로 다른 대상이 설정되었습니다."
+
+msgid "A static site URL is required to generate the feed."
+msgstr "정적 사이트 URL을 설정해야 생성됩니다."
+
+msgid "A target file changed on GitHub. Review the change and prepare again."
+msgstr "GitHub의 대상 파일이 변경되었습니다. 변경 내용을 확인한 뒤 다시 준비하세요."
+
+msgid "Add custom menu"
+msgstr "사용자 지정 메뉴 추가"
+
+msgid "Add replacement"
+msgstr "치환 규칙 추가"
+
+msgid "Adds <code>&lt;meta name=\"generator\"&gt;</code> to the HTML."
+msgstr "HTML에 <code>&lt;meta name=\"generator\"&gt;</code>를 추가합니다."
+
+msgid "Allow comment writing on the static site"
+msgstr "정적 사이트에서 댓글 작성 허용"
+
+msgid "Allow search engine crawling"
+msgstr "검색엔진 크롤링 허용"
+
+msgid "Apple touch icon"
+msgstr "Apple 터치 아이콘"
+
+msgid "Apply HTML before </body>"
+msgstr "</body> 앞 HTML 적용"
+
+msgid "Apply HTML before </head>"
+msgstr "</head> 앞 HTML 적용"
+
+msgid "Apply custom CSS"
+msgstr "사용자 정의 CSS 적용"
+
+msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
+msgstr "인증 암호화를 사용할 수 없습니다. 인증 정보를 등록하려면 서버에서 OpenSSL AES-256-GCM을 활성화하세요."
+
+msgid "Before </body>"
+msgstr "</body> 앞"
+
+msgid "Before </head>"
+msgstr "</head> 앞"
+
+msgid "Both files will be updated in one commit."
+msgstr "두 파일을 하나의 커밋으로 갱신합니다."
+
+msgid "Both targets must be regular files, not directories, symlinks or submodules."
+msgstr "두 대상은 디렉터리, 심볼릭 링크, 서브모듈이 아닌 일반 파일이어야 합니다."
+
+msgid "Branch and both existing files found. Save the publishing target to use it."
+msgstr "브랜치와 기존 파일 두 개를 확인했습니다. 이 대상으로 발행하려면 발행 대상을 저장하세요."
+
+msgid "Button label"
+msgstr "버튼 문구"
+
+msgid "CSS"
+msgstr "CSS"
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Change keys"
+msgstr "키 변경"
+
+msgid "Check the values in this section."
+msgstr "이 섹션의 입력값을 확인하세요."
+
+msgid "Choose <strong>Only select repositories</strong>, select <strong>only the publishing repository</strong>, and grant <code>Contents: Read and write</code>."
+msgstr "<strong>Only select repositories</strong>를 선택한 뒤 <strong>발행할 저장소만</strong> 지정하고 <code>Contents: Read and write</code> 권한을 부여하세요."
+
+msgid "Close confirmation"
+msgstr "확인창 닫기"
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
+
+msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
+msgstr "Cloudflare Turnstile을 사용하면 자동화된 댓글 작성 공격을 줄일 수 있습니다."
+
+msgid "Comment display and writing"
+msgstr "댓글 표시·작성"
+
+msgid "Comment writing could not be verified. Refresh the writing options and try again."
+msgstr "댓글 작성을 확인할 수 없습니다. 작성 설정을 다시 확인한 뒤 시도하세요."
+
+msgid "Comments"
+msgstr "댓글"
+
+msgid "Connection details changed. Test again to check these values."
+msgstr "연결 정보가 변경되었습니다. 변경한 값으로 연결을 다시 확인하세요."
+
+msgid "Copyright or legal notice"
+msgstr "저작권 또는 법적 고지 문구"
+
+msgid "Create a GitHub token"
+msgstr "GitHub 토큰 생성"
+
+msgid "Custom CSS"
+msgstr "사용자 정의 CSS"
+
+msgid "Custom CSS lets you adjust the appearance of your static site. Examples include fonts, colors, and spacing."
+msgstr "정적 사이트의 디자인을 CSS로 조정합니다. 글꼴, 색상, 여백 등을 변경할 수 있습니다."
+
+msgid "Custom HTML"
+msgstr "사용자 정의 HTML"
+
+msgid "Custom HTML lets you add markup or scripts to your static site. Examples include analytics integrations and external widgets."
+msgstr "정적 사이트에 HTML 또는 스크립트를 추가합니다. 방문 통계나 외부 위젯 연동 등에 사용할 수 있습니다."
+
+msgid "Data is ready to download. Configure and test GitHub to publish."
+msgstr "데이터를 다운로드할 수 있습니다. 발행하려면 GitHub를 설정하고 연결을 확인하세요."
+
+msgid "Data prepared. Review the result below."
+msgstr "데이터를 준비했습니다. 아래 결과를 확인하세요."
+
+msgid "Delete saved keys"
+msgstr "저장된 키 삭제"
+
+msgid "Delete saved token"
+msgstr "저장된 토큰 삭제"
+
+msgid "Delete the saved GitHub token?"
+msgstr "저장된 GitHub 토큰을 삭제할까요?"
+
+msgid "Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile."
+msgstr "저장된 Site Key와 Secret Key를 삭제하고 Cloudflare Turnstile 사용을 끕니다."
+
+msgid "Delete the saved Turnstile keys?"
+msgstr "저장된 Turnstile 키를 삭제할까요?"
+
+msgid "Delete token"
+msgstr "토큰 삭제"
+
+msgid "Deleting keys…"
+msgstr "키 삭제 중…"
+
+msgid "Deleting token…"
+msgstr "토큰 삭제 중…"
+
+msgid "Description"
+msgstr "설명"
+
+msgid "Destination URL prefix"
+msgstr "대상 URL prefix"
+
+msgid "Destination URL prefix example:"
+msgstr "대상 URL prefix 예시:"
+
+msgid "Display and credits"
+msgstr "표시 및 출처"
+
+msgid "Displays <code>Published with ZeroPress</code> in the theme footer."
+msgstr "테마 하단에 <code>Published with ZeroPress</code>를 표시합니다."
+
+msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
+msgstr "구독 페이지를 사이트 안의 팝업에 표시합니다. iframe 표시를 허용하는 페이지 URL을 입력하세요."
+
+msgid "Do not publish"
+msgstr "발행하지 않음"
+
+msgid "Download WXR"
+msgstr "WXR 다운로드"
+
+msgid "Download build settings"
+msgstr "빌드 설정 다운로드"
+
+msgid "Edit in WordPress settings"
+msgstr "WordPress 설정에서 수정"
+
+msgid "Edit publishing settings"
+msgstr "발행 설정 수정"
+
+msgid "Embedded signup page URL"
+msgstr "사이트 내 구독 화면 URL"
+
+msgid "Enable JavaScript to save settings and prepare publishing data."
+msgstr "설정 저장과 발행 데이터 준비를 위해 JavaScript를 활성화하세요."
+
+msgid "Enable search"
+msgstr "검색 기능 활성화"
+
+msgid "Enter CSS of up to 65,536 characters."
+msgstr "CSS를 최대 65,536자까지 입력하세요."
+
+msgid "Enter HTML of up to 65,536 characters."
+msgstr "HTML을 최대 65,536자까지 입력하세요."
+
+msgid "Enter Turnstile keys without spaces or line breaks."
+msgstr "공백이나 줄바꿈 없이 Turnstile 키를 입력하세요."
+
+msgid "Enter a GitHub repository before testing the connection."
+msgstr "연결을 확인하기 전에 GitHub 저장소를 입력하세요."
+
+msgid "Enter a REST API URL that site visitors can access to enable comments."
+msgstr "댓글을 사용하려면 사이트 방문자가 접근할 수 있는 REST API URL을 입력하세요."
+
+msgid "Enter a Secret Key without spaces or line breaks."
+msgstr "공백이나 줄바꿈 없이 Secret Key를 입력하세요."
+
+msgid "Enter a Turnstile Site Key."
+msgstr "Turnstile Site Key를 입력하세요."
+
+msgid "Enter a button label of up to 200 characters."
+msgstr "버튼 문구는 200자 이내로 입력하세요."
+
+msgid "Enter a description of up to 2,000 characters."
+msgstr "설명은 2,000자 이내로 입력하세요."
+
+msgid "Enter a github.com repository URL or owner/repository."
+msgstr "github.com 저장소 URL 또는 owner/repository를 입력하세요."
+
+msgid "Enter a signup page URL or an embedded signup page URL."
+msgstr "구독 페이지 URL 또는 사이트 내 구독 화면 URL을 입력하세요."
+
+msgid "Enter a static site URL to allow comment writing."
+msgstr "정적 사이트에서 댓글 작성을 허용하려면 반드시 입력해야 합니다."
+
+msgid "Enter a title of up to 200 characters."
+msgstr "제목은 200자 이내로 입력하세요."
+
+msgid "Enter a token without spaces or line breaks."
+msgstr "공백이나 줄바꿈 없이 토큰을 입력하세요."
+
+msgid "Enter a valid HTTP(S) embedded signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "올바른 HTTP(S) 사이트 내 구독 화면 URL 또는 사이트 기준 경로를 입력하세요(최대 2,048자)."
+
+msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "올바른 HTTP(S) 구독 페이지 URL 또는 사이트 기준 경로를 입력하세요(최대 2,048자)."
+
+msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
+msgstr "인증 정보, 쿼리, fragment가 없는 HTTP(S) URL을 입력하세요."
+
+msgid "Enter an HTTP(S) page URL or a path starting with <code>/</code>. At least one of the two URLs is required."
+msgstr "HTTP(S) 페이지 URL 또는 <code>/</code>로 시작하는 경로를 입력하세요. 두 URL 중 하나 이상이 필요합니다."
+
+msgid "Enter the Secret Key for this Site Key."
+msgstr "이 Site Key에 해당하는 Secret Key를 입력하세요."
+
+msgid "Enter the publishing branch name. Tags and commit URLs are not supported."
+msgstr "발행할 브랜치 이름을 입력하세요. 태그와 커밋 URL은 지원하지 않습니다."
+
+msgid "Enter the site origin without a path."
+msgstr "경로를 제외한 사이트 기준 주소를 입력하세요."
+
+msgid "Example based on this WordPress installation: %s."
+msgstr "현재 WordPress 주소 기준 예: %s."
+
+msgid "Examples: %1$s · %2$s · %3$s"
+msgstr "예: %1$s · %2$s · %3$s"
+
+msgid "Files to update"
+msgstr "갱신할 파일"
+
+msgid "Generate RSS feed"
+msgstr "RSS 피드 생성"
+
+msgid "Generate chronological archives"
+msgstr "시간순 아카이브 생성"
+
+msgid "Get new posts and updates by email."
+msgstr "새 글과 소식을 이메일로 전해드립니다."
+
+msgid "Get the latest news by email"
+msgstr "새 소식을 이메일로 받아보세요"
+
+msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
+msgstr "GitHub에서 등록된 토큰을 인증하지 못했습니다. 토큰을 삭제하고 다시 등록한 후 연결을 테스트하세요."
+
+msgid "GitHub is temporarily unavailable or the request timed out."
+msgstr "GitHub를 일시적으로 사용할 수 없거나 요청 시간이 초과되었습니다."
+
+msgid "GitHub publishing"
+msgstr "GitHub 발행"
+
+msgid "GitHub publishing (optional)"
+msgstr "GitHub 발행 (선택)"
+
+msgid "GitHub rejected the write. Check repository permissions and branch rules."
+msgstr "GitHub가 쓰기를 거부했습니다. 저장소 권한과 브랜치 규칙을 확인하세요."
+
+msgid "GitHub repository"
+msgstr "GitHub 저장소"
+
+msgid "GitHub request limit reached. Wait before trying again."
+msgstr "GitHub 요청 제한에 도달했습니다. 잠시 후 다시 시도하세요."
+
+msgid "GitHub token"
+msgstr "GitHub 토큰"
+
+msgid "GitHub token management"
+msgstr "GitHub 토큰 관리"
+
+msgid "Icon URLs for publishing"
+msgstr "발행에 사용할 아이콘 URL"
+
+msgid "Information from WordPress"
+msgstr "WordPress에서 가져온 정보"
+
+msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
+msgstr "저장소 최상위에 <code>wordpress-export.xml</code>과 <code>wxr-import-base.json</code>을 유지하세요. GitHub에 발행하면 이 두 파일을 교체합니다."
+
+msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
+msgstr "비워두면 <code>sitemap.xml</code>, <code>feed.xml</code>과 페이지의 대표 주소를 지정하는 <code>&lt;link rel=\"canonical\"&gt;</code> 태그를 생성하지 않습니다."
+
+msgid "Leave blank to omit a separate copyright or legal notice."
+msgstr "비워두면 별도의 저작권·법적 고지 문구를 표시하지 않습니다."
+
+msgid "Leave the title, description and button label blank to use the theme defaults."
+msgstr "제목·설명·버튼 문구를 비워두면 테마의 기본 문구를 사용합니다."
+
+msgid "Manage Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile 관리"
+
+msgid "Media URL replacements"
+msgstr "미디어 URL 치환"
+
+msgid "Media URLs are replaced according to your rules."
+msgstr "미디어 URL을 설정한 규칙에 따라 치환합니다."
+
+msgid "Menu ID"
+msgstr "메뉴 ID"
+
+msgid "Menus"
+msgstr "메뉴"
+
+msgid "Newsletter connection"
+msgstr "뉴스레터 연결"
+
+msgid "No GitHub token is registered. Reload this page to check its current status."
+msgstr "등록된 GitHub 토큰이 없습니다. 페이지를 새로고침하여 현재 상태를 확인하세요."
+
+msgid "No Turnstile keys are saved. Reload this page to check their current status."
+msgstr "저장된 Turnstile 키가 없습니다. 페이지를 새로고침하여 현재 상태를 확인하세요."
+
+msgid "No publishing changes. GitHub already contains this data."
+msgstr "발행할 변경 사항이 없습니다. GitHub에 동일한 데이터가 반영되어 있습니다."
+
+msgid "Not configured"
+msgstr "설정되지 않음"
+
+msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgstr "비밀번호가 없는 공개된 글과 페이지만 내보냅니다. 쇼트코드와 동적 블록은 실행하지 않습니다."
+
+msgid "Opens the signup page in a new tab."
+msgstr "구독 페이지를 새 탭으로 엽니다."
+
+msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
+msgstr "PHP 메모리 제한: {limit}. 추정 필요 메모리: {estimated}."
+
+msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
+msgstr "PHP 시간 제한: {limit}초. 요청 처리 예산: {budget}초. 경과 시간: {elapsed}초."
+
+msgid "Posts per page"
+msgstr "페이지당 글 수"
+
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}"
+msgstr "글 {posts}개 · 페이지 {pages}개 · 미디어 {media}개 · 메뉴 {menus}개 · WXR {wxr} · 설정 {base} · 치환된 값 {replacements}개"
+
+msgid "Prepare and publish"
+msgstr "준비 및 발행"
+
+msgid "Prepare publishing data"
+msgstr "발행 데이터 준비"
+
+msgid "Preparing data…"
+msgstr "데이터 준비 중…"
+
+msgid "Preparing download…"
+msgstr "다운로드 준비 중…"
+
+msgid "Press Esc, then Tab to move out of the code editor."
+msgstr "코드 편집기에서 나가려면 Esc를 누른 다음 Tab을 누르세요."
+
+msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
+msgstr "반영 여부 확인이 필요합니다. 다시 준비하기 전에 GitHub 커밋을 확인하세요. 쓰기를 재시도하지 않았습니다."
+
+msgid "Publication result"
+msgstr "발행 결과"
+
+msgid "Publish"
+msgstr "발행"
+
+msgid "Publish to GitHub"
+msgstr "GitHub에 발행"
+
+msgid "Publish to GitHub again"
+msgstr "GitHub에 다시 발행"
+
+msgid "Publish your WordPress content to a static site with ZeroPress and GitHub."
+msgstr "WordPress 콘텐츠를 GitHub에 반영하여 ZeroPress 정적 사이트를 발행합니다."
+
+msgid "Published to GitHub"
+msgstr "GitHub 발행 완료"
+
+msgid "Published to GitHub."
+msgstr "GitHub에 발행했습니다."
+
+msgid "Publishing GitHub repository URL"
+msgstr "발행 GitHub 저장소 URL"
+
+msgid "Publishing branch"
+msgstr "발행 브랜치"
+
+msgid "Publishing destination"
+msgstr "발행 대상"
+
+msgid "Publishing target"
+msgstr "발행 대상"
+
+msgid "Publishing to GitHub…"
+msgstr "GitHub에 반영 중…"
+
+msgid "Reading settings"
+msgstr "글 표시 설정"
+
+msgid "Ready to publish to {repository} ({branch})."
+msgstr "{repository} ({branch})에 발행할 준비가 되었습니다."
+
+msgid "Register a GitHub token to publish."
+msgstr "GitHub 토큰을 등록해야 GitHub 발행 기능을 사용할 수 있습니다."
+
+msgid "Register a GitHub token to test or publish."
+msgstr "연결 테스트 또는 발행을 하려면 GitHub 토큰을 등록하세요."
+
+msgid "Register the static site domain in your Turnstile widget."
+msgstr "정적 사이트의 도메인을 Turnstile 위젯에 등록하세요."
+
+msgid "Register token"
+msgstr "토큰 등록"
+
+msgid "Registering token…"
+msgstr "토큰 등록 중…"
+
+msgid "Remove menu assignment"
+msgstr "메뉴 연결 제거"
+
+msgid "Remove replacement"
+msgstr "치환 규칙 제거"
+
+msgid "Repository, branch or required files not found. Check access and the two root files."
+msgstr "저장소, 브랜치 또는 필수 파일을 찾지 못했습니다. 접근 권한과 최상위의 두 파일을 확인하세요."
+
+msgid "Review prepared data"
+msgstr "준비 결과 확인"
+
+msgid "Save Turnstile settings"
+msgstr "Turnstile 설정 저장"
+
+msgid "Save a Site Key and Secret Key together to use Turnstile."
+msgstr "Turnstile을 사용하려면 Site Key와 Secret Key를 함께 저장하세요."
+
+msgid "Save a static site URL in the Site section to allow comment writing."
+msgstr "댓글 작성을 허용하려면 사이트 섹션에 정적 사이트 URL을 저장하세요."
+
+msgid "Save comment settings"
+msgstr "댓글 설정 저장"
+
+msgid "Save custom CSS"
+msgstr "사용자 정의 CSS 저장"
+
+msgid "Save custom HTML"
+msgstr "사용자 정의 HTML 저장"
+
+msgid "Save display and credit settings"
+msgstr "표시 및 출처 설정 저장"
+
+msgid "Save media settings"
+msgstr "미디어 URL 치환 저장"
+
+msgid "Save menu settings"
+msgstr "메뉴 설정 저장"
+
+msgid "Save newsletter settings"
+msgstr "뉴스레터 설정 저장"
+
+msgid "Save publishing target"
+msgstr "발행 대상 저장"
+
+msgid "Save search and navigation settings"
+msgstr "검색 및 탐색 설정 저장"
+
+msgid "Save site settings"
+msgstr "사이트 설정 저장"
+
+msgid "Saving…"
+msgstr "저장 중…"
+
+msgid "Search and archive display depends on your theme."
+msgstr "검색과 아카이브의 표시는 테마 지원에 따라 달라집니다."
+
+msgid "Search and content navigation"
+msgstr "검색 및 콘텐츠 탐색"
+
+msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
+msgstr "발행할 WordPress 클래식 메뉴를 선택하세요. 메뉴 ID로 정적 사이트 테마에 연결합니다."
+
+msgid "Set up a WXR starter repository"
+msgstr "WXR 스타터 저장소 준비"
+
+msgid "Settings"
+msgstr "설정"
+
+msgid "Settings changed in another window. Reload before saving."
+msgstr "다른 화면에서 설정이 변경되었습니다. 새로고침 후 저장하세요."
+
+msgid "Settings sections"
+msgstr "설정 영역 이동"
+
+msgid "Show WordPress comments on the static site"
+msgstr "정적 사이트에 WordPress 댓글 표시"
+
+msgid "Show ZeroPress attribution"
+msgstr "ZeroPress 출처 표시"
+
+msgid "Show ZeroPress generator information"
+msgstr "ZeroPress 제작 도구 정보 표시"
+
+msgid "Show newsletter signup"
+msgstr "뉴스레터 구독 안내 표시"
+
+msgid "Sign up with a newsletter service such as Hostinger Reach, Omnisend or Mailchimp and prepare a signup page. Enter the page URL below to display a signup prompt on your static site."
+msgstr "Hostinger Reach, Omnisend, Mailchimp 같은 뉴스레터 서비스에 가입하고 구독 페이지를 준비하세요. 아래에 페이지 URL을 입력하면 정적 사이트에 구독 안내를 표시합니다."
+
+msgid "Signup page URL"
+msgstr "구독 페이지 URL"
+
+msgid "Site"
+msgstr "사이트"
+
+msgid "Site description"
+msgstr "사이트 설명"
+
+msgid "Site icon"
+msgstr "사이트 아이콘"
+
+msgid "Site icon preview"
+msgstr "사이트 아이콘 미리보기"
+
+msgid "Site language"
+msgstr "사이트 언어"
+
+msgid "Site title"
+msgstr "사이트 제목"
+
+msgid "Source URL prefix"
+msgstr "원본 URL prefix"
+
+msgid "Source URL prefix example:"
+msgstr "원본 URL prefix 예시:"
+
+msgid "Static site URL"
+msgstr "정적 사이트 URL"
+
+msgid "Subscribe"
+msgstr "구독하기"
+
+msgid "Test connection"
+msgstr "연결 확인"
+
+msgid "Testing connection…"
+msgstr "연결 확인 중…"
+
+msgid "The GitHub branch changed concurrently. Review it and prepare again."
+msgstr "GitHub 브랜치가 동시에 변경되었습니다. 내용을 확인한 뒤 다시 준비하세요."
+
+msgid "The GitHub token is registered."
+msgstr "GitHub 토큰을 등록했습니다."
+
+msgid "The REST API URL must end in /wp-json/wp/v2."
+msgstr "REST API URL은 /wp-json/wp/v2로 끝나야 합니다."
+
+msgid "The confirmation dialog could not be loaded. Reload this page and try again."
+msgstr "발행 확인창을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도하세요."
+
+msgid "The download is ready. Check your browser downloads."
+msgstr "다운로드가 준비되었습니다. 브라우저의 다운로드 목록을 확인하세요."
+
+msgid "The preparation expired or settings changed. Prepare again."
+msgstr "준비 결과가 만료되었거나 설정이 변경되었습니다. 다시 준비하세요."
+
+msgid "The preparation is invalid. Prepare again."
+msgstr "유효하지 않은 준비 결과입니다. 다시 준비하세요."
+
+msgid "The request could not be completed. Please retry."
+msgstr "요청을 완료하지 못했습니다. 다시 시도해 주세요."
+
+msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
+msgstr "서버 설정에 따른 요청 처리 시간을 초과했습니다. 서버의 허용 시간을 늘린 뒤 다시 준비하세요."
+
+msgid "The saved GitHub token was deleted."
+msgstr "저장된 GitHub 토큰을 삭제했습니다."
+
+msgid "The saved keys were deleted and Cloudflare Turnstile is off."
+msgstr "저장된 키를 삭제하고 Cloudflare Turnstile 사용을 껐습니다."
+
+msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
+msgstr "저장된 토큰을 복호화할 수 없습니다. WordPress 비밀값이 변경되었을 수 있습니다. 토큰을 삭제하고 다시 등록하세요."
+
+msgid "The token cannot access this repository. Check its selected repositories and permissions."
+msgstr "토큰으로 이 저장소에 접근할 수 없습니다. 선택한 저장소와 권한을 확인하세요."
+
+msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
+msgstr "요청을 완료하기에 PHP 메모리가 부족합니다. 서버의 메모리 허용량을 늘린 뒤 다시 준비하세요."
+
+msgid "These values are read from WordPress when preparing publishing data."
+msgstr "발행 데이터를 준비할 때 WordPress에서 가져오는 값입니다."
+
+msgid "This WordPress installation: %s."
+msgstr "현재 WordPress REST API 주소: %s."
+
+msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
+msgstr "현재 설치의 REST API 주소는 지원하는 <code>/wp-json/wp/v2</code> 형식이 아닙니다. 방문자가 접근할 수 있는 해당 경로의 API를 구성하세요. 쿼리형 REST 주소는 지원하지 않습니다."
+
+msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
+msgstr "이 플러그인에 저장된 토큰을 삭제합니다. GitHub에 발행하려면 토큰을 다시 등록해야 합니다."
+
+msgid "This section is saved."
+msgstr "이 섹션을 저장했습니다."
+
+msgid "This section is saved. Changes apply to new comment requests."
+msgstr "이 섹션을 저장했습니다. 새로운 댓글 요청부터 반영됩니다."
+
+msgid "This section is saved. Changes take effect after the next publication."
+msgstr "이 섹션을 저장했습니다. 다음 발행 후 반영됩니다."
+
+msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
+msgstr "이 섹션을 저장했습니다. 댓글 표시 설정은 다음 발행 후, 작성 설정은 새로운 댓글 요청부터 반영됩니다."
+
+msgid "This version supports single-site WordPress only."
+msgstr "이 버전은 단일 사이트 WordPress만 지원합니다."
+
+msgid "Timezone"
+msgstr "시간대"
+
+msgid "Title"
+msgstr "제목"
+
+msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr "댓글 작성을 허용하려면 사이트 섹션에 정적 사이트 URL을 저장하세요. 댓글 요청의 출처를 이 주소와 대조합니다."
+
+msgid "Turnstile Secret Key"
+msgstr "Turnstile Secret Key"
+
+msgid "Turnstile Site Key"
+msgstr "Turnstile Site Key"
+
+msgid "Unavailable menu (ID {id})"
+msgstr "사용할 수 없는 메뉴 (ID {id})"
+
+msgid "Unknown author"
+msgstr "알 수 없는 작성자"
+
+msgid "Unsaved changes"
+msgstr "저장하지 않은 변경 사항"
+
+msgid "Up to 65,536 characters."
+msgstr "최대 65,536자까지 입력할 수 있습니다."
+
+msgid "Update the WXR generation time and create a new commit without changing the content."
+msgstr "콘텐츠 변경 없이 WXR 생성 시각을 갱신하여 새 커밋을 생성합니다."
+
+msgid "Use Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile 사용"
+
+msgid "Use an API URL that site visitors can access."
+msgstr "사이트 방문자가 접근할 수 있는 API URL을 사용하세요."
+
+msgid "Use primary for the main navigation and footer for footer links. Custom IDs must match the menu IDs used by your theme."
+msgstr "주 메뉴는 primary, 하단 링크는 footer를 사용합니다. 사용자 지정 ID는 테마에서 사용하는 메뉴 ID와 일치해야 합니다."
+
+msgid "Use unique menu IDs starting with a lowercase letter, followed by lowercase letters, numbers, hyphens or underscores (up to 64 characters)."
+msgstr "메뉴 ID는 영문 소문자로 시작하고 영문 소문자, 숫자, 하이픈, 밑줄로 최대 64자까지 입력하세요. ID는 중복될 수 없습니다."
+
+msgid "Use up to 50 complete source and destination URL pairs."
+msgstr "원본 URL과 대상 URL을 모두 입력하세요. 최대 50쌍까지 지원합니다."
+
+msgid "View commit"
+msgstr "커밋 보기"
+
+msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
+msgstr "선택하지 않으면 정적 사이트의 <code>robots.txt</code>에 <code>Disallow: /</code>를 기록합니다."
+
+msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
+msgstr "댓글 작성을 끄면 댓글만 표시합니다. WordPress의 기존 댓글 설정은 그대로 적용됩니다."
+
+msgid "WordPress REST API URL"
+msgstr "WordPress REST API URL"
+
+msgid "WordPress content changed. Prepare again to include the latest data."
+msgstr "WordPress 콘텐츠가 변경되었습니다. 최신 데이터를 반영하려면 다시 준비하세요."
+
+msgid "WordPress menu"
+msgstr "WordPress 메뉴"
+
+msgid "Working…"
+msgstr "처리 중…"
+
+msgid "ZeroPress"
+msgstr "ZeroPress"
+
+msgid "ZeroPress Static"
+msgstr "ZeroPress Static"
+
+msgid "ZeroPress Static – Static Site Publisher"
+msgstr "ZeroPress Static – 정적 사이트 발행"

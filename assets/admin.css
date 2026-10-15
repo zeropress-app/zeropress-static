@@ -1,0 +1,96 @@
+.zpsp { max-width: 1040px; }
+.zpsp-panel { background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin: 24px 0; }
+.zpsp label:has(> .regular-text), .zpsp p > label[for] { display: block; margin-bottom: 6px; font-weight: 600; }
+.zpsp .regular-text { width: 100%; max-width: 680px; }
+.zpsp .description { overflow-wrap: anywhere; }
+.zpsp code { overflow-wrap: anywhere; }
+.zpsp .dashicons { vertical-align: middle; }
+.zpsp a .dashicons { text-decoration: none; }
+.zpsp h2 .dashicons { margin-right: 6px; }
+.zpsp .button.zpsp-icon-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+/* Flex alignment needs icon-sized line boxes, not WordPress 7.1 button line heights. */
+.zpsp .button.zpsp-icon-button .dashicons { flex-shrink: 0; line-height: 1; font-size: 18px; width: 18px; height: 18px; }
+.zpsp-media-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) max-content; column-gap: 12px; }
+.zpsp-media-examples, .zpsp-media-grid > #zpsp-rules, .zpsp-rule { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+.zpsp-media-examples { row-gap: 12px; margin-bottom: 16px; }
+.zpsp-media-examples .description { margin: 0; }
+.zpsp-rule { align-items: end; row-gap: 12px; margin-bottom: 12px; }
+.zpsp-rule label { min-width: 0; }
+.zpsp-rule input { display: block; width: 100%; margin-top: 6px; }
+.zpsp .zpsp-rule > .button { margin-bottom: 0; }
+.zpsp-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 640px) {
+	.zpsp-media-grid { grid-template-columns: minmax(0, 1fr); }
+	.zpsp-panel { padding: 16px; }
+}
+.zpsp [hidden] { display: none !important; }
+.zpsp .nav-tab-wrapper { margin-bottom: 20px; }
+.zpsp .zpsp-feedback { scroll-margin-block: 60px; }
+.zpsp .zpsp-feedback:not(:empty) { margin: 12px 0 0; padding: 12px; }
+.zpsp .zpsp-actions { margin-top: 20px; align-items: center; }
+.zpsp .zpsp-dirty { color: #646970; font-style: italic; }
+.zpsp-token-help, .zpsp-turnstile-help { box-sizing: border-box; max-width: 680px; margin: 20px 0; padding: 16px; border: 1px solid #dcdcde; background: #f6f7f7; }
+.zpsp-token-help p, .zpsp-turnstile-help p { margin: 0; }
+.zpsp-token-help p + p, .zpsp-turnstile-help p + p { margin-top: 8px; }
+.zpsp .zpsp-subsection { box-sizing: border-box; max-width: 680px; border-top: 1px solid #dcdcde; margin-top: 24px; padding-top: 20px; }
+.zpsp .zpsp-subsection h3 { margin: 0 0 16px; }
+.zpsp .zpsp-subsection .regular-text { max-width: none; }
+.zpsp .zpsp-target { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 20px; }
+.zpsp .zpsp-target dt { font-weight: 600; }
+.zpsp .zpsp-target dd { margin: 0; overflow-wrap: anywhere; }
+.zpsp [aria-invalid="true"] { border-color: #d63638; }
+.zpsp #zpsp-result { border-top: 1px solid #dcdcde; margin-top: 24px; padding-top: 8px; }
+.zpsp #zpsp-result-heading { scroll-margin-block: 60px; }
+@media (max-width: 640px) {
+  .zpsp .zpsp-target { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .zpsp .zpsp-target dd { margin-bottom: 12px; }
+  .zpsp .button { white-space: normal; }
+}
+.zpsp .zpsp-field-error { display: block; color: #b32d2e; margin-top: 6px; }
+.zpsp form, .zpsp input, .zpsp textarea { scroll-margin-block: 60px; }
+.zpsp fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+/* WordPress renders the modal in a portal outside the plugin page wrapper. */
+.zpsp-confirm-modal .zpsp-confirm-target { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 20px; }
+.zpsp-confirm-modal .zpsp-confirm-target dt { font-weight: 600; }
+.zpsp-confirm-modal .zpsp-confirm-target dd { margin: 0; overflow-wrap: anywhere; }
+.zpsp-confirm-modal .zpsp-confirm-target ul { margin: 0; }
+.zpsp-confirm-modal .zpsp-confirm-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.zpsp-confirm-modal .button { white-space: normal; }
+@media (max-width: 640px) {
+	.zpsp-confirm-modal .zpsp-confirm-target { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+	.zpsp-confirm-modal .zpsp-confirm-target dd { margin-bottom: 12px; }
+}
+
+.zpsp-menu-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(180px, 2fr) minmax(180px, 1fr); gap: 12px; align-items: end; margin: 16px 0; }
+.zpsp-menu-row > * { min-width: 0; }
+.zpsp-menu-row input, .zpsp-menu-row select { display: block; box-sizing: border-box; width: 100%; max-width: none; margin-top: 6px; }
+@media (max-width: 640px) {
+	.zpsp-menu-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+.zpsp .zpsp-code { box-sizing: border-box; width: 100%; }
+.zpsp .CodeMirror { border: 1px solid #8c8f94; height: 240px; }
+.zpsp .CodeMirror:focus-within { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+
+.zpsp-settings-nav { box-sizing: border-box; margin-top: 20px; padding: 12px 16px; background: #fff; border: 1px solid #c3c4c7; }
+.zpsp-settings-nav ul { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; }
+.zpsp-settings-nav li { margin: 0; }
+.zpsp-settings-nav a[aria-current="location"] { font-weight: 600; }
+.zpsp[data-page="settings"] { --zpsp-anchor-offset: 64px; }
+.zpsp[data-page="settings"] :is(.zpsp-panel, form, input, textarea, select, .zpsp-feedback, .zpsp-panel h2) { scroll-margin-top: var(--zpsp-anchor-offset); }
+@media (min-width: 783px) {
+	.zpsp-settings-nav { position: sticky; top: var(--wp-admin--admin-bar--height, 32px); z-index: 20; }
+	.zpsp[data-page="settings"] { --zpsp-anchor-offset: calc(var(--wp-admin--admin-bar--height, 32px) + var(--zpsp-nav-height, 100px) + 16px); }
+}
+.zpsp-wordpress-info { max-width: 680px; margin: 20px 0 24px; padding-bottom: 16px; border-bottom: 1px solid #dcdcde; }
+.zpsp-site-details { display: grid; grid-template-columns: minmax(100px, max-content) minmax(0, 1fr); gap: 10px 20px; margin: 16px 0; }
+.zpsp-site-details dt { font-weight: 600; }
+.zpsp-site-details dd { margin: 0; overflow-wrap: anywhere; }
+.zpsp-site-details [data-site-value] { white-space: pre-wrap; }
+.zpsp-site-icon { display: block; object-fit: contain; }
+.zpsp-icon-urls summary { cursor: pointer; }
+.zpsp-wordpress-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+@media (max-width: 640px) {
+	.zpsp-site-details { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+	.zpsp-site-details dd { margin-bottom: 8px; }
+}

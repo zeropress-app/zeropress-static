@@ -1,0 +1,722 @@
+msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
+msgstr ""
+
+msgid "A GitHub token is already registered. Reload this page to manage it."
+msgstr ""
+
+msgid "A GitHub token is registered."
+msgstr ""
+
+msgid "A Turnstile Secret Key is registered."
+msgstr ""
+
+msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
+msgstr ""
+
+msgid "A source media prefix has conflicting destinations."
+msgstr ""
+
+msgid "A static site URL is required to generate the feed."
+msgstr ""
+
+msgid "A target file changed on GitHub. Review the change and prepare again."
+msgstr ""
+
+msgid "Add custom menu"
+msgstr ""
+
+msgid "Add replacement"
+msgstr ""
+
+msgid "Adds <code>&lt;meta name=\"generator\"&gt;</code> to the HTML."
+msgstr ""
+
+msgid "Allow comment writing on the static site"
+msgstr ""
+
+msgid "Allow search engine crawling"
+msgstr ""
+
+msgid "Apple touch icon"
+msgstr ""
+
+msgid "Apply HTML before </body>"
+msgstr ""
+
+msgid "Apply HTML before </head>"
+msgstr ""
+
+msgid "Apply custom CSS"
+msgstr ""
+
+msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
+msgstr ""
+
+msgid "Before </body>"
+msgstr ""
+
+msgid "Before </head>"
+msgstr ""
+
+msgid "Both files will be updated in one commit."
+msgstr ""
+
+msgid "Both targets must be regular files, not directories, symlinks or submodules."
+msgstr ""
+
+msgid "Branch and both existing files found. Save the publishing target to use it."
+msgstr ""
+
+msgid "Button label"
+msgstr ""
+
+msgid "CSS"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Change keys"
+msgstr ""
+
+msgid "Check the values in this section."
+msgstr ""
+
+msgid "Choose <strong>Only select repositories</strong>, select <strong>only the publishing repository</strong>, and grant <code>Contents: Read and write</code>."
+msgstr ""
+
+msgid "Close confirmation"
+msgstr ""
+
+msgid "Cloudflare Turnstile"
+msgstr ""
+
+msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
+msgstr ""
+
+msgid "Comment display and writing"
+msgstr ""
+
+msgid "Comment writing could not be verified. Refresh the writing options and try again."
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Connection details changed. Test again to check these values."
+msgstr ""
+
+msgid "Copyright or legal notice"
+msgstr ""
+
+msgid "Create a GitHub token"
+msgstr ""
+
+msgid "Custom CSS"
+msgstr ""
+
+msgid "Custom CSS lets you adjust the appearance of your static site. Examples include fonts, colors, and spacing."
+msgstr ""
+
+msgid "Custom HTML"
+msgstr ""
+
+msgid "Custom HTML lets you add markup or scripts to your static site. Examples include analytics integrations and external widgets."
+msgstr ""
+
+msgid "Data is ready to download. Configure and test GitHub to publish."
+msgstr ""
+
+msgid "Data prepared. Review the result below."
+msgstr ""
+
+msgid "Delete saved keys"
+msgstr ""
+
+msgid "Delete saved token"
+msgstr ""
+
+msgid "Delete the saved GitHub token?"
+msgstr ""
+
+msgid "Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile."
+msgstr ""
+
+msgid "Delete the saved Turnstile keys?"
+msgstr ""
+
+msgid "Delete token"
+msgstr ""
+
+msgid "Deleting keys…"
+msgstr ""
+
+msgid "Deleting token…"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Destination URL prefix"
+msgstr ""
+
+msgid "Destination URL prefix example:"
+msgstr ""
+
+msgid "Display and credits"
+msgstr ""
+
+msgid "Displays <code>Published with ZeroPress</code> in the theme footer."
+msgstr ""
+
+msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
+msgstr ""
+
+msgid "Do not publish"
+msgstr ""
+
+msgid "Download WXR"
+msgstr ""
+
+msgid "Download build settings"
+msgstr ""
+
+msgid "Edit in WordPress settings"
+msgstr ""
+
+msgid "Edit publishing settings"
+msgstr ""
+
+msgid "Embedded signup page URL"
+msgstr ""
+
+msgid "Enable JavaScript to save settings and prepare publishing data."
+msgstr ""
+
+msgid "Enable search"
+msgstr ""
+
+msgid "Enter CSS of up to 65,536 characters."
+msgstr ""
+
+msgid "Enter HTML of up to 65,536 characters."
+msgstr ""
+
+msgid "Enter Turnstile keys without spaces or line breaks."
+msgstr ""
+
+msgid "Enter a GitHub repository before testing the connection."
+msgstr ""
+
+msgid "Enter a REST API URL that site visitors can access to enable comments."
+msgstr ""
+
+msgid "Enter a Secret Key without spaces or line breaks."
+msgstr ""
+
+msgid "Enter a Turnstile Site Key."
+msgstr ""
+
+msgid "Enter a button label of up to 200 characters."
+msgstr ""
+
+msgid "Enter a description of up to 2,000 characters."
+msgstr ""
+
+msgid "Enter a github.com repository URL or owner/repository."
+msgstr ""
+
+msgid "Enter a signup page URL or an embedded signup page URL."
+msgstr ""
+
+msgid "Enter a static site URL to allow comment writing."
+msgstr ""
+
+msgid "Enter a title of up to 200 characters."
+msgstr ""
+
+msgid "Enter a token without spaces or line breaks."
+msgstr ""
+
+msgid "Enter a valid HTTP(S) embedded signup page URL or site-relative path (up to 2,048 characters)."
+msgstr ""
+
+msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
+msgstr ""
+
+msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
+msgstr ""
+
+msgid "Enter an HTTP(S) page URL or a path starting with <code>/</code>. At least one of the two URLs is required."
+msgstr ""
+
+msgid "Enter the Secret Key for this Site Key."
+msgstr ""
+
+msgid "Enter the publishing branch name. Tags and commit URLs are not supported."
+msgstr ""
+
+msgid "Enter the site origin without a path."
+msgstr ""
+
+msgid "Example based on this WordPress installation: %s."
+msgstr ""
+
+msgid "Examples: %1$s · %2$s · %3$s"
+msgstr ""
+
+msgid "Files to update"
+msgstr ""
+
+msgid "Generate RSS feed"
+msgstr ""
+
+msgid "Generate chronological archives"
+msgstr ""
+
+msgid "Get new posts and updates by email."
+msgstr ""
+
+msgid "Get the latest news by email"
+msgstr ""
+
+msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
+msgstr ""
+
+msgid "GitHub is temporarily unavailable or the request timed out."
+msgstr ""
+
+msgid "GitHub publishing"
+msgstr ""
+
+msgid "GitHub publishing (optional)"
+msgstr ""
+
+msgid "GitHub rejected the write. Check repository permissions and branch rules."
+msgstr ""
+
+msgid "GitHub repository"
+msgstr ""
+
+msgid "GitHub request limit reached. Wait before trying again."
+msgstr ""
+
+msgid "GitHub token"
+msgstr ""
+
+msgid "GitHub token management"
+msgstr ""
+
+msgid "Icon URLs for publishing"
+msgstr ""
+
+msgid "Information from WordPress"
+msgstr ""
+
+msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
+msgstr ""
+
+msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
+msgstr ""
+
+msgid "Leave blank to omit a separate copyright or legal notice."
+msgstr ""
+
+msgid "Leave the title, description and button label blank to use the theme defaults."
+msgstr ""
+
+msgid "Manage Cloudflare Turnstile"
+msgstr ""
+
+msgid "Media URL replacements"
+msgstr ""
+
+msgid "Media URLs are replaced according to your rules."
+msgstr ""
+
+msgid "Menu ID"
+msgstr ""
+
+msgid "Menus"
+msgstr ""
+
+msgid "Newsletter connection"
+msgstr ""
+
+msgid "No GitHub token is registered. Reload this page to check its current status."
+msgstr ""
+
+msgid "No Turnstile keys are saved. Reload this page to check their current status."
+msgstr ""
+
+msgid "No publishing changes. GitHub already contains this data."
+msgstr ""
+
+msgid "Not configured"
+msgstr ""
+
+msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgstr ""
+
+msgid "Opens the signup page in a new tab."
+msgstr ""
+
+msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
+msgstr ""
+
+msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
+msgstr ""
+
+msgid "Posts per page"
+msgstr ""
+
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}"
+msgstr ""
+
+msgid "Prepare and publish"
+msgstr ""
+
+msgid "Prepare publishing data"
+msgstr ""
+
+msgid "Preparing data…"
+msgstr ""
+
+msgid "Preparing download…"
+msgstr ""
+
+msgid "Press Esc, then Tab to move out of the code editor."
+msgstr ""
+
+msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
+msgstr ""
+
+msgid "Publication result"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+msgid "Publish to GitHub"
+msgstr ""
+
+msgid "Publish to GitHub again"
+msgstr ""
+
+msgid "Publish your WordPress content to a static site with ZeroPress and GitHub."
+msgstr ""
+
+msgid "Published to GitHub"
+msgstr ""
+
+msgid "Published to GitHub."
+msgstr ""
+
+msgid "Publishing GitHub repository URL"
+msgstr ""
+
+msgid "Publishing branch"
+msgstr ""
+
+msgid "Publishing destination"
+msgstr ""
+
+msgid "Publishing target"
+msgstr ""
+
+msgid "Publishing to GitHub…"
+msgstr ""
+
+msgid "Reading settings"
+msgstr ""
+
+msgid "Ready to publish to {repository} ({branch})."
+msgstr ""
+
+msgid "Register a GitHub token to publish."
+msgstr ""
+
+msgid "Register a GitHub token to test or publish."
+msgstr ""
+
+msgid "Register the static site domain in your Turnstile widget."
+msgstr ""
+
+msgid "Register token"
+msgstr ""
+
+msgid "Registering token…"
+msgstr ""
+
+msgid "Remove menu assignment"
+msgstr ""
+
+msgid "Remove replacement"
+msgstr ""
+
+msgid "Repository, branch or required files not found. Check access and the two root files."
+msgstr ""
+
+msgid "Review prepared data"
+msgstr ""
+
+msgid "Save Turnstile settings"
+msgstr ""
+
+msgid "Save a Site Key and Secret Key together to use Turnstile."
+msgstr ""
+
+msgid "Save a static site URL in the Site section to allow comment writing."
+msgstr ""
+
+msgid "Save comment settings"
+msgstr ""
+
+msgid "Save custom CSS"
+msgstr ""
+
+msgid "Save custom HTML"
+msgstr ""
+
+msgid "Save display and credit settings"
+msgstr ""
+
+msgid "Save media settings"
+msgstr ""
+
+msgid "Save menu settings"
+msgstr ""
+
+msgid "Save newsletter settings"
+msgstr ""
+
+msgid "Save publishing target"
+msgstr ""
+
+msgid "Save search and navigation settings"
+msgstr ""
+
+msgid "Save site settings"
+msgstr ""
+
+msgid "Saving…"
+msgstr ""
+
+msgid "Search and archive display depends on your theme."
+msgstr ""
+
+msgid "Search and content navigation"
+msgstr ""
+
+msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
+msgstr ""
+
+msgid "Set up a WXR starter repository"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Settings changed in another window. Reload before saving."
+msgstr ""
+
+msgid "Settings sections"
+msgstr ""
+
+msgid "Show WordPress comments on the static site"
+msgstr ""
+
+msgid "Show ZeroPress attribution"
+msgstr ""
+
+msgid "Show ZeroPress generator information"
+msgstr ""
+
+msgid "Show newsletter signup"
+msgstr ""
+
+msgid "Sign up with a newsletter service such as Hostinger Reach, Omnisend or Mailchimp and prepare a signup page. Enter the page URL below to display a signup prompt on your static site."
+msgstr ""
+
+msgid "Signup page URL"
+msgstr ""
+
+msgid "Site"
+msgstr ""
+
+msgid "Site description"
+msgstr ""
+
+msgid "Site icon"
+msgstr ""
+
+msgid "Site icon preview"
+msgstr ""
+
+msgid "Site language"
+msgstr ""
+
+msgid "Site title"
+msgstr ""
+
+msgid "Source URL prefix"
+msgstr ""
+
+msgid "Source URL prefix example:"
+msgstr ""
+
+msgid "Static site URL"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "Test connection"
+msgstr ""
+
+msgid "Testing connection…"
+msgstr ""
+
+msgid "The GitHub branch changed concurrently. Review it and prepare again."
+msgstr ""
+
+msgid "The GitHub token is registered."
+msgstr ""
+
+msgid "The REST API URL must end in /wp-json/wp/v2."
+msgstr ""
+
+msgid "The confirmation dialog could not be loaded. Reload this page and try again."
+msgstr ""
+
+msgid "The download is ready. Check your browser downloads."
+msgstr ""
+
+msgid "The preparation expired or settings changed. Prepare again."
+msgstr ""
+
+msgid "The preparation is invalid. Prepare again."
+msgstr ""
+
+msgid "The request could not be completed. Please retry."
+msgstr ""
+
+msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
+msgstr ""
+
+msgid "The saved GitHub token was deleted."
+msgstr ""
+
+msgid "The saved keys were deleted and Cloudflare Turnstile is off."
+msgstr ""
+
+msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
+msgstr ""
+
+msgid "The token cannot access this repository. Check its selected repositories and permissions."
+msgstr ""
+
+msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
+msgstr ""
+
+msgid "These values are read from WordPress when preparing publishing data."
+msgstr ""
+
+msgid "This WordPress installation: %s."
+msgstr ""
+
+msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
+msgstr ""
+
+msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
+msgstr ""
+
+msgid "This section is saved."
+msgstr ""
+
+msgid "This section is saved. Changes apply to new comment requests."
+msgstr ""
+
+msgid "This section is saved. Changes take effect after the next publication."
+msgstr ""
+
+msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
+msgstr ""
+
+msgid "This version supports single-site WordPress only."
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr ""
+
+msgid "Turnstile Secret Key"
+msgstr ""
+
+msgid "Turnstile Site Key"
+msgstr ""
+
+msgid "Unavailable menu (ID {id})"
+msgstr ""
+
+msgid "Unknown author"
+msgstr ""
+
+msgid "Unsaved changes"
+msgstr ""
+
+msgid "Up to 65,536 characters."
+msgstr ""
+
+msgid "Update the WXR generation time and create a new commit without changing the content."
+msgstr ""
+
+msgid "Use Cloudflare Turnstile"
+msgstr ""
+
+msgid "Use an API URL that site visitors can access."
+msgstr ""
+
+msgid "Use primary for the main navigation and footer for footer links. Custom IDs must match the menu IDs used by your theme."
+msgstr ""
+
+msgid "Use unique menu IDs starting with a lowercase letter, followed by lowercase letters, numbers, hyphens or underscores (up to 64 characters)."
+msgstr ""
+
+msgid "Use up to 50 complete source and destination URL pairs."
+msgstr ""
+
+msgid "View commit"
+msgstr ""
+
+msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
+msgstr ""
+
+msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
+msgstr ""
+
+msgid "WordPress REST API URL"
+msgstr ""
+
+msgid "WordPress content changed. Prepare again to include the latest data."
+msgstr ""
+
+msgid "WordPress menu"
+msgstr ""
+
+msgid "Working…"
+msgstr ""
+
+msgid "ZeroPress"
+msgstr ""
+
+msgid "ZeroPress Static"
+msgstr ""
+
+msgid "ZeroPress Static – Static Site Publisher"
+msgstr ""
