@@ -1,0 +1,12 @@
+# Repository metadata; keep installable source and user documentation.
+/.git
+/.github
+/.gitignore
+/.gitattributes
+/.distignore
+/SECURITY.md
+/build
+/dist
+*.zip
+*.zip.sha256
+.DS_Store

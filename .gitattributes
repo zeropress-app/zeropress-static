@@ -1,0 +1,9 @@
+/.github export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
+/.distignore export-ignore
+/SECURITY.md export-ignore
+/build export-ignore
+/dist export-ignore
+*.zip export-ignore
+*.zip.sha256 export-ignore
