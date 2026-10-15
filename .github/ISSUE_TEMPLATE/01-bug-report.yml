@@ -1,0 +1,45 @@
+name: Bug report
+description: Report something that is not working as expected.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues are public; remove passwords, tokens and personal data.
+        For security vulnerabilities, use [private vulnerability reporting](https://github.com/zeropress-app/zeropress-static/security/advisories/new).
+  - type: input
+    id: plugin-version
+    attributes:
+      label: ZeroPress Static version
+      description: Find the version on the Installed Plugins screen in WordPress.
+    validations:
+      required: true
+  - type: input
+    id: wordpress-version
+    attributes:
+      label: WordPress version
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      description: Include this if you know it.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Describe the settings and actions needed to reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: What did you expect to happen, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add relevant logs, screenshots or browser details if helpful.

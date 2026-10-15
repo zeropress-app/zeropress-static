@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an improvement to ZeroPress Static.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues are public; remove passwords, tokens and personal data.
+        For security vulnerabilities, use [private vulnerability reporting](https://github.com/zeropress-app/zeropress-static/security/advisories/new).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe your use case and what you would like to improve.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested behavior
+      description: Describe a possible solution or alternatives you have considered.

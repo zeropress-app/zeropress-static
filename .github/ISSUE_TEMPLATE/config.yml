@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/zeropress-app/zeropress-static/security/advisories/new
+    about: Privately report security vulnerabilities to the maintainers.
