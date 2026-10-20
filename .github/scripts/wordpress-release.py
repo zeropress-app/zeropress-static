@@ -343,9 +343,7 @@ def github_release(manifest, output, github):
         notes = changelog((output / "payload/readme.txt").read_text(), manifest["version"])
         release = github.request("POST", "/releases", {
             "tag_name": manifest["tag"], "target_commitish": manifest["commit"],
-            "name": "ZeroPress Static " + manifest["version"], "draft": True,
-            "body": notes + "\n\nSource commit: `" + manifest["commit"] + "`.\n"
-                    "The installation ZIP contains the verified WordPress.org SVN tag files.\n"})
+            "name": manifest["tag"], "draft": True, "body": notes})
     require(not release["prerelease"], "Expected a stable GitHub release.")
     release_id = release["id"]
     assets = github.assets(release_id)

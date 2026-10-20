@@ -194,6 +194,8 @@ class ReleaseTest(unittest.TestCase):
         github = FakeGitHub(manifest)
         result = release.github_release(manifest, self.output, github)
         self.assertIn("/releases/tag/v0.7.0", result["release_url"])
+        self.assertEqual(github.current["name"], "v0.7.0")
+        self.assertEqual(github.current["body"], "* Initial release.")
         self.assertFalse(github.current["draft"])
         self.assertEqual(set(a["name"] for a in github.stored.values()), {
             release.archive_name(manifest), release.archive_name(manifest) + ".sha256"})
@@ -323,7 +325,7 @@ class FakeGitHub:
             self.writes.append((method, route))
         if method == "POST" and route == "/releases":
             assert data["draft"] and data["target_commitish"] == self.manifest["commit"]
-            self.current = {"id": 7, "draft": True, "prerelease": False}
+            self.current = {**data, "id": 7, "prerelease": False}
             return self.current
         if method == "GET" and route.startswith("/releases/assets/"):
             assert binary
