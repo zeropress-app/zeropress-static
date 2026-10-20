@@ -18,6 +18,8 @@ ZeroPress Static prepares a WordPress export (WXR) and build settings. Review th
 result, then download the files or publish them to GitHub in one commit. Your
 configured build service builds and deploys the static site.
 
+The static site uses a ZeroPress theme. Your active WordPress theme is not exported.
+
 = Features =
 
 * Publish posts and pages with selected classic menus and media references.
@@ -38,6 +40,8 @@ your selected repository branch. Manage their settings in the plugin. Building
 and hosting are configured in the WXR starter project.
 
 Supports WordPress 6.8+, PHP 8.2+, and single-site installations.
+Saving GitHub tokens and Turnstile secret keys requires PHP OpenSSL with
+AES-256-GCM support.
 
 = External services =
 
@@ -244,16 +248,18 @@ must allow iframe display.
 = Can I publish again without changing content? =
 
 Yes. When the data matches the previous publication, no further publication is
-needed. To publish intentionally, expand Republish options and select Publish to
-GitHub again. This updates the WXR generation time and creates a new commit.
-Post dates and build settings remain unchanged. This can trigger your
-repository's build service.
+needed. To publish intentionally, open ZeroPress → Publish, expand Republish
+options, and select Publish to GitHub again. This updates the WXR generation time
+and creates a new commit. Post dates and build settings remain unchanged. This
+can trigger your repository's build service.
 
 = What happens after an uncertain GitHub response? =
 
-The plugin checks the result once without repeating the write. If it reports
-Publication needs verification, inspect the repository before preparing and
-publishing again.
+If GitHub's response to the branch update is inconclusive, the plugin attempts
+one read-back within the remaining request time, without repeating the write.
+A lost browser response or a terminated server request may prevent confirmation.
+If it reports Publication needs verification, inspect the publishing branch
+before preparing and publishing again.
 
 = How are credentials and settings stored? =
 
@@ -273,5 +279,12 @@ temporary verification records.
 == Changelog ==
 
 = 0.7.0 =
-* Initial WXR publication, media replacements and optional WordPress comments.
-* Static site features: search, RSS, archives, menu selection, footer information and newsletter signup.
+
+* Initial release: export published posts and pages, selected classic menus and media references for ZeroPress WXR Starter.
+* Download WXR and build settings, or publish both files to GitHub in one commit with progress feedback and change detection.
+* Prepare and publish from classic and block editors, with a check for unsaved changes and links to posts on the static site.
+* Use the static site address for exported permalinks and menu links, with separate media and Site Icon URL replacements.
+* Configure search, RSS, archives, footer credits, generator information and newsletter signup pages.
+* Display and accept WordPress comments with proof-of-work or Cloudflare Turnstile verification and per-IP request limits.
+* Optionally restrict public REST API access and reject client-supplied REST route overrides.
+* Provide English and Korean admin screens and use WordPress and PHP resource settings for publishing limits.

@@ -6,7 +6,11 @@ ZeroPress Static exports published content and build settings. You can download
 the files or publish them to GitHub, where your configured build service can
 build and deploy the site.
 
+The static site uses a ZeroPress theme. Your active WordPress theme is not exported.
+
 Requires WordPress 6.8+, PHP 8.2+, and a single-site installation.
+Saving GitHub tokens and Turnstile secret keys requires PHP OpenSSL with
+AES-256-GCM support.
 License: GPL-2.0-or-later.
 
 ## Publishing flow
@@ -58,7 +62,7 @@ files are ready to use; installation requires no Node.js, Composer or build step
 2. Open **ZeroPress → Settings**, configure the sections you need, and save them.
 3. To use **Publish to GitHub**, configure [GitHub publishing](#github-publishing).
 4. Open **ZeroPress → Publish** and select **Prepare publishing data**. Review
-   the content counts, file sizes and publishing destination.
+   the content counts and publishing destination.
 5. Download the files, or select **Publish to GitHub** and confirm the repository,
    branch and files in the dialog.
 
@@ -150,10 +154,10 @@ source prefix wins. Each original value is replaced once, preserving the rest of
 the path, query and fragment.
 
 Rules apply to media URLs in saved HTML, supported media-block attributes,
-attachment URLs and site-icon URLs before export. Ordinary article links, custom
-code and shortcode output are outside this process. The rules change exported
-URLs; files remain at their existing locations. The destination URLs must serve
-the media to your site's visitors.
+attachment URLs and site-icon URLs before export. Ordinary article links retain
+their addresses, and shortcodes are not executed. The rules change exported URLs;
+files remain at their existing locations. The destination URLs must serve the
+media to your site's visitors.
 
 The WordPress Site Icon supplies the favicon and Apple touch icon using
 WordPress's 512 and 180 size requests. The 512 request selects the full Site Icon
@@ -176,7 +180,7 @@ Theme-provided links, such as a home link, are controlled by the static theme.
 Custom IDs start with a lowercase letter and may contain lowercase letters,
 digits, hyphens and underscores, up to 64 characters. `constructor` and
 `prototype` are reserved. Selections are exported as `import.menu_mapping` in
-the base JSON. Media replacement rules are applied in the plugin before export.
+the base JSON.
 
 ### Search and content navigation
 
@@ -328,15 +332,17 @@ ten minutes. Changes to the target files on GitHub also require preparing again;
 unrelated repository commits are preserved.
 
 When the prepared data matches the previous publication, **No changes to publish**
-confirms that publishing is unnecessary. To publish intentionally, expand
-**Republish options** and select **Publish to GitHub again**. This creates a new
-commit by updating the WXR generation time. Post dates and build settings stay
-unchanged. This can trigger the build service configured for
-your repository. The branch is never force-updated.
+confirms that publishing is unnecessary. To publish intentionally, open
+**ZeroPress → Publish**, expand **Republish options**, and select **Publish to
+GitHub again**. This creates a new commit by updating the WXR generation time.
+Post dates and build settings stay unchanged. This can trigger the build service
+configured for your repository. The branch is never force-updated.
 
-If a publication response is lost, the plugin checks the result once without
-repeating the write. **Publication needs verification** means you should inspect
-the repository before preparing and publishing again.
+If GitHub's response to the branch update is inconclusive, the plugin attempts
+one read-back within the remaining request time, without repeating the write.
+A lost browser response or a terminated server request may prevent confirmation.
+If **Publication needs verification** appears, inspect the publishing branch
+before preparing and publishing again.
 
 ## Export scope and limits
 
