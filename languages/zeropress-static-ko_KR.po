@@ -25,6 +25,9 @@ msgstr "정적 사이트 URL을 설정해야 생성됩니다."
 msgid "A target file changed on GitHub. Review the change and prepare again."
 msgstr "GitHub의 대상 파일이 변경되었습니다. 변경 내용을 확인한 뒤 다시 준비하세요."
 
+msgid "API protection"
+msgstr "API 보호"
+
 msgid "Add custom menu"
 msgstr "사용자 지정 메뉴 추가"
 
@@ -72,6 +75,9 @@ msgstr "GitHub 저장소를 확인하고 있습니다…"
 
 msgid "Click “Save publishing target” to save these changes."
 msgstr "변경한 내용을 저장하려면 ‘발행 대상 저장’을 클릭하세요."
+
+msgid "Client-supplied REST route overrides are disabled."
+msgstr "클라이언트의 REST 경로 재지정이 차단되어 있습니다."
 
 msgid "Close confirmation"
 msgstr "확인창 닫기"
@@ -304,6 +310,9 @@ msgstr "비워두면 별도의 저작권·법적 고지 문구를 표시하지 �
 msgid "Leave the title, description and button label blank to use the theme defaults."
 msgstr "제목·설명·버튼 문구를 비워두면 테마의 기본 문구를 사용합니다."
 
+msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
+msgstr "ZeroPress Static의 댓글 기능에 필요한 API만 공개합니다."
+
 msgid "Manage Cloudflare Turnstile"
 msgstr "Cloudflare Turnstile 관리"
 
@@ -343,6 +352,9 @@ msgstr "<strong>Select repositories</strong>를 열고 위의 <strong>발행 Git
 msgid "Opens the signup page in a new tab."
 msgstr "구독 페이지를 새 탭으로 엽니다."
 
+msgid "Other plugins that use public REST APIs may be affected."
+msgstr "공개 REST API를 사용하는 다른 플러그인은 영향을 받을 수 있습니다."
+
 msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
 msgstr "PHP 메모리 제한: {limit}. 추정 필요 메모리: {estimated}."
 
@@ -366,6 +378,9 @@ msgstr "데이터 준비 중…"
 
 msgid "Preparing download…"
 msgstr "다운로드 준비 중…"
+
+msgid "Public access to this REST API is restricted."
+msgstr "이 REST API에 대한 공개 접근이 제한되어 있습니다."
 
 msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
 msgstr "반영 여부 확인이 필요합니다. 다시 준비하기 전에 GitHub 커밋을 확인하세요. 쓰기를 재시도하지 않았습니다."
@@ -442,8 +457,14 @@ msgstr "저장소, 브랜치 또는 필수 파일을 찾지 못했습니다. 접
 msgid "Republish options"
 msgstr "다시 발행 옵션"
 
+msgid "Restrict public REST API access"
+msgstr "공개 REST API 제한"
+
 msgid "Review prepared data"
 msgstr "준비 결과 확인"
+
+msgid "Save API protection settings"
+msgstr "API 보호 설정 저장"
 
 msgid "Save Turnstile settings"
 msgstr "Turnstile 설정 저장"
@@ -504,6 +525,9 @@ msgstr "다른 화면에서 설정이 변경되었습니다. 새로고침 후 �
 
 msgid "Settings sections"
 msgstr "설정 영역 이동"
+
+msgid "Settings take effect immediately after saving."
+msgstr "설정은 저장 즉시 적용됩니다."
 
 msgid "Show WordPress comments on the static site"
 msgstr "정적 사이트에 WordPress 댓글 표시"
@@ -616,11 +640,17 @@ msgstr "이 플러그인에 저장된 토큰을 삭제합니다. GitHub에 발�
 msgid "This section is saved."
 msgstr "이 섹션을 저장했습니다."
 
+msgid "This section is saved. API protection applies immediately."
+msgstr "이 섹션을 저장했습니다. API 보호 설정은 즉시 적용됩니다."
+
 msgid "This section is saved. Changes apply to new comment requests."
 msgstr "이 섹션을 저장했습니다. 새로운 댓글 요청부터 반영됩니다."
 
 msgid "This section is saved. Changes take effect after the next publication."
 msgstr "이 섹션을 저장했습니다. 다음 발행 후 반영됩니다."
+
+msgid "This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately."
+msgstr "이 섹션을 저장했습니다. 댓글 표시 변경은 다음 발행 후 반영되며, API 접근과 댓글 작성 설정은 즉시 적용됩니다."
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "이 섹션을 저장했습니다. 댓글 표시 설정은 다음 발행 후, 작성 설정은 새로운 댓글 요청부터 반영됩니다."

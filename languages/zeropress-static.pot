@@ -22,6 +22,9 @@ msgstr ""
 msgid "A target file changed on GitHub. Review the change and prepare again."
 msgstr ""
 
+msgid "API protection"
+msgstr ""
+
 msgid "Add custom menu"
 msgstr ""
 
@@ -68,6 +71,9 @@ msgid "Checking the GitHub repository…"
 msgstr ""
 
 msgid "Click “Save publishing target” to save these changes."
+msgstr ""
+
+msgid "Client-supplied REST route overrides are disabled."
 msgstr ""
 
 msgid "Close confirmation"
@@ -301,6 +307,9 @@ msgstr ""
 msgid "Leave the title, description and button label blank to use the theme defaults."
 msgstr ""
 
+msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
+msgstr ""
+
 msgid "Manage Cloudflare Turnstile"
 msgstr ""
 
@@ -340,6 +349,9 @@ msgstr ""
 msgid "Opens the signup page in a new tab."
 msgstr ""
 
+msgid "Other plugins that use public REST APIs may be affected."
+msgstr ""
+
 msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
 msgstr ""
 
@@ -362,6 +374,9 @@ msgid "Preparing data…"
 msgstr ""
 
 msgid "Preparing download…"
+msgstr ""
+
+msgid "Public access to this REST API is restricted."
 msgstr ""
 
 msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
@@ -439,7 +454,13 @@ msgstr ""
 msgid "Republish options"
 msgstr ""
 
+msgid "Restrict public REST API access"
+msgstr ""
+
 msgid "Review prepared data"
+msgstr ""
+
+msgid "Save API protection settings"
 msgstr ""
 
 msgid "Save Turnstile settings"
@@ -500,6 +521,9 @@ msgid "Settings changed in another window. Reload before saving."
 msgstr ""
 
 msgid "Settings sections"
+msgstr ""
+
+msgid "Settings take effect immediately after saving."
 msgstr ""
 
 msgid "Show WordPress comments on the static site"
@@ -613,10 +637,16 @@ msgstr ""
 msgid "This section is saved."
 msgstr ""
 
+msgid "This section is saved. API protection applies immediately."
+msgstr ""
+
 msgid "This section is saved. Changes apply to new comment requests."
 msgstr ""
 
 msgid "This section is saved. Changes take effect after the next publication."
+msgstr ""
+
+msgid "This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately."
 msgstr ""
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."

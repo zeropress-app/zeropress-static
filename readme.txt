@@ -25,6 +25,7 @@ configured build service builds and deploys the static site.
 * Media URL replacements, including the WordPress Site Icon.
 * Search, RSS, archives, footer credits and newsletter signup links.
 * Optional WordPress comments, with separate display and writing settings and Cloudflare Turnstile support.
+* Optional public REST API restriction for a WordPress authoring backend.
 * English and Korean admin screens, section navigation and independent save buttons.
 
 All options are in ZeroPress → Settings. The Site section shows the title,
@@ -161,6 +162,22 @@ applies. See the repository README for an example.
 
 Resource errors show the applicable limits. If a publication response is lost,
 check GitHub before preparing again.
+
+= Can I restrict public REST API access? =
+
+Yes. In Settings → API protection, enable **Restrict public REST API access**
+(default: off). With comment display off, all unauthenticated REST requests are
+blocked. With comment display on, only the three comment APIs are allowed:
+/wp-json/wp/v2/comments (GET/POST), /wp-json/zeropress-static/v1/comments/policy
+(GET), and /wp-json/zeropress-static/v1/comments/challenge (POST).
+Read HEAD requests and CORS OPTIONS requests are supported.
+
+Client-supplied rest_route query and form fields are also blocked on unauthenticated
+REST requests. Valid WordPress REST authentication retains normal permissions;
+a login cookie alone requires a REST nonce. Saving API protection or comment
+display settings changes API access immediately. Other plugins using public
+REST APIs may be affected. Pages, media and non-REST endpoints are unaffected.
+Clear existing REST caches and exclude REST responses from CDN or server caching.
 
 = How do menus work? =
 

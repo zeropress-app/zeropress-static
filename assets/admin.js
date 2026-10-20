@@ -441,7 +441,7 @@
 						element.textContent = settings.publishing_icons[element.dataset.publishingIcon] || '';
 					});
 				}
-				const feedback = section === 'comments' ? 'saved_comments' : section === 'turnstile' ? 'saved_runtime' : section === 'github' ? 'saved' : 'saved_publish';
+				const feedback = section === 'api' ? 'saved_api' : section === 'comments' ? (settings.restrict_public_rest_api ? 'saved_comments_api' : 'saved_comments') : section === 'turnstile' ? 'saved_runtime' : section === 'github' ? 'saved' : 'saved_publish';
 				notice(section, message(feedback));
 			}, form);
 			if (saved && section === 'turnstile') $('save-turnstile').focus();

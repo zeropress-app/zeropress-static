@@ -311,6 +311,7 @@ final class Admin {
 			'menus'          => __( 'Menus', 'zeropress-static' ),
 			'discovery'      => __( 'Search and content navigation', 'zeropress-static' ),
 			'comments-panel' => __( 'Comments', 'zeropress-static' ),
+			'api'            => __( 'API protection', 'zeropress-static' ),
 			'newsletter'     => __( 'Newsletter connection', 'zeropress-static' ),
 			'information'    => __( 'Display and credits', 'zeropress-static' ),
 		);
@@ -329,6 +330,7 @@ final class Admin {
 		self::menus_panel();
 		self::discovery_panel();
 		self::comments_panel();
+		self::api_panel();
 		self::newsletter_panel();
 		self::information_panel();
 	}
@@ -553,6 +555,21 @@ final class Admin {
 		<?php
 	}
 
+	/** Render the immediately applied public REST policy. */
+	private static function api_panel(): void {
+		?>
+		<form id="zpsp-api" class="zpsp-panel" data-section="api" aria-labelledby="zpsp-api-heading">
+			<fieldset disabled>
+				<h2 id="zpsp-api-heading"><span class="dashicons dashicons-shield" aria-hidden="true"></span> <?php esc_html_e( 'API protection', 'zeropress-static' ); ?></h2>
+				<?php self::check( 'restrict_public_rest_api', __( 'Restrict public REST API access', 'zeropress-static' ), __( 'Limit public REST API access to the APIs needed for ZeroPress Static comments.', 'zeropress-static' ) ); ?>
+				<p class="description"><?php esc_html_e( 'Other plugins that use public REST APIs may be affected.', 'zeropress-static' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Settings take effect immediately after saving.', 'zeropress-static' ); ?></p>
+				<?php self::section_actions( 'api', __( 'Save API protection settings', 'zeropress-static' ) ); ?>
+			</fieldset>
+		</form>
+		<?php
+	}
+
 	/** Render the newsletter settings section. */
 	private static function newsletter_panel(): void {
 		?>
@@ -765,7 +782,9 @@ final class Admin {
 			'saved'                           => __( 'This section is saved.', 'zeropress-static' ),
 			'saved_publish'                   => __( 'This section is saved. Changes take effect after the next publication.', 'zeropress-static' ),
 			'saved_comments'                  => __( 'This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests.', 'zeropress-static' ),
+			'saved_comments_api'              => __( 'This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately.', 'zeropress-static' ),
 			'saved_runtime'                   => __( 'This section is saved. Changes apply to new comment requests.', 'zeropress-static' ),
+			'saved_api'                       => __( 'This section is saved. API protection applies immediately.', 'zeropress-static' ),
 			'connected'                       => __( 'GitHub connection confirmed.', 'zeropress-static' ),
 			'connected_unsaved'               => __( 'Click “Save publishing target” to save these changes.', 'zeropress-static' ),
 			'registering_token'               => __( 'Registering token…', 'zeropress-static' ),

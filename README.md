@@ -209,7 +209,7 @@ visitors:
 
 Read-only comments use the two `GET` endpoints. Preserve query parameters such
 as `?post=123&page=2`. Include any WordPress installation subdirectory in every
-path and allow `OPTIONS` where CORS preflight is needed. API access and proxy
+path and allow `OPTIONS` where CORS preflight is needed. Network and proxy
 configuration are managed on your server.
 
 Challenge requests and comment submissions marked `zeropress_client=theme-v1`
@@ -218,7 +218,8 @@ hostname and port. A preview at another address can read comments but cannot
 submit them. Turnstile also verifies the widget hostname and action.
 
 The marker selects this integration; it does not authenticate a theme. Other
-REST clients retain their existing WordPress policies. A custom HTTP client can
+REST clients retain their existing WordPress comment policies, subject to the
+optional public REST access restriction below. A custom HTTP client can
 supply an Origin header, so the origin check supplements PoW or Turnstile
 verification. The theme retains the comment list if the writing policy cannot be
 loaded and offers a retry. Uncertain comment submissions are not automatically resent.
@@ -241,6 +242,40 @@ are excluded from option autoloading, and expired records are cleaned up in
 bounded batches as new counters are created. Uninstalling removes these records.
 If the client address or counter storage is unavailable, submissions return HTTP
 `503` until the server can enforce the limits again.
+
+### API protection
+
+**Settings → API protection → Restrict public REST API access** is off by
+default. When enabled, it restricts unauthenticated HTTP REST requests according
+to the saved **Show WordPress comments on the static site** setting:
+
+| Comment display | Public REST access |
+| --- | --- |
+| Off | All REST routes are blocked. |
+| On | Only the three comment routes listed above are allowed, with their listed methods. `HEAD` is allowed for reads and `OPTIONS` for CORS preflight. |
+
+The restriction checks WordPress's resolved route and effective HTTP method,
+including embedded REST requests. Unauthenticated REST requests with a
+client-supplied `rest_route` query or form field are rejected, including
+query-style `?rest_route=` URLs. Changing the visible URL path cannot grant
+access to a different REST route. Blocked routes return HTTP `403`; rejected
+route overrides return HTTP `400`.
+
+WordPress REST authentication runs first. Valid cookie-and-nonce or Application
+Password authentication retains WordPress's normal capability checks, including
+for the block editor. A login cookie without a REST nonce is treated as
+unauthenticated. Server-side REST calls outside an HTTP REST request keep their
+normal behavior.
+
+Saving API protection or comment display settings changes API access immediately;
+no static publication is needed. Comment writing settings, Origin checks,
+PoW/Turnstile and request limits still apply. Public REST APIs used by other
+plugins are also restricted. WordPress pages, media files, admin-ajax and XML-RPC
+are outside this option's scope.
+
+Restricted REST responses send no-cache headers. If a CDN or server cache already
+stores REST responses, clear them and configure it to bypass REST caching so
+requests reach WordPress and its current access policy.
 
 ### Newsletter connection
 
