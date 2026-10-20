@@ -196,6 +196,14 @@ settings apply when the theme next checks the writing policy. The
 [usage guide](https://github.com/zeropress-app/zeropress-static#api-access)
 lists the required API paths and origin checks.
 
+Each IP address is limited to 60 challenge requests and 5 ZeroPress comment or
+reply submission attempts per minute, across all posts. Failed verification
+attempts count, and limits apply before PoW or Turnstile verification. Quotas
+reset at each minute boundary. Requests over the limit receive HTTP 429 and a
+retry delay; comment reading is unaffected. Behind a proxy, the trusted web
+server must supply the visitor's IP address in PHP's REMOTE_ADDR to give each
+visitor a separate quota. Temporary counters use a keyed hash of the address.
+
 = Does the plugin send newsletters? =
 
 No. Newsletter connection displays a signup prompt for a page you prepare with

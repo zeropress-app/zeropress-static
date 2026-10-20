@@ -100,6 +100,9 @@ msgstr ""
 msgid "Comment display and writing"
 msgstr ""
 
+msgid "Comment request limiting is temporarily unavailable. Please try again later."
+msgstr ""
+
 msgid "Comment writing could not be verified. Refresh the writing options and try again."
 msgstr ""
 
@@ -674,6 +677,9 @@ msgid "Title"
 msgstr ""
 
 msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr ""
+
+msgid "Too many comment requests. Please try again shortly."
 msgstr ""
 
 msgid "Turnstile Secret Key"

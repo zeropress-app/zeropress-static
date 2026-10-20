@@ -103,6 +103,9 @@ msgstr "Cloudflare Turnstile을 사용하면 자동화된 댓글 작성 공격�
 msgid "Comment display and writing"
 msgstr "댓글 표시·작성"
 
+msgid "Comment request limiting is temporarily unavailable. Please try again later."
+msgstr "댓글 요청 제한을 확인할 수 없습니다. 잠시 후 다시 시도해 주세요."
+
 msgid "Comment writing could not be verified. Refresh the writing options and try again."
 msgstr "댓글 작성을 확인할 수 없습니다. 작성 설정을 다시 확인한 뒤 시도하세요."
 
@@ -678,6 +681,9 @@ msgstr "제목"
 
 msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
 msgstr "댓글 작성을 허용하려면 사이트 섹션에 정적 사이트 URL을 저장하세요. 댓글 요청의 출처를 이 주소와 대조합니다."
+
+msgid "Too many comment requests. Please try again shortly."
+msgstr "댓글 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."
 
 msgid "Turnstile Secret Key"
 msgstr "Turnstile Secret Key"

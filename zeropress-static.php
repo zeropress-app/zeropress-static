@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 const VERSION     = '0.7.0';
 const PLUGIN_FILE = __FILE__;
 
-foreach ( array( 'failure', 'resource-budget', 'settings', 'media-rewriter', 'menus', 'exporter', 'github', 'publisher', 'publication-progress', 'admin', 'comments' ) as $zeropress_static_component ) {
+foreach ( array( 'failure', 'resource-budget', 'settings', 'media-rewriter', 'menus', 'exporter', 'github', 'publisher', 'publication-progress', 'admin', 'comment-rate-limit', 'comments' ) as $zeropress_static_component ) {
 	require_once __DIR__ . '/includes/class-' . $zeropress_static_component . '.php';
 }
 

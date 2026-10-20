@@ -19,6 +19,7 @@ final class Comments {
 		add_action( 'rest_api_init', array( self::class, 'routes' ) );
 		add_filter( 'rest_allow_anonymous_comments', array( self::class, 'allow_anonymous' ), 10, 2 );
 		add_filter( 'rest_pre_insert_comment', array( self::class, 'before_insert' ), 100, 2 );
+		add_filter( 'rest_request_before_callbacks', array( self::class, 'rate_limit' ), 10, 3 );
 		add_filter( 'rest_post_dispatch', array( self::class, 'no_store' ), 10, 3 );
 	}
 
@@ -45,7 +46,7 @@ final class Comments {
 	}
 
 	/**
-	 * Prevent storage of both successful and rejected policy responses.
+	 * Prevent storage of policy/write responses and include quota retry guidance.
 	 *
 	 * @param mixed            $response REST response.
 	 * @param mixed            $server REST server.
@@ -53,11 +54,39 @@ final class Comments {
 	 * @return mixed
 	 */
 	public static function no_store( $response, $server, $request ) {
-		if ( str_starts_with( $request->get_route(), '/' . self::API_NAMESPACE . '/' ) ) {
+		if ( ! is_wp_error( $response ) && ( self::marked( $request ) || str_starts_with( $request->get_route(), '/' . self::API_NAMESPACE . '/' ) ) ) {
 			$response = rest_ensure_response( $response );
 			$response->header( 'Cache-Control', 'no-store' );
+			$data = $response->get_data();
+			if ( is_array( $data ) && 'zpsp_comment_rate_limited' === ( $data['code'] ?? null ) && is_int( $data['data']['retry_after'] ?? null ) ) {
+				$response->header( 'Retry-After', (string) $data['data']['retry_after'] );
+			}
 		}
 		return $response;
+	}
+
+	/**
+	 * Limit recognized POST attempts before WordPress callbacks and Siteverify.
+	 *
+	 * @param mixed            $response An earlier validation error, or null.
+	 * @param array            $handler Matched route handler.
+	 * @param \WP_REST_Request $request Request.
+	 * @return mixed Earlier result or a quota error.
+	 */
+	public static function rate_limit( $response, $handler, $request ) {
+		if ( null !== $response || 'POST' !== $request->get_method() ) {
+			return $response;
+		}
+		if ( '/' . self::API_NAMESPACE . '/comments/challenge' === rtrim( $request->get_route(), '/' ) ) {
+			$scope = 'challenge';
+		} elseif ( self::marked( $request ) ) {
+			$scope = 'write';
+		} else {
+			return $response;
+		}
+		// Proxy deployments must restore the client address at the trusted server boundary.
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		return Comment_Rate_Limit::check( $scope, $ip );
 	}
 
 	/**

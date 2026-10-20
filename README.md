@@ -223,6 +223,25 @@ supply an Origin header, so the origin check supplements PoW or Turnstile
 verification. The theme retains the comment list if the writing policy cannot be
 loaded and offers a retry. Uncertain comment submissions are not automatically resent.
 
+#### Comment request limits
+
+Each IP address can make **60 challenge requests** and **5 marked comment or
+reply submission attempts per minute**, shared across all posts. The two quotas
+are separate and reset at each minute boundary. Failed verification attempts
+also count. Limits are checked before PoW or Turnstile verification; exceeding a
+quota returns HTTP `429`, with a `Retry-After` header and `data.retry_after` in
+the JSON response indicating the seconds to wait. Reading comments and policies,
+and unmarked clients using WordPress's existing policies, are unaffected.
+
+The client address comes from PHP's `REMOTE_ADDR`. If WordPress runs behind a
+proxy, configure the trusted web server to restore the visitor's IP address;
+otherwise visitors may share the proxy's quota. The plugin does not trust
+client-supplied forwarding headers. Counters store a keyed hash of the address,
+are excluded from option autoloading, and expired records are cleaned up in
+bounded batches as new counters are created. Uninstalling removes these records.
+If the client address or counter storage is unavailable, submissions return HTTP
+`503` until the server can enforce the limits again.
+
 ### Newsletter connection
 
 Prepare a signup page with a newsletter service such as Hostinger Reach,
