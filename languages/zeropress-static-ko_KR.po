@@ -70,6 +70,9 @@ msgstr "키 변경"
 msgid "Check the values in this section."
 msgstr "이 섹션의 입력값을 확인하세요."
 
+msgid "Check your GitHub settings before publishing."
+msgstr "GitHub 발행 설정을 확인해 주세요."
+
 msgid "Checking the GitHub repository…"
 msgstr "GitHub 저장소를 확인하고 있습니다…"
 
@@ -78,6 +81,9 @@ msgstr "변경한 내용을 저장하려면 ‘발행 대상 저장’을 클릭
 
 msgid "Client-supplied REST route overrides are disabled."
 msgstr "클라이언트의 REST 경로 재지정이 차단되어 있습니다."
+
+msgid "Close"
+msgstr "닫기"
 
 msgid "Close confirmation"
 msgstr "확인창 닫기"
@@ -271,6 +277,9 @@ msgstr "GitHub에서 등록된 토큰을 인증하지 못했습니다. 토큰을
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "GitHub를 일시적으로 사용할 수 없거나 요청 시간이 초과되었습니다."
 
+msgid "GitHub publish"
+msgstr "GitHub 발행"
+
 msgid "GitHub publishing"
 msgstr "GitHub 발행"
 
@@ -349,6 +358,9 @@ msgstr "비밀번호가 없는 공개된 글과 페이지만 내보냅니다. �
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "<strong>Select repositories</strong>를 열고 위의 <strong>발행 GitHub 저장소 URL</strong>에 입력한 저장소만 선택하세요."
 
+msgid "Open GitHub publishing"
+msgstr "GitHub 발행 창 열기"
+
 msgid "Opens the signup page in a new tab."
 msgstr "구독 페이지를 새 탭으로 엽니다."
 
@@ -364,8 +376,8 @@ msgstr "PHP 시간 제한: {limit}초. 요청 처리 예산: {budget}초. 경과
 msgid "Posts per page"
 msgstr "페이지당 글 수"
 
-msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}"
-msgstr "글 {posts}개 · 페이지 {pages}개 · 미디어 {media}개 · 메뉴 {menus}개 · WXR {wxr} · 설정 {base} · 치환된 값 {replacements}개"
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
+msgstr "글 {posts}개 · 페이지 {pages}개 · 미디어 {media}개 · 메뉴 {menus}개"
 
 msgid "Prepare and publish"
 msgstr "준비 및 발행"
@@ -390,6 +402,9 @@ msgstr "발행 결과"
 
 msgid "Publish"
 msgstr "발행"
+
+msgid "Publish all saved public posts and pages."
+msgstr "저장된 전체 공개 글과 페이지를 발행합니다."
 
 msgid "Publish to GitHub"
 msgstr "GitHub에 발행"
@@ -498,6 +513,9 @@ msgstr "검색 및 탐색 설정 저장"
 
 msgid "Save site settings"
 msgstr "사이트 설정 저장"
+
+msgid "Save your post changes before preparing or publishing."
+msgstr "글의 변경 사항을 저장한 후 준비·발행해 주세요."
 
 msgid "Saving…"
 msgstr "저장 중…"
@@ -718,8 +736,14 @@ msgstr "GitHub 반영 결과를 확인하고 있습니다…"
 msgid "View commit"
 msgstr "커밋 보기"
 
+msgid "View on static site"
+msgstr "정적 사이트에서 보기"
+
 msgid "View saved publishing repository"
 msgstr "저장된 발행 저장소 보기"
+
+msgid "Wait for WordPress to finish saving your post."
+msgstr "WordPress에서 글 저장을 완료할 때까지 기다려 주세요."
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
 msgstr "선택하지 않으면 정적 사이트의 <code>robots.txt</code>에 <code>Disallow: /</code>를 기록합니다."
@@ -747,3 +771,6 @@ msgstr "ZeroPress Static"
 
 msgid "ZeroPress Static – Static Site Publisher"
 msgstr "ZeroPress Static – 정적 사이트 발행"
+
+msgid "ZeroPress publish"
+msgstr "ZeroPress 발행"

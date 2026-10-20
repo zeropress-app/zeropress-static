@@ -67,6 +67,9 @@ msgstr ""
 msgid "Check the values in this section."
 msgstr ""
 
+msgid "Check your GitHub settings before publishing."
+msgstr ""
+
 msgid "Checking the GitHub repository…"
 msgstr ""
 
@@ -74,6 +77,9 @@ msgid "Click “Save publishing target” to save these changes."
 msgstr ""
 
 msgid "Client-supplied REST route overrides are disabled."
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "Close confirmation"
@@ -268,6 +274,9 @@ msgstr ""
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr ""
 
+msgid "GitHub publish"
+msgstr ""
+
 msgid "GitHub publishing"
 msgstr ""
 
@@ -346,6 +355,9 @@ msgstr ""
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr ""
 
+msgid "Open GitHub publishing"
+msgstr ""
+
 msgid "Opens the signup page in a new tab."
 msgstr ""
 
@@ -361,7 +373,7 @@ msgstr ""
 msgid "Posts per page"
 msgstr ""
 
-msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}"
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
 msgstr ""
 
 msgid "Prepare and publish"
@@ -386,6 +398,9 @@ msgid "Publication result"
 msgstr ""
 
 msgid "Publish"
+msgstr ""
+
+msgid "Publish all saved public posts and pages."
 msgstr ""
 
 msgid "Publish to GitHub"
@@ -494,6 +509,9 @@ msgid "Save search and navigation settings"
 msgstr ""
 
 msgid "Save site settings"
+msgstr ""
+
+msgid "Save your post changes before preparing or publishing."
 msgstr ""
 
 msgid "Saving…"
@@ -715,7 +733,13 @@ msgstr ""
 msgid "View commit"
 msgstr ""
 
+msgid "View on static site"
+msgstr ""
+
 msgid "View saved publishing repository"
+msgstr ""
+
+msgid "Wait for WordPress to finish saving your post."
 msgstr ""
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
@@ -743,4 +767,7 @@ msgid "ZeroPress Static"
 msgstr ""
 
 msgid "ZeroPress Static – Static Site Publisher"
+msgstr ""
+
+msgid "ZeroPress publish"
 msgstr ""

@@ -8,7 +8,8 @@
 	const root = document.querySelector('.zpsp[data-page]');
 	if (!root || !window.zeroPressPublisher) return;
 	const config = zeroPressPublisher;
-	const messages = config.messages;
+	const publication = window.zeroPressPublication(config);
+	const { request, message, failureMessage } = publication;
 	const $ = (id) => document.getElementById('zpsp-' + id);
 	const forms = [...root.querySelectorAll('form[data-section]')];
 	const baselines = new Map();
@@ -20,25 +21,6 @@
 	let confirmation = null;
 	let turnstileEditing = false;
 	let menuRowId = 0;
-	const numbers = new Intl.NumberFormat(document.documentElement.lang || undefined, { maximumFractionDigits: 2 });
-	function formatBytes(bytes, binary = false) {
-		const units = binary ? ['B', 'KiB', 'MiB', 'GiB'] : ['B', 'KB', 'MB', 'GB'];
-		const step = binary ? 1024 : 1000;
-		let unit = 0;
-		while (bytes >= step && unit < units.length - 1) { bytes /= step; unit++; }
-		return numbers.format(bytes) + ' ' + units[unit];
-	}
-	const message = (key, values = {}) => (messages[key] || messages.error).replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
-	function failureMessage(code, details = {}) {
-		let text = message(code);
-		const numeric = (keys) => keys.every((key) => Number.isFinite(details?.[key]) && details[key] >= 0);
-		if (code === 'MEMORY_LIMIT_EXCEEDED' && numeric(['memory_limit_bytes', 'estimated_memory_bytes'])) {
-			text += ' ' + message('memory_details', { limit: formatBytes(details.memory_limit_bytes, true), estimated: formatBytes(details.estimated_memory_bytes, true) });
-		} else if (code === 'REQUEST_TIME_LIMIT_EXCEEDED' && numeric(['time_limit_seconds', 'time_budget_seconds', 'elapsed_seconds'])) {
-			text += ' ' + message('time_details', { limit: numbers.format(details.time_limit_seconds), budget: numbers.format(details.time_budget_seconds), elapsed: numbers.format(details.elapsed_seconds) });
-		}
-		return text;
-	}
 
 	function stopLoading(id) {
 		loadingIndicators.get(id)?.unmount();
@@ -315,28 +297,7 @@
 		notice('test', '');
 		notice('token', message(status));
 	}
-	async function request(operation, extra = {}, download = false, signal) {
-		let response;
-		try {
-			response = await fetch(config.url, {
-				method: 'POST', credentials: 'same-origin', signal,
-				body: new URLSearchParams({ action: 'zeropress_static', nonce: config.nonce, payload: JSON.stringify({ operation, ...extra }) }),
-			});
-		} catch {
-			const error = new Error(message(operation === 'publish' ? 'unknown' : 'error'));
-			error.uncertain = operation === 'publish';
-			throw error;
-		}
-		if (download && response.ok && response.headers.get('Content-Type')?.startsWith('application/octet-stream')) return response.blob();
-		const result = await response.json().catch(() => null);
-		if (!response.ok || !result?.success) {
-			const error = new Error(failureMessage(result?.data?.code, result?.data?.details));
-			error.code = result?.data?.code;
-			error.uncertain = operation === 'publish' && !error.code && (response.status >= 500 || response.ok);
-			throw error;
-		}
-		return result.data;
-	}
+
 	function focusError(error, id, form) {
 		const fields = {
 			NEWSLETTER_URL_REQUIRED: 'newsletter_signup_url',
@@ -574,11 +535,7 @@
 		notice('download', '');
 		run(event.currentTarget, 'prepare', 'preparing', async () => {
 			prepared = await request('prepare');
-			$('summary').textContent = message('summary', {
-				...Object.fromEntries(Object.entries(prepared.counts).map(([key, count]) => [key, numbers.format(count)])),
-				wxr: formatBytes(prepared.bytes.wxr), base: formatBytes(prepared.bytes.base),
-				replacements: numbers.format(prepared.rewritten_values),
-			});
+			$('summary').textContent = publication.summary(prepared);
 			const unchanged = prepared.state === 'unchanged';
 			const state = $('state');
 			state.className = unchanged ? 'notice notice-success zpsp-unchanged' : '';
@@ -600,40 +557,7 @@
 			$(unchanged ? 'state' : 'result-heading').focus();
 		});
 	});
-	function watchPublication(publicationId) {
-		const stages = ['validating', 'inspecting', 'uploading', 'committing', 'verifying'];
-		const label = $('result-notice').querySelector('.zpsp-feedback-message');
-		let stopped = false;
-		let timer;
-		let controller;
-		function show(stage) {
-			const text = message(stages.includes(stage) ? 'publish_' + stage : 'publishing');
-			// Leave the progress bar mounted and announce only changed stage text.
-			if (!stopped && label.textContent !== text) label.textContent = text;
-		}
-		async function poll() {
-			controller = new AbortController();
-			const timeout = setTimeout(() => controller.abort(), 4000);
-			try {
-				const status = await request('publish_progress', { publication_id: publicationId }, false, controller.signal);
-				show(status?.stage);
-			} catch {
-				show(null);
-			} finally {
-				clearTimeout(timeout);
-				if (!stopped) timer = setTimeout(poll, 1000);
-			}
-		}
-		function stop() {
-			stopped = true;
-			clearTimeout(timer);
-			controller?.abort();
-			window.removeEventListener('pagehide', stop);
-		}
-		timer = setTimeout(poll, 1000);
-		window.addEventListener('pagehide', stop, { once: true });
-		return stop;
-	}
+
 	function publish(button, snapshot) {
 		if (busy || confirmation || prepared !== snapshot || !['ready', 'unchanged'].includes(snapshot.state)) return;
 		const republish = snapshot.state === 'unchanged';
@@ -646,16 +570,11 @@
 			$('result-heading').textContent = message('publication_result');
 			// Every write attempt requires a new preparation, even when its response is uncertain.
 			snapshot.state = 'attempted';
-			const publicationId = [...window.crypto.getRandomValues(new Uint8Array(16))].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-			const stopWatching = watchPublication(publicationId);
-			let result;
-			try { result = await request('publish', { receipt, republish, publication_id: publicationId }); }
-			catch (error) {
-				if (error.uncertain) result = { state: 'unknown' };
-				else throw error;
-			} finally {
-				stopWatching();
-			}
+			const label = $('result-notice').querySelector('.zpsp-feedback-message');
+			const result = await publication.publish(receipt, republish, (text) => {
+				// Keep the progress bar mounted while announcing actual server stages.
+				if (label.textContent !== text) label.textContent = text;
+			});
 			if (result.state === 'published') {
 				snapshot.state = 'published';
 			}

@@ -20,6 +20,7 @@ final class Admin {
 	public static function register(): void {
 		add_action( 'admin_menu', array( self::class, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( self::class, 'assets' ) );
+		add_action( 'post_submitbox_start', array( self::class, 'editor_button' ) );
 		add_action( 'wp_ajax_zeropress_static', array( self::class, 'handle' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( self::class, 'plugin_links' ) );
 	}
@@ -53,32 +54,70 @@ final class Admin {
 		return admin_url( 'admin.php?page=zeropress-static' . ( 'publish' === $page ? '' : '-' . $page ) );
 	}
 
-	/**
-	 * Load assets only on this plugin screen.
-	 *
-	 * @param string $hook Current WordPress screen hook.
-	 * @throws Failure If validation or the operation cannot be completed.
-	 */
-	public static function assets( string $hook ): void {
-		if ( ! in_array( $hook, self::$screen_hooks, true ) ) {
+	/** Whether this post editor can offer GitHub publication. */
+	public static function editor_available(): bool {
+		global $post;
+		$screen = get_current_screen();
+		if ( is_multisite() || ! current_user_can( 'manage_options' ) || ! $screen || 'post' !== $screen->base ||
+			! in_array( $screen->post_type, array( 'post', 'page' ), true ) || ! $post instanceof \WP_Post || ! current_user_can( 'edit_post', $post->ID ) ) {
+			return false;
+		}
+		$settings = Settings::read();
+		return '' !== $settings['repository'] && '' !== $settings['branch'] && '' !== $settings['credential'];
+	}
+
+	/** Render the classic editor launcher for placement beside its publishing action. */
+	public static function editor_button(): void {
+		if ( ! self::editor_available() || get_current_screen()->is_block_editor() ) {
 			return;
 		}
+		?>
+		<button type="button" id="zpsp-editor-open" class="button button-large" title="<?php esc_attr_e( 'Open GitHub publishing', 'zeropress-static' ); ?>" aria-label="<?php esc_attr_e( 'Open GitHub publishing', 'zeropress-static' ); ?>" aria-haspopup="dialog" disabled>GitHub</button>
+		<?php
+	}
+
+	/**
+	 * Load publication assets on plugin screens and eligible post editors.
+	 *
+	 * @param string $hook Current WordPress screen hook.
+	 */
+	public static function assets( string $hook ): void {
+		$plugin = in_array( $hook, self::$screen_hooks, true );
+		$editor = in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && self::editor_available();
+		if ( ! $plugin && ! $editor ) {
+			return;
+		}
+		$block        = $editor && get_current_screen()->is_block_editor();
+		$handle       = $editor ? 'zeropress-static-editor' : 'zeropress-static';
+		$dependencies = array( 'wp-element', 'wp-components', 'zeropress-static-publication' );
+		if ( $editor ) {
+			$dependencies = array_merge( $dependencies, $block ? array( 'wp-editor', 'wp-plugins', 'wp-data' ) : array( 'autosave' ) );
+		}
 		wp_enqueue_style( 'zeropress-static', plugins_url( 'assets/admin.css', PLUGIN_FILE ), array( 'wp-components' ), VERSION );
-		wp_enqueue_script( 'zeropress-static', plugins_url( 'assets/admin.js', PLUGIN_FILE ), array( 'wp-element', 'wp-components' ), VERSION, true );
-		wp_add_inline_script(
-			'zeropress-static',
-			'var zeroPressPublisher = ' . wp_json_encode(
-				array(
-					'url'      => admin_url( 'admin-ajax.php' ),
-					'nonce'    => wp_create_nonce( 'zeropress_static' ),
-					'settings' => Settings::public_view(),
-					'menus'    => Menus::catalog(),
-					'messages' => self::messages(),
-				),
-				JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
-			) . ';',
-			'before'
+		wp_register_script( 'zeropress-static-publication', plugins_url( 'assets/publisher.js', PLUGIN_FILE ), array(), VERSION, true );
+		wp_enqueue_script( $handle, plugins_url( $editor ? 'assets/editor.js' : 'assets/admin.js', PLUGIN_FILE ), $dependencies, VERSION, true );
+		$settings = Settings::public_view();
+		$config   = array(
+			'url'      => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'zeropress_static' ),
+			'settings' => $editor ? array_intersect_key( $settings, array_flip( array( 'repository', 'branch' ) ) ) : $settings,
+			'messages' => self::messages(),
 		);
+		if ( $editor ) {
+			$post             = get_post();
+			$config['editor'] = $block ? 'block' : 'classic';
+			$config['site']   = array(
+				'public_url'    => $settings['public_url'],
+				'wordpress_url' => home_url( '/' ),
+			);
+			$config['post']   = array(
+				'link'   => get_permalink( $post ),
+				'public' => 'publish' === $post->post_status && '' === $post->post_password,
+			);
+		} else {
+			$config['menus'] = Menus::catalog();
+		}
+		wp_add_inline_script( $handle, 'var zeroPressPublisher = ' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ';', 'before' );
 	}
 
 	/**
@@ -778,6 +817,15 @@ final class Admin {
 			'turnstile_delete_title'          => __( 'Delete the saved Turnstile keys?', 'zeropress-static' ),
 			'turnstile_delete_help'           => __( 'Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile.', 'zeropress-static' ),
 			'turnstile_delete_confirm'        => __( 'Delete saved keys', 'zeropress-static' ),
+			'editor_title'                    => __( 'ZeroPress publish', 'zeropress-static' ),
+			'editor_open'                     => __( 'GitHub publish', 'zeropress-static' ),
+			'editor_scope'                    => __( 'Publish all saved public posts and pages.', 'zeropress-static' ),
+			'editor_site'                     => __( 'View on static site', 'zeropress-static' ),
+			'editor_unsaved'                  => __( 'Save your post changes before preparing or publishing.', 'zeropress-static' ),
+			'editor_saving'                   => __( 'Wait for WordPress to finish saving your post.', 'zeropress-static' ),
+			'editor_close'                    => __( 'Close', 'zeropress-static' ),
+			'editor_prepare'                  => __( 'Prepare publishing data', 'zeropress-static' ),
+			'editor_unavailable'              => __( 'Check your GitHub settings before publishing.', 'zeropress-static' ),
 			'working'                         => __( 'Working…', 'zeropress-static' ),
 			'saved'                           => __( 'This section is saved.', 'zeropress-static' ),
 			'saved_publish'                   => __( 'This section is saved. Changes take effect after the next publication.', 'zeropress-static' ),
@@ -799,7 +847,7 @@ final class Admin {
 			'from'                            => __( 'Source URL prefix', 'zeropress-static' ),
 			'to'                              => __( 'Destination URL prefix', 'zeropress-static' ),
 			'remove'                          => __( 'Remove replacement', 'zeropress-static' ),
-			'summary'                         => __( 'Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}', 'zeropress-static' ),
+			'summary'                         => __( 'Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}', 'zeropress-static' ),
 			'prepared'                        => __( 'Data prepared. Review the result below.', 'zeropress-static' ),
 			'ready'                           => __( 'Ready to publish to {repository} ({branch}).', 'zeropress-static' ),
 			'unchanged'                       => __( 'No changes to publish.', 'zeropress-static' ),

@@ -21,6 +21,7 @@ configured build service builds and deploys the static site.
 = Features =
 
 * Publish posts and pages with selected classic menus and media references.
+* Prepare and publish from a dialog in the classic or block editor.
 * Downloads for building without a GitHub connection.
 * Media URL replacements, including the WordPress Site Icon.
 * Search, RSS, archives, footer credits and newsletter signup links.
@@ -97,6 +98,19 @@ Install ZeroPress Static from the WordPress Plugin Directory:
 2. Open ZeroPress → Settings, configure the sections you need, and save them.
 3. To use **Publish to GitHub**, save the repository URL and branch under GitHub publishing. Register a fine-grained token for only that repository with Contents: Read and write permission, then test the connection. The branch field defaults to main.
 4. Open ZeroPress → Publish, prepare publishing data, and review the result. Download the files or confirm Publish to GitHub.
+
+= Publish from the editor =
+
+With GitHub publishing configured, administrators can select **GitHub** beside
+Update or Publish in the classic editor, or **GitHub publish** in the block
+editor's ZeroPress sidebar panel.
+Save changes in WordPress, prepare publishing data in the dialog, review the
+result, then select **Publish to GitHub**. This publishes all saved public posts
+and pages. Unsaved changes block preparation and publication.
+
+When a static site URL is configured, the dialog links to the current public
+post or page on that site before and after publishing. It opens the deployed
+page, so changes appear there after the site's build and deployment finish.
 
 == Frequently Asked Questions ==
 

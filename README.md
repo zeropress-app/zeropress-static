@@ -67,6 +67,23 @@ the plugin; direct edits to the generated files are replaced on the next
 publication. A successful publication confirms the GitHub update. Building and
 hosting are configured in your starter project.
 
+## Publish from the editor
+
+After GitHub publishing is configured, administrators can publish without leaving
+the post or page editor. In the classic editor, select **GitHub** beside **Update**
+or **Publish**. In the block editor, select **GitHub publish** in the **ZeroPress**
+panel in the post settings sidebar.
+
+Save your changes in WordPress, open the dialog, and select **Prepare publishing
+data**. Review the result and select **Publish to GitHub**. This publishes all
+saved public posts and pages, not just the post being edited. Unsaved changes
+block preparation and publication. If GitHub already contains the same data,
+the dialog shows that no publication is needed.
+
+When a static site URL is configured, **View on static site** links to the
+current public post or page before and after publishing. It opens the deployed
+page; saved changes appear there after the site's build and deployment finish.
+
 ## Settings
 
 All options are on **ZeroPress → Settings**. Use the section links to move within
