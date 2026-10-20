@@ -130,14 +130,16 @@ final class GitHub {
 	/**
 	 * Publish both files in a single non-forced branch update.
 	 *
-	 * @param array $snapshot Verified target at a pinned commit.
-	 * @param array $export Generated public WXR and base settings.
-	 * @param bool  $republish Whether this commit explicitly republishes unchanged content.
+	 * @param array                     $snapshot Verified target at a pinned commit.
+	 * @param array                     $export Generated public WXR and base settings.
+	 * @param bool                      $republish Whether this commit explicitly republishes unchanged content.
+	 * @param Publication_Progress|null $progress Optional stage feedback for this attempt.
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
 	 * @throws \Throwable If transport fails before the branch update is dispatched.
 	 */
-	public function publish( array $snapshot, array $export, bool $republish = false ): array {
+	public function publish( array $snapshot, array $export, bool $republish = false, ?Publication_Progress $progress = null ): array {
+		$progress?->update( 'uploading' );
 		$entries = array();
 		$blobs   = array();
 		foreach ( self::FILES as $key => $path ) {
@@ -162,6 +164,7 @@ final class GitHub {
 				'sha'  => $expected,
 			);
 		}
+		$progress?->update( 'committing' );
 		$tree    = $this->request(
 			'POST',
 			'/git/trees',
@@ -204,6 +207,7 @@ final class GitHub {
 			if ( ! $this->ref_update_sent || ( $error instanceof Failure && ! in_array( $error->reason, array( 'GITHUB_UNAVAILABLE', 'GITHUB_RESPONSE_INVALID', 'MEMORY_LIMIT_EXCEEDED', 'REQUEST_TIME_LIMIT_EXCEEDED' ), true ) ) ) {
 				throw $error;
 			}
+			$progress?->update( 'verifying' );
 			try {
 				$current          = $this->inspect( $snapshot['branch'] );
 				$commit_confirmed = $current['head'] === $sha ||

@@ -49,6 +49,9 @@ msgstr ""
 msgid "Apply custom CSS"
 msgstr ""
 
+msgid "Applying changes on GitHub…"
+msgstr ""
+
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr ""
 
@@ -62,9 +65,6 @@ msgid "Both files will be updated in one commit."
 msgstr ""
 
 msgid "Both targets must be regular files, not directories, symlinks or submodules."
-msgstr ""
-
-msgid "Branch and both existing files found. Save the publishing target to use it."
 msgstr ""
 
 msgid "Button label"
@@ -82,7 +82,10 @@ msgstr ""
 msgid "Check the values in this section."
 msgstr ""
 
-msgid "Choose <strong>Only select repositories</strong>, select <strong>only the publishing repository</strong>, and grant <code>Contents: Read and write</code>."
+msgid "Checking the GitHub repository…"
+msgstr ""
+
+msgid "Click “Save publishing target” to save these changes."
 msgstr ""
 
 msgid "Close confirmation"
@@ -280,6 +283,12 @@ msgstr ""
 msgid "Get the latest news by email"
 msgstr ""
 
+msgid "GitHub already contains this data. You do not need to publish again."
+msgstr ""
+
+msgid "GitHub connection confirmed."
+msgstr ""
+
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr ""
 
@@ -349,13 +358,16 @@ msgstr ""
 msgid "No Turnstile keys are saved. Reload this page to check their current status."
 msgstr ""
 
-msgid "No publishing changes. GitHub already contains this data."
+msgid "No changes to publish."
 msgstr ""
 
 msgid "Not configured"
 msgstr ""
 
 msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgstr ""
+
+msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr ""
 
 msgid "Opens the signup page in a new tab."
@@ -454,7 +466,13 @@ msgstr ""
 msgid "Remove replacement"
 msgstr ""
 
+msgid "Repository to select:"
+msgstr ""
+
 msgid "Repository, branch or required files not found. Check access and the two root files."
+msgstr ""
+
+msgid "Republish options"
 msgstr ""
 
 msgid "Review prepared data"
@@ -509,6 +527,9 @@ msgid "Search and content navigation"
 msgstr ""
 
 msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
+msgstr ""
+
+msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
 msgstr ""
 
 msgid "Set up a WXR starter repository"
@@ -664,6 +685,9 @@ msgstr ""
 msgid "Unavailable menu (ID {id})"
 msgstr ""
 
+msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
+msgstr ""
+
 msgid "Unknown author"
 msgstr ""
 
@@ -674,6 +698,9 @@ msgid "Up to 65,536 characters."
 msgstr ""
 
 msgid "Update the WXR generation time and create a new commit without changing the content."
+msgstr ""
+
+msgid "Uploading files to GitHub…"
 msgstr ""
 
 msgid "Use Cloudflare Turnstile"
@@ -691,7 +718,16 @@ msgstr ""
 msgid "Use up to 50 complete source and destination URL pairs."
 msgstr ""
 
+msgid "Verifying publishing data…"
+msgstr ""
+
+msgid "Verifying the GitHub publication result…"
+msgstr ""
+
 msgid "View commit"
+msgstr ""
+
+msgid "View saved publishing repository"
 msgstr ""
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."

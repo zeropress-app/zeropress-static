@@ -27,11 +27,19 @@
 .zpsp .nav-tab-wrapper { margin-bottom: 20px; }
 .zpsp .zpsp-feedback { scroll-margin-block: 60px; }
 .zpsp .zpsp-feedback:not(:empty) { margin: 12px 0 0; padding: 12px; }
+.zpsp-loading-spinner { display: inline-flex; vertical-align: middle; margin-inline-end: 8px; }
+.zpsp-loading-spinner .components-spinner { margin: 0; }
+.zpsp-loading-progress { display: block; max-width: 360px; margin-top: 12px; }
+.zpsp .zpsp-progress-bar { width: 100%; }
 .zpsp .zpsp-actions { margin-top: 20px; align-items: center; }
 .zpsp .zpsp-dirty { color: #646970; font-style: italic; }
 .zpsp-token-help, .zpsp-turnstile-help { box-sizing: border-box; max-width: 680px; margin: 20px 0; padding: 16px; border: 1px solid #dcdcde; background: #f6f7f7; }
 .zpsp-token-help p, .zpsp-turnstile-help p { margin: 0; }
 .zpsp-token-help p + p, .zpsp-turnstile-help p + p { margin-top: 8px; }
+.zpsp-token-steps { margin: 12px 0 0 20px; }
+.zpsp-token-steps li { margin: 0 0 8px; }
+.zpsp-token-steps li:last-child { margin-bottom: 0; }
+.zpsp-token-steps #zpsp-token-repository-hint { margin-top: 6px; }
 .zpsp .zpsp-subsection { box-sizing: border-box; max-width: 680px; border-top: 1px solid #dcdcde; margin-top: 24px; padding-top: 20px; }
 .zpsp .zpsp-subsection h3 { margin: 0 0 16px; }
 .zpsp .zpsp-subsection .regular-text { max-width: none; }
@@ -41,6 +49,14 @@
 .zpsp [aria-invalid="true"] { border-color: #d63638; }
 .zpsp #zpsp-result { border-top: 1px solid #dcdcde; margin-top: 24px; padding-top: 8px; }
 .zpsp #zpsp-result-heading { scroll-margin-block: 60px; }
+.zpsp #zpsp-state { scroll-margin-block: 60px; }
+.zpsp .zpsp-unchanged { margin: 16px 0; padding: 16px; background: #edfaef; }
+.zpsp .zpsp-unchanged-title { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.zpsp .zpsp-unchanged-title .dashicons { flex-shrink: 0; color: #008a20; }
+.zpsp .zpsp-unchanged p { margin: 8px 0 0; padding: 0; }
+.zpsp #zpsp-republish-options { margin-top: 20px; }
+.zpsp #zpsp-republish-options summary { width: fit-content; cursor: pointer; }
+.zpsp #zpsp-republish-options .zpsp-actions { margin-top: 12px; }
 @media (max-width: 640px) {
   .zpsp .zpsp-target { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .zpsp .zpsp-target dd { margin-bottom: 12px; }

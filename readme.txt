@@ -201,9 +201,11 @@ permissions apply.
 
 = Can I publish again without changing content? =
 
-Yes. When the data matches the previous publication, Publish to GitHub again
-updates the WXR generation time and creates a new commit. Post dates and build
-settings remain unchanged. This can trigger your repository's build service.
+Yes. When the data matches the previous publication, no further publication is
+needed. To publish intentionally, expand Republish options and select Publish to
+GitHub again. This updates the WXR generation time and creates a new commit.
+Post dates and build settings remain unchanged. This can trigger your
+repository's build service.
 
 = What happens after an uncertain GitHub response? =
 

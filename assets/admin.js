@@ -14,6 +14,7 @@
 	const baselines = new Map();
 	const dirty = new Set();
 	const editors = new Map();
+	const loadingIndicators = new Map();
 	let settings = config.settings;
 	let prepared = null;
 	let busy = false;
@@ -40,13 +41,25 @@
 		return text;
 	}
 
-	function notice(id, text, error = false) {
+	function stopLoading(id) {
+		loadingIndicators.get(id)?.unmount();
+		loadingIndicators.delete(id);
+		$(id + '-notice').querySelector('.zpsp-loading')?.remove();
+	}
+	function notice(id, text, error = false, commitUrl = '') {
+		stopLoading(id);
 		const element = $(id + '-notice');
-		element.textContent = text;
+		element.textContent = '';
+		if (text) {
+			const label = document.createElement('span');
+			label.className = 'zpsp-feedback-message';
+			label.textContent = text;
+			element.append(label);
+		}
 		element.className = 'zpsp-feedback' + (text ? ' notice ' + (error ? 'notice-error' : 'notice-info') : '');
-		if (id === 'result' && text && prepared?.commit_url) {
+		if (commitUrl) {
 			const link = document.createElement('a');
-			link.href = prepared.commit_url;
+			link.href = commitUrl;
 			link.target = '_blank';
 			link.rel = 'noopener noreferrer';
 			link.textContent = message('commit');
@@ -56,6 +69,21 @@
 			link.append(' ', icon);
 			element.append(' ', link);
 		}
+	}
+	function startLoading(id, progress) {
+		const component = { preparing: 'Spinner', downloading: 'Spinner', publishing: 'ProgressBar' }[progress];
+		const Component = window.wp?.components?.[component];
+		const { createElement: el, createRoot } = window.wp?.element || {};
+		if (!Component || !el || !createRoot) return;
+		const isProgressBar = component === 'ProgressBar';
+		const indicator = document.createElement(isProgressBar ? 'div' : 'span');
+		indicator.className = 'zpsp-loading ' + (isProgressBar ? 'zpsp-loading-progress' : 'zpsp-loading-spinner');
+		const element = $(id + '-notice');
+		if (isProgressBar) element.append(indicator);
+		else element.prepend(indicator);
+		const view = createRoot(indicator);
+		loadingIndicators.set(id, view);
+		view.render(el(Component, isProgressBar ? { className: 'zpsp-progress-bar', 'aria-label': message(progress) } : { 'aria-hidden': true }));
 	}
 	function values(form) {
 		if (form.dataset.section === 'menus') {
@@ -239,7 +267,7 @@
 			for (const [id, source] of Object.entries(mapping)) if (!['primary', 'footer'].includes(id)) addMenu(id, source);
 			validateMenus();
 		}
-		if (section === 'github') tokenLink();
+		if (section === 'github') { tokenLink(); repositoryLink(); }
 		if (section === 'comments') commentControls();
 		if (section === 'newsletter' || section === 'discovery') featureControls();
 		if (section === 'turnstile') { turnstileEditing = false; turnstileControls(); }
@@ -285,14 +313,22 @@
 		$('cancel-turnstile').hidden = !turnstileEditing;
 	}
 	function tokenLink() {
-		const repository = $('repository').value.trim().replace(/^https:\/\/github\.com\//, '');
+		const repository = $('repository').value.trim().replace(/^https:\/\/github\.com\//, '').replace(/\/+$/, '').replace(/\.git$/, '');
 		const owner = repository.split('/')[0];
-		const url = new URL('https://github.com/settings/personal-access-tokens/new');
-		url.searchParams.set('name', 'ZeroPress Static');
-		url.searchParams.set('contents', 'write');
-		url.searchParams.set('expires_in', '366');
+		const url = new URL($('token-link').href);
+		url.searchParams.delete('target_name');
 		if (/^[a-z0-9-]+$/i.test(owner)) url.searchParams.set('target_name', owner);
 		$('token-link').href = url.href;
+		$('token-repository').textContent = repository;
+		$('token-repository-hint').hidden = !repository;
+	}
+	function repositoryLink() {
+		const link = $('repository-link');
+		const repository = settings.repository;
+		const valid = /^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9_.-]{1,100}$/.test(repository) && !['.', '..'].includes(repository.split('/')[1]);
+		link.hidden = !valid;
+		if (valid) link.href = 'https://github.com/' + repository.split('/').map(encodeURIComponent).join('/');
+		else link.removeAttribute('href');
 	}
 	function tokenControls() {
 		const form = $('token-form');
@@ -313,11 +349,11 @@
 		notice('test', '');
 		notice('token', message(status));
 	}
-	async function request(operation, extra = {}, download = false) {
+	async function request(operation, extra = {}, download = false, signal) {
 		let response;
 		try {
 			response = await fetch(config.url, {
-				method: 'POST', credentials: 'same-origin',
+				method: 'POST', credentials: 'same-origin', signal,
 				body: new URLSearchParams({ action: 'zeropress_static', nonce: config.nonce, payload: JSON.stringify({ operation, ...extra }) }),
 			});
 		} catch {
@@ -386,6 +422,9 @@
 		if (!busy && prepared?.state !== 'attempted') {
 			const republish = prepared?.state === 'unchanged';
 			const published = prepared?.state === 'published';
+			const actions = $(republish ? 'republish-actions' : 'publish-actions');
+			if ($('publish').parentElement !== actions) actions.append($('publish'));
+			$('republish-options').hidden = !republish;
 			$('publish').querySelector('.zpsp-button-label').textContent = message(published ? 'published_button' : republish ? 'republish_title' : 'confirm_title');
 			$('publish').classList.toggle('button-primary', !republish && !published);
 			$('publish').querySelector('.dashicons').className = 'dashicons ' + (republish ? 'dashicons-update' : 'dashicons-upload');
@@ -402,15 +441,19 @@
 		const labelElement = button.querySelector('.zpsp-button-label') || button;
 		const label = labelElement.textContent;
 		labelElement.textContent = message(progress);
-		const scope = form || button.closest('section');
+		// Keep live stage announcements outside the busy element during publication.
+		const scope = progress === 'publishing' ? button : form || button.closest('section');
 		scope.setAttribute('aria-busy', 'true');
 		notice(id, message(progress));
 		let failure;
-		try { await work(); }
-		catch (error) {
+		try {
+			startLoading(id, progress);
+			await work();
+		} catch (error) {
 			failure = error;
 			if (['PREPARATION_EXPIRED', 'PREPARATION_INVALID', 'CONTENT_CHANGED', 'SETTINGS_CHANGED', 'TARGET_CHANGED'].includes(error.code)) prepared = null;
 		} finally {
+			stopLoading(id);
 			locked.forEach((disabled, input) => { input.disabled = disabled; editors.get(input)?.setOption('readOnly', disabled); });
 			labelElement.textContent = label;
 			scope.removeAttribute('aria-busy');
@@ -560,8 +603,9 @@
 		const input = { ...values(form), revision: settings.revision };
 		notice('github', '');
 		run(event.currentTarget, 'test', 'testing', async () => {
-			await request('test', { settings: input });
-			notice('test', message('connected'));
+			const target = await request('test', { settings: input });
+			const unsaved = target.repository !== settings.repository || target.branch !== settings.branch;
+			notice('test', message('connected') + (unsaved ? ' ' + message('connected_unsaved') : ''));
 		}, form);
 	});
 	if ($('prepare')) $('prepare').disabled = false;
@@ -569,8 +613,10 @@
 		if (busy || confirmation) return;
 		prepared = null;
 		$('result').hidden = true;
+		$('republish-options').open = false;
 		$('result-heading').textContent = message('review_prepared');
 		notice('result', '');
+		notice('download', '');
 		run(event.currentTarget, 'prepare', 'preparing', async () => {
 			prepared = await request('prepare');
 			$('summary').textContent = message('summary', {
@@ -578,35 +624,87 @@
 				wxr: formatBytes(prepared.bytes.wxr), base: formatBytes(prepared.bytes.base),
 				replacements: numbers.format(prepared.rewritten_values),
 			});
-			$('state').textContent = message(prepared.state, prepared.target || {});
+			const unchanged = prepared.state === 'unchanged';
+			const state = $('state');
+			state.className = unchanged ? 'notice notice-success zpsp-unchanged' : '';
+			state.textContent = '';
+			if (unchanged) {
+				const title = document.createElement('strong');
+				title.className = 'zpsp-unchanged-title';
+				const icon = document.createElement('span');
+				icon.className = 'dashicons dashicons-yes-alt';
+				icon.setAttribute('aria-hidden', 'true');
+				title.append(icon, message('unchanged'));
+				const description = document.createElement('p');
+				description.textContent = message('unchanged_description');
+				state.append(title, description);
+			} else state.textContent = message(prepared.state, prepared.target || {});
 			$('state').hidden = false;
 			$('result').hidden = false;
-			notice('prepare', prepared.connection_error ? failureMessage(prepared.connection_error, prepared.connection_error_details) : message('prepared'), !!prepared.connection_error);
-			$('result-heading').focus();
+			notice('prepare', prepared.connection_error ? failureMessage(prepared.connection_error, prepared.connection_error_details) : unchanged ? '' : message('prepared'), !!prepared.connection_error);
+			$(unchanged ? 'state' : 'result-heading').focus();
 		});
 	});
+	function watchPublication(publicationId) {
+		const stages = ['validating', 'inspecting', 'uploading', 'committing', 'verifying'];
+		const label = $('result-notice').querySelector('.zpsp-feedback-message');
+		let stopped = false;
+		let timer;
+		let controller;
+		function show(stage) {
+			const text = message(stages.includes(stage) ? 'publish_' + stage : 'publishing');
+			// Leave the progress bar mounted and announce only changed stage text.
+			if (!stopped && label.textContent !== text) label.textContent = text;
+		}
+		async function poll() {
+			controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), 4000);
+			try {
+				const status = await request('publish_progress', { publication_id: publicationId }, false, controller.signal);
+				show(status?.stage);
+			} catch {
+				show(null);
+			} finally {
+				clearTimeout(timeout);
+				if (!stopped) timer = setTimeout(poll, 1000);
+			}
+		}
+		function stop() {
+			stopped = true;
+			clearTimeout(timer);
+			controller?.abort();
+			window.removeEventListener('pagehide', stop);
+		}
+		timer = setTimeout(poll, 1000);
+		window.addEventListener('pagehide', stop, { once: true });
+		return stop;
+	}
 	function publish(button, snapshot) {
 		if (busy || confirmation || prepared !== snapshot || !['ready', 'unchanged'].includes(snapshot.state)) return;
 		const republish = snapshot.state === 'unchanged';
 		const receipt = snapshot.receipt;
 		run(button, 'result', 'publishing', async () => {
 			notice('prepare', '');
+			notice('download', '');
 			$('state').textContent = '';
 			$('state').hidden = true;
 			$('result-heading').textContent = message('publication_result');
 			// Every write attempt requires a new preparation, even when its response is uncertain.
 			snapshot.state = 'attempted';
+			const publicationId = [...window.crypto.getRandomValues(new Uint8Array(16))].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+			const stopWatching = watchPublication(publicationId);
 			let result;
-			try { result = await request('publish', { receipt, republish }); }
+			try { result = await request('publish', { receipt, republish, publication_id: publicationId }); }
 			catch (error) {
 				if (error.uncertain) result = { state: 'unknown' };
 				else throw error;
+			} finally {
+				stopWatching();
 			}
 			if (result.state === 'published') {
 				snapshot.state = 'published';
 			}
-			snapshot.commit_url = result.commit_url;
-			notice('result', message(result.state), result.state === 'unknown');
+			notice('result', message(result.state), result.state === 'unknown', result.commit_url);
 			if (result.state === 'published') $('result-notice').classList.replace('notice-info', 'notice-success');
 			$('result-notice').focus();
 		});
@@ -674,7 +772,7 @@
 	});
 	root.querySelectorAll('[data-download]').forEach((button) => button.addEventListener('click', () => {
 		if (!prepared || busy || confirmation) return;
-		run(button, 'result', 'downloading', async () => {
+		run(button, 'download', 'downloading', async () => {
 			const blob = await request('download', { receipt: prepared.receipt, file: button.dataset.download }, true);
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement('a');
@@ -682,7 +780,7 @@
 			link.download = button.dataset.download === 'wxr' ? 'wordpress-export.xml' : 'wxr-import-base.json';
 			link.click();
 			setTimeout(() => URL.revokeObjectURL(url), 1000);
-			notice('result', message('downloaded'));
+			notice('download', message('downloaded'));
 		});
 	}));
 })();

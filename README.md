@@ -257,9 +257,11 @@ Prepare data again after changing settings or content. Preparation expires after
 ten minutes. Changes to the target files on GitHub also require preparing again;
 unrelated repository commits are preserved.
 
-When the prepared data matches the previous publication, **Publish to GitHub
-again** creates a new commit by updating the WXR generation time. Post dates and
-build settings stay unchanged. This can trigger the build service configured for
+When the prepared data matches the previous publication, **No changes to publish**
+confirms that publishing is unnecessary. To publish intentionally, expand
+**Republish options** and select **Publish to GitHub again**. This creates a new
+commit by updating the WXR generation time. Post dates and build settings stay
+unchanged. This can trigger the build service configured for
 your repository. The branch is never force-updated.
 
 If a publication response is lost, the plugin checks the result once without

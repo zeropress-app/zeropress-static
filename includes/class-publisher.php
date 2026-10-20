@@ -110,36 +110,44 @@ final class Publisher {
 	/**
 	 * Revalidate preparation before updating the GitHub branch.
 	 *
-	 * @param string               $receipt Signed preparation receipt.
-	 * @param bool                 $republish Explicitly publish an unchanged prepared export again.
-	 * @param Resource_Budget|null $budget Shared request resource budget.
+	 * @param string                    $receipt Signed preparation receipt.
+	 * @param bool                      $republish Explicitly publish an unchanged prepared export again.
+	 * @param Resource_Budget|null      $budget Shared request resource budget.
+	 * @param Publication_Progress|null $progress Optional stage feedback for this attempt.
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
-	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null ): array {
-		$budget                             ??= Resource_Budget::from_request();
-		list( $settings, $prepared, $export ) = self::validate( $receipt, $budget, $republish );
-		if ( empty( $prepared['snapshot'] ) ) {
-			throw new Failure( 'CONNECTION_REQUIRED' );
+	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null ): array {
+		$budget ??= Resource_Budget::from_request();
+		try {
+			$progress?->update( 'validating' );
+			list( $settings, $prepared, $export ) = self::validate( $receipt, $budget, $republish );
+			if ( empty( $prepared['snapshot'] ) ) {
+				throw new Failure( 'CONNECTION_REQUIRED' );
+			}
+			if ( $republish && $prepared['snapshot']['data_hash'] !== $export['data_hash'] ) {
+				throw new Failure( 'PREPARATION_INVALID', 409 );
+			}
+			$progress?->update( 'inspecting' );
+			$github  = new GitHub( $settings, $budget );
+			$current = $github->inspect( $prepared['snapshot']['branch'] );
+			if ( $current['repository'] !== $prepared['snapshot']['repository'] || $current['files'] !== $prepared['snapshot']['files'] ) {
+				throw new Failure( 'TARGET_CHANGED', 409 );
+			}
+			if ( ! $republish && $current['data_hash'] === $export['data_hash'] ) {
+				return array( 'state' => 'unchanged' );
+			}
+			if ( $republish && GitHub::blob_sha( $export['wxr'] ) === $current['files']['wxr'] ) {
+				$progress?->update( 'validating' );
+				// WXR dates have second precision. Wait once so an immediate repeat changes the file too.
+				$budget->check();
+				usleep( 1000000 );
+				list( , , $export ) = self::validate( $receipt, $budget, true );
+			}
+			// Include unrelated intervening commits by publishing on the current verified tree.
+			return $github->publish( $current, $export, $republish, $progress );
+		} finally {
+			$progress?->clear();
 		}
-		if ( $republish && $prepared['snapshot']['data_hash'] !== $export['data_hash'] ) {
-			throw new Failure( 'PREPARATION_INVALID', 409 );
-		}
-		$github  = new GitHub( $settings, $budget );
-		$current = $github->inspect( $prepared['snapshot']['branch'] );
-		if ( $current['repository'] !== $prepared['snapshot']['repository'] || $current['files'] !== $prepared['snapshot']['files'] ) {
-			throw new Failure( 'TARGET_CHANGED', 409 );
-		}
-		if ( ! $republish && $current['data_hash'] === $export['data_hash'] ) {
-			return array( 'state' => 'unchanged' );
-		}
-		if ( $republish && GitHub::blob_sha( $export['wxr'] ) === $current['files']['wxr'] ) {
-			// WXR dates have second precision. Wait once so an immediate repeat changes the file too.
-			$budget->check();
-			usleep( 1000000 );
-			list( , , $export ) = self::validate( $receipt, $budget, true );
-		}
-		// Include unrelated intervening commits by publishing on the current verified tree.
-		return $github->publish( $current, $export, $republish );
 	}
 }

@@ -151,7 +151,12 @@ final class Admin {
 					if ( ! is_bool( $republish ) ) {
 						throw new Failure( 'INVALID_REQUEST' );
 					}
-					$result = Publisher::publish( Settings::string( $input, 'receipt' ), $republish, Resource_Budget::from_request( true ) );
+					$progress = new Publication_Progress( Settings::string( $input, 'publication_id' ) );
+					$result   = Publisher::publish( Settings::string( $input, 'receipt' ), $republish, Resource_Budget::from_request( true ), $progress );
+					break;
+				case 'publish_progress':
+					$progress = new Publication_Progress( Settings::string( $input, 'publication_id' ) );
+					$result   = array( 'stage' => $progress->read() );
 					break;
 				case 'download':
 					$file    = Settings::string( $input, 'file' );
@@ -405,6 +410,14 @@ final class Admin {
 
 	/** Render the github settings section. */
 	private static function github_panel(): void {
+		$token_url = add_query_arg(
+			array(
+				'name'       => rawurlencode( 'ZeroPress Static - ' . Exporter::site_metadata()['title'] ),
+				'contents'   => 'write',
+				'expires_in' => 366,
+			),
+			'https://github.com/settings/personal-access-tokens/new'
+		);
 		?>
 		<section id="zpsp-github-panel" class="zpsp-panel" aria-labelledby="zpsp-github-heading">
 			<h2 id="zpsp-github-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> <?php esc_html_e( 'GitHub publishing (optional)', 'zeropress-static' ); ?></h2>
@@ -418,6 +431,7 @@ final class Admin {
 					<div class="zpsp-actions">
 						<button id="zpsp-save-github" type="submit" class="button button-primary"><?php esc_html_e( 'Save publishing target', 'zeropress-static' ); ?></button>
 						<button id="zpsp-test" type="button" class="button zpsp-icon-button" disabled><span class="dashicons dashicons-admin-links" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Test connection', 'zeropress-static' ); ?></span></button>
+						<a id="zpsp-repository-link" target="_blank" rel="noopener noreferrer" hidden><?php esc_html_e( 'View saved publishing repository', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a>
 						<span id="zpsp-github-dirty" class="zpsp-dirty" hidden><?php esc_html_e( 'Unsaved changes', 'zeropress-static' ); ?></span>
 					</div>
 					<?php self::feedback( 'github' ); ?>
@@ -430,8 +444,15 @@ final class Admin {
 					<div id="zpsp-token-unregistered" hidden>
 						<?php self::field( 'token', __( 'GitHub token', 'zeropress-static' ), 'password', '', __( 'Register a GitHub token to publish.', 'zeropress-static' ), true, true ); ?>
 						<div class="zpsp-token-help">
-							<p><a id="zpsp-token-link" href="https://github.com/settings/personal-access-tokens/new?name=ZeroPress%20Static&amp;contents=write&amp;expires_in=366" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Create a GitHub token', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
-							<p class="description"><?php self::help_text( __( 'Choose <strong>Only select repositories</strong>, select <strong>only the publishing repository</strong>, and grant <code>Contents: Read and write</code>.', 'zeropress-static' ) ); ?></p>
+							<p><a id="zpsp-token-link" href="<?php echo esc_url( $token_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Create a GitHub token', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
+							<ol class="description zpsp-token-steps">
+								<li><?php self::help_text( __( 'Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>.', 'zeropress-static' ) ); ?></li>
+								<li>
+									<?php self::help_text( __( 'Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above.', 'zeropress-static' ) ); ?>
+									<p id="zpsp-token-repository-hint" hidden><?php esc_html_e( 'Repository to select:', 'zeropress-static' ); ?> <code id="zpsp-token-repository"></code></p>
+								</li>
+								<li><?php self::help_text( __( 'Set <strong>Contents</strong> to <strong>Read and write</strong>.', 'zeropress-static' ) ); ?></li>
+							</ol>
 						</div>
 						<div class="zpsp-actions">
 							<button id="zpsp-register-token" type="submit" class="button"><?php esc_html_e( 'Register token', 'zeropress-static' ); ?></button>
@@ -663,9 +684,21 @@ final class Admin {
 			<h2 id="zpsp-target-heading"><span class="dashicons dashicons-admin-site-alt3" aria-hidden="true"></span> <?php esc_html_e( 'Publishing destination', 'zeropress-static' ); ?></h2>
 			<dl class="zpsp-target">
 				<dt><?php esc_html_e( 'Static site URL', 'zeropress-static' ); ?></dt>
-				<dd><?php echo esc_html( $settings['public_url'] ? $settings['public_url'] : __( 'Not configured', 'zeropress-static' ) ); ?></dd>
+				<dd>
+					<?php if ( in_array( wp_parse_url( $settings['public_url'], PHP_URL_SCHEME ), array( 'http', 'https' ), true ) ) : ?>
+						<a href="<?php echo esc_url( $settings['public_url'], array( 'http', 'https' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $settings['public_url'] ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a>
+					<?php else : ?>
+						<?php echo esc_html( $settings['public_url'] ? $settings['public_url'] : __( 'Not configured', 'zeropress-static' ) ); ?>
+					<?php endif; ?>
+				</dd>
 				<dt><?php esc_html_e( 'GitHub repository', 'zeropress-static' ); ?></dt>
-				<dd><?php echo esc_html( $settings['repository'] ? $settings['repository'] : __( 'Not configured', 'zeropress-static' ) ); ?></dd>
+				<dd>
+					<?php if ( $settings['repository'] ) : ?>
+						<a href="<?php echo esc_url( 'https://github.com/' . implode( '/', array_map( 'rawurlencode', explode( '/', $settings['repository'] ) ) ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $settings['repository'] ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a>
+					<?php else : ?>
+						<?php esc_html_e( 'Not configured', 'zeropress-static' ); ?>
+					<?php endif; ?>
+				</dd>
 				<?php if ( $settings['repository'] ) : ?>
 					<dt><?php esc_html_e( 'Publishing branch', 'zeropress-static' ); ?></dt>
 					<dd><?php echo esc_html( $settings['branch'] ? $settings['branch'] : __( 'Not configured', 'zeropress-static' ) ); ?></dd>
@@ -680,13 +713,20 @@ final class Admin {
 			<?php self::feedback( 'prepare' ); ?>
 			<div id="zpsp-result" hidden>
 				<h3 tabindex="-1" id="zpsp-result-heading"><?php esc_html_e( 'Review prepared data', 'zeropress-static' ); ?></h3>
-				<p id="zpsp-summary"></p><p id="zpsp-state"></p>
-				<div class="zpsp-actions">
+				<div id="zpsp-state" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
+				<p id="zpsp-summary"></p>
+				<div id="zpsp-publish-actions" class="zpsp-actions">
 					<button type="button" class="button zpsp-icon-button" data-download="wxr"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download WXR', 'zeropress-static' ); ?></span></button>
 					<button type="button" class="button zpsp-icon-button" data-download="base"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download build settings', 'zeropress-static' ); ?></span></button>
 					<button type="button" class="button zpsp-icon-button button-primary" id="zpsp-publish" disabled><span class="dashicons dashicons-upload" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Publish to GitHub', 'zeropress-static' ); ?></span></button>
 				</div>
+				<details id="zpsp-republish-options" hidden>
+					<summary><?php esc_html_e( 'Republish options', 'zeropress-static' ); ?></summary>
+					<p><?php esc_html_e( 'Update the WXR generation time and create a new commit without changing the content.', 'zeropress-static' ); ?></p>
+					<div id="zpsp-republish-actions" class="zpsp-actions"></div>
+				</details>
 				<?php self::feedback( 'result' ); ?>
+				<?php self::feedback( 'download' ); ?>
 			</div>
 		</section>
 		<?php
@@ -806,7 +846,8 @@ final class Admin {
 			'saved_publish'                   => __( 'This section is saved. Changes take effect after the next publication.', 'zeropress-static' ),
 			'saved_comments'                  => __( 'This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests.', 'zeropress-static' ),
 			'saved_runtime'                   => __( 'This section is saved. Changes apply to new comment requests.', 'zeropress-static' ),
-			'connected'                       => __( 'Branch and both existing files found. Save the publishing target to use it.', 'zeropress-static' ),
+			'connected'                       => __( 'GitHub connection confirmed.', 'zeropress-static' ),
+			'connected_unsaved'               => __( 'Click “Save publishing target” to save these changes.', 'zeropress-static' ),
 			'registering_token'               => __( 'Registering token…', 'zeropress-static' ),
 			'deleting_token'                  => __( 'Deleting token…', 'zeropress-static' ),
 			'token_registered'                => __( 'The GitHub token is registered.', 'zeropress-static' ),
@@ -822,7 +863,8 @@ final class Admin {
 			'summary'                         => __( 'Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus} · WXR: {wxr} · Settings: {base} · Rewritten values: {replacements}', 'zeropress-static' ),
 			'prepared'                        => __( 'Data prepared. Review the result below.', 'zeropress-static' ),
 			'ready'                           => __( 'Ready to publish to {repository} ({branch}).', 'zeropress-static' ),
-			'unchanged'                       => __( 'No publishing changes. GitHub already contains this data.', 'zeropress-static' ),
+			'unchanged'                       => __( 'No changes to publish.', 'zeropress-static' ),
+			'unchanged_description'           => __( 'GitHub already contains this data. You do not need to publish again.', 'zeropress-static' ),
 			'download_only'                   => __( 'Data is ready to download. Configure and test GitHub to publish.', 'zeropress-static' ),
 			'review_prepared'                 => __( 'Review prepared data', 'zeropress-static' ),
 			'publication_result'              => __( 'Publication result', 'zeropress-static' ),
@@ -844,6 +886,11 @@ final class Admin {
 			'testing'                         => __( 'Testing connection…', 'zeropress-static' ),
 			'preparing'                       => __( 'Preparing data…', 'zeropress-static' ),
 			'publishing'                      => __( 'Publishing to GitHub…', 'zeropress-static' ),
+			'publish_validating'              => __( 'Verifying publishing data…', 'zeropress-static' ),
+			'publish_inspecting'              => __( 'Checking the GitHub repository…', 'zeropress-static' ),
+			'publish_uploading'               => __( 'Uploading files to GitHub…', 'zeropress-static' ),
+			'publish_committing'              => __( 'Applying changes on GitHub…', 'zeropress-static' ),
+			'publish_verifying'               => __( 'Verifying the GitHub publication result…', 'zeropress-static' ),
 			'downloading'                     => __( 'Preparing download…', 'zeropress-static' ),
 			'downloaded'                      => __( 'The download is ready. Check your browser downloads.', 'zeropress-static' ),
 			'test_changed'                    => __( 'Connection details changed. Test again to check these values.', 'zeropress-static' ),
