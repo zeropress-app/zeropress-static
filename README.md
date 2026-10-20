@@ -269,18 +269,6 @@ separate notice in the blog theme. **Show ZeroPress attribution** adds
 `Published with ZeroPress` to the theme footer. **Show ZeroPress generator
 information** adds `<meta name="generator">` to the HTML. Both options start on.
 
-### Custom CSS and HTML
-
-Custom CSS is included as a separate stylesheet. Custom HTML is inserted before
-`</head>` or `</body>` and can include scripts for analytics or widgets.
-
-CSS and each HTML insertion location have their own apply checkbox, off by
-default. Code remains editable and saved while disabled; only enabled, non-empty
-code is included in the next publication. Each field accepts 65,536 characters.
-WordPress code editors follow your profile's syntax-highlighting preference.
-CSS editing requires `edit_css`, and HTML requires `unfiltered_html`, in addition
-to `manage_options`. WordPress permission restrictions apply.
-
 ## Publishing behavior
 
 Prepare data again after changing settings or content. Preparation expires after

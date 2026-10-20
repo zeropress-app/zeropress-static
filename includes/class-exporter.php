@@ -544,16 +544,6 @@ final class Exporter {
 				}
 			}
 		}
-		$css = $settings['custom_css_content'] ?? '';
-		if ( ! empty( $settings['custom_css_enabled'] ) && '' !== trim( $css ) ) {
-			$base['custom_css'] = array( 'content' => $css );
-		}
-		foreach ( array( 'head_end', 'body_end' ) as $slot ) {
-			$html = $settings[ 'custom_html_' . $slot ] ?? '';
-			if ( ! empty( $settings[ 'custom_html_' . $slot . '_enabled' ] ) && '' !== trim( $html ) ) {
-				$base['custom_html'][ $slot ] = $html;
-			}
-		}
 		foreach ( $site['favicon'] as $key => $url ) {
 			$base['site']['favicon'][ $key ] = $this->rewriter->url( $url );
 		}

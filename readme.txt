@@ -24,7 +24,6 @@ configured build service builds and deploys the static site.
 * Downloads for building without a GitHub connection.
 * Media URL replacements, including the WordPress Site Icon.
 * Search, RSS, archives, footer credits and newsletter signup links.
-* Custom CSS and HTML with separate apply controls.
 * Optional WordPress comments, with separate display and writing settings and Cloudflare Turnstile support.
 * English and Korean admin screens, section navigation and independent save buttons.
 
@@ -210,13 +209,6 @@ No. Newsletter connection displays a signup prompt for a page you prepare with
 a newsletter service. Supply a signup page URL, an embedded signup page URL or
 both. The service handles subscriptions and mail delivery. The embedded page
 must allow iframe display.
-
-= When do custom CSS and HTML take effect? =
-
-After you enable the relevant apply checkbox, save, and publish again. CSS is
-included as a separate stylesheet; HTML is inserted before `</head>` or `</body>`.
-Turning an option off retains the saved code. WordPress's code-editing
-permissions apply.
 
 = Can I publish again without changing content? =
 

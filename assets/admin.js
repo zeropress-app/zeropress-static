@@ -13,7 +13,6 @@
 	const forms = [...root.querySelectorAll('form[data-section]')];
 	const baselines = new Map();
 	const dirty = new Set();
-	const editors = new Map();
 	const loadingIndicators = new Map();
 	let settings = config.settings;
 	let prepared = null;
@@ -105,46 +104,15 @@
 		for (const input of form.elements) {
 			if (!input.name) continue;
 			if (input.name === 'comment_verification') result[input.name] = input.checked ? 'turnstile' : 'pow';
-			else result[input.name] = input.type === 'checkbox' ? input.checked : input.hasAttribute('data-code-type') ? input.value : input.value.trim();
+			else result[input.name] = input.type === 'checkbox' ? input.checked : input.value.trim();
 		}
 		if (form.dataset.section === 'media') {
 			result.media_rules = [...$('rules').children].map((row) => [...row.querySelectorAll('input')].map((input) => input.value.trim()));
 		}
 		return result;
 	}
-	function initializeEditors(form) {
-		form.querySelectorAll('[data-code-type]').forEach((input) => {
-			const options = config.editors[input.dataset.codeType];
-			if (!options || !window.wp?.codeEditor) return;
-			const moveFocus = (editor, direction) => {
-				const targets = [...root.querySelectorAll('a[href], button, input, select, textarea, [contenteditable="true"]')]
-					.filter((element) => !element.disabled && element.tabIndex >= 0 && element.getClientRects().length);
-				const index = targets.indexOf(editor.getInputField());
-				if (index !== -1) targets[index + direction]?.focus();
-			};
-			const editor = window.wp.codeEditor.initialize(input, {
-				...options,
-				codemirror: { ...options.codemirror, inputStyle: 'textarea' },
-				onTabNext: (cm) => moveFocus(cm, 1),
-				onTabPrevious: (cm) => moveFocus(cm, -1),
-			}).codemirror;
-			document.getElementById(input.id + '-help').append(' ' + message('editor_tab_help'));
-			editors.set(input, editor);
-			editor.getInputField().setAttribute('aria-labelledby', input.id + '-label');
-			editor.getInputField().setAttribute('aria-describedby', input.id + '-help');
-			editor.on('change', (_, change) => {
-				editor.save();
-				if (change.origin !== 'setValue') changed(form);
-			});
-		});
-	}
 	function clearFieldErrors(form) {
 		form?.querySelectorAll('.zpsp-field-error').forEach((element) => element.remove());
-		form?.querySelectorAll('[data-code-type]').forEach((input) => {
-			const editorInput = editors.get(input)?.getInputField();
-			editorInput?.removeAttribute('aria-invalid');
-			editorInput?.setAttribute('aria-describedby', input.id + '-help');
-		});
 		form?.querySelectorAll('[aria-invalid]').forEach((input) => {
 			input.removeAttribute('aria-invalid');
 			const help = document.getElementById(input.id + '-help');
@@ -252,8 +220,6 @@
 			if (input.name === 'comment_verification') input.checked = value === 'turnstile';
 			else if (input.type === 'checkbox') input.checked = !!value;
 			else input.value = value || '';
-			const editor = editors.get(input);
-			if (editor && editor.getValue() !== input.value) editor.setValue(input.value);
 		}
 		const section = form.dataset.section;
 		if (section === 'media') {
@@ -373,9 +339,6 @@
 	}
 	function focusError(error, id, form) {
 		const fields = {
-			INVALID_CUSTOM_CSS_CONTENT: 'custom_css_content',
-			INVALID_CUSTOM_HTML_HEAD_END: 'custom_html_head_end',
-			INVALID_CUSTOM_HTML_BODY_END: 'custom_html_body_end',
 			NEWSLETTER_URL_REQUIRED: 'newsletter_signup_url',
 			INVALID_NEWSLETTER_TITLE: 'newsletter_title',
 			INVALID_NEWSLETTER_DESCRIPTION: 'newsletter_description',
@@ -401,15 +364,10 @@
 			detail.id = errorId;
 			detail.className = 'zpsp-field-error';
 			detail.textContent = text;
-			const editor = editors.get(input);
-			(editor?.getWrapperElement() || input).after(detail);
+			input.after(detail);
 			const help = document.getElementById(input.id + '-help');
 			input.setAttribute('aria-describedby', [help?.id, errorId].filter(Boolean).join(' '));
-			if (editor) {
-				editor.getInputField().setAttribute('aria-invalid', 'true');
-				editor.getInputField().setAttribute('aria-describedby', input.getAttribute('aria-describedby'));
-				editor.focus();
-			} else input.focus();
+			input.focus();
 		} else {
 			notice(id, text, true);
 			$(id + '-notice').focus();
@@ -437,7 +395,7 @@
 		clearFieldErrors(form);
 		// Serialize requests using the shared revision, but leave other panels' inputs alone.
 		const locked = new Map([...root.querySelectorAll('button'), ...(form ? form.querySelectorAll('input, select, textarea') : [])].map((input) => [input, input.disabled]));
-		locked.forEach((_, input) => { input.disabled = true; editors.get(input)?.setOption('readOnly', true); });
+		locked.forEach((_, input) => { input.disabled = true; });
 		const labelElement = button.querySelector('.zpsp-button-label') || button;
 		const label = labelElement.textContent;
 		labelElement.textContent = message(progress);
@@ -454,7 +412,7 @@
 			if (['PREPARATION_EXPIRED', 'PREPARATION_INVALID', 'CONTENT_CHANGED', 'SETTINGS_CHANGED', 'TARGET_CHANGED'].includes(error.code)) prepared = null;
 		} finally {
 			stopLoading(id);
-			locked.forEach((disabled, input) => { input.disabled = disabled; editors.get(input)?.setOption('readOnly', disabled); });
+			locked.forEach((disabled, input) => { input.disabled = disabled; });
 			labelElement.textContent = label;
 			scope.removeAttribute('aria-busy');
 			busy = false;
@@ -469,9 +427,7 @@
 	}
 	forms.forEach((form) => {
 		fill(form);
-		form.addEventListener('input', (event) => {
-			if (!event.target.closest('.CodeMirror')) changed(form);
-		});
+		form.addEventListener('input', () => changed(form));
 		form.addEventListener('submit', async (event) => {
 			event.preventDefault();
 			const section = form.dataset.section;
@@ -495,7 +451,6 @@
 			}
 		});
 		form.querySelector('fieldset').disabled = false;
-		initializeEditors(form);
 	});
 	const settingsNav = root.querySelector('.zpsp-settings-nav');
 	if (settingsNav) {

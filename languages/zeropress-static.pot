@@ -40,25 +40,10 @@ msgstr ""
 msgid "Apple touch icon"
 msgstr ""
 
-msgid "Apply HTML before </body>"
-msgstr ""
-
-msgid "Apply HTML before </head>"
-msgstr ""
-
-msgid "Apply custom CSS"
-msgstr ""
-
 msgid "Applying changes on GitHub…"
 msgstr ""
 
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
-msgstr ""
-
-msgid "Before </body>"
-msgstr ""
-
-msgid "Before </head>"
 msgstr ""
 
 msgid "Both files will be updated in one commit."
@@ -68,9 +53,6 @@ msgid "Both targets must be regular files, not directories, symlinks or submodul
 msgstr ""
 
 msgid "Button label"
-msgstr ""
-
-msgid "CSS"
 msgstr ""
 
 msgid "Cancel"
@@ -116,18 +98,6 @@ msgid "Copyright or legal notice"
 msgstr ""
 
 msgid "Create a GitHub token"
-msgstr ""
-
-msgid "Custom CSS"
-msgstr ""
-
-msgid "Custom CSS lets you adjust the appearance of your static site. Examples include fonts, colors, and spacing."
-msgstr ""
-
-msgid "Custom HTML"
-msgstr ""
-
-msgid "Custom HTML lets you add markup or scripts to your static site. Examples include analytics integrations and external widgets."
 msgstr ""
 
 msgid "Data is ready to download. Configure and test GitHub to publish."
@@ -200,12 +170,6 @@ msgid "Enable JavaScript to save settings and prepare publishing data."
 msgstr ""
 
 msgid "Enable search"
-msgstr ""
-
-msgid "Enter CSS of up to 65,536 characters."
-msgstr ""
-
-msgid "Enter HTML of up to 65,536 characters."
 msgstr ""
 
 msgid "Enter Turnstile keys without spaces or line breaks."
@@ -400,9 +364,6 @@ msgstr ""
 msgid "Preparing download…"
 msgstr ""
 
-msgid "Press Esc, then Tab to move out of the code editor."
-msgstr ""
-
 msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
 msgstr ""
 
@@ -491,12 +452,6 @@ msgid "Save a static site URL in the Site section to allow comment writing."
 msgstr ""
 
 msgid "Save comment settings"
-msgstr ""
-
-msgid "Save custom CSS"
-msgstr ""
-
-msgid "Save custom HTML"
 msgstr ""
 
 msgid "Save display and credit settings"
@@ -698,9 +653,6 @@ msgid "Unknown author"
 msgstr ""
 
 msgid "Unsaved changes"
-msgstr ""
-
-msgid "Up to 65,536 characters."
 msgstr ""
 
 msgid "Update the WXR generation time and create a new commit without changing the content."

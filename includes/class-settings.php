@@ -9,8 +9,7 @@ namespace ZeroPress\StaticPublisher;
 
 /** Settings stored only in this site's options. */
 final class Settings {
-	const OPTION     = 'zeropress_static_settings';
-	const CODE_LIMIT = 65536;
+	const OPTION = 'zeropress_static_settings';
 
 	/** Read defaults without changing the database. */
 	public static function read(): array {
@@ -21,38 +20,32 @@ final class Settings {
 	/** Default values for missing settings. */
 	private static function defaults(): array {
 		return array(
-			'revision'                     => 'unconfigured',
-			'repository'                   => '',
-			'branch'                       => 'main',
-			'public_url'                   => '',
-			'allow_indexing'               => false,
-			'media_rules'                  => array(),
-			'menu_mapping'                 => array(),
-			'search_enabled'               => true,
-			'feed_enabled'                 => true,
-			'archive_enabled'              => true,
-			'copyright_text'               => '',
-			'attribution'                  => true,
-			'expose_generator'             => true,
-			'custom_css_enabled'           => false,
-			'custom_css_content'           => '',
-			'custom_html_head_end_enabled' => false,
-			'custom_html_head_end'         => '',
-			'custom_html_body_end_enabled' => false,
-			'custom_html_body_end'         => '',
-			'newsletter_enabled'           => false,
-			'newsletter_title'             => '',
-			'newsletter_description'       => '',
-			'newsletter_button_label'      => '',
-			'newsletter_signup_url'        => '',
-			'newsletter_embed_url'         => '',
-			'comments_enabled'             => false,
-			'comments_api_url'             => '',
-			'anonymous_comments'           => false,
-			'credential'                   => '',
-			'comment_verification'         => 'pow',
-			'turnstile_site_key'           => '',
-			'turnstile_credential'         => '',
+			'revision'                => 'unconfigured',
+			'repository'              => '',
+			'branch'                  => 'main',
+			'public_url'              => '',
+			'allow_indexing'          => false,
+			'media_rules'             => array(),
+			'menu_mapping'            => array(),
+			'search_enabled'          => true,
+			'feed_enabled'            => true,
+			'archive_enabled'         => true,
+			'copyright_text'          => '',
+			'attribution'             => true,
+			'expose_generator'        => true,
+			'newsletter_enabled'      => false,
+			'newsletter_title'        => '',
+			'newsletter_description'  => '',
+			'newsletter_button_label' => '',
+			'newsletter_signup_url'   => '',
+			'newsletter_embed_url'    => '',
+			'comments_enabled'        => false,
+			'comments_api_url'        => '',
+			'anonymous_comments'      => false,
+			'credential'              => '',
+			'comment_verification'    => 'pow',
+			'turnstile_site_key'      => '',
+			'turnstile_credential'    => '',
 		);
 	}
 
@@ -86,29 +79,6 @@ final class Settings {
 		if ( ! isset( $input['revision'] ) || $input['revision'] !== $current['revision'] ) {
 			throw new Failure( 'SETTINGS_CHANGED', 409 );
 		}
-		$code = array();
-		foreach ( array(
-			'custom_css'           => 'edit_css',
-			'custom_html_head_end' => 'unfiltered_html',
-			'custom_html_body_end' => 'unfiltered_html',
-		) as $slot => $capability ) {
-			$field         = 'custom_css' === $slot ? 'custom_css_content' : $slot;
-			$enabled_field = $slot . '_enabled';
-			$value         = array_key_exists( $field, $input ) ? $input[ $field ] : $current[ $field ];
-			$enabled       = array_key_exists( $enabled_field, $input ) ? self::boolean( $input, $enabled_field ) : $current[ $enabled_field ];
-			$scope         = 'edit_css' === $capability ? 'custom_css' : 'custom_html';
-			if ( ( $section === $scope || $value !== $current[ $field ] || $enabled !== $current[ $enabled_field ] ) && ! current_user_can( $capability ) ) {
-				throw new Failure( 'FORBIDDEN', 403 );
-			}
-			$length = is_string( $value ) ? preg_match_all( '/./us', $value ) : false;
-			if ( false === $length || $length > self::CODE_LIMIT || str_contains( $value, "\0" ) ) {
-				// A field-specific code is returned as JSON, not rendered as HTML.
-				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-				throw new Failure( 'INVALID_' . strtoupper( $field ) );
-			}
-			$code[ $field ]         = $value;
-			$code[ $enabled_field ] = $enabled;
-		}
 		if ( null !== $section ) {
 			$sections = array(
 				'site'        => array( 'public_url', 'allow_indexing' ),
@@ -117,8 +87,6 @@ final class Settings {
 				'discovery'   => array( 'search_enabled', 'feed_enabled', 'archive_enabled' ),
 				'information' => array( 'copyright_text', 'attribution', 'expose_generator' ),
 				'newsletter'  => array( 'newsletter_enabled', 'newsletter_title', 'newsletter_description', 'newsletter_button_label', 'newsletter_signup_url', 'newsletter_embed_url' ),
-				'custom_css'  => array( 'custom_css_enabled', 'custom_css_content' ),
-				'custom_html' => array( 'custom_html_head_end_enabled', 'custom_html_head_end', 'custom_html_body_end_enabled', 'custom_html_body_end' ),
 				'comments'    => array( 'comments_enabled', 'comments_api_url', 'anonymous_comments' ),
 				'turnstile'   => array( 'comment_verification', 'turnstile_keys' ),
 				'github'      => array( 'repository', 'branch' ),
@@ -201,7 +169,6 @@ final class Settings {
 		}
 		return array_merge(
 			$newsletter,
-			$code,
 			array(
 				'revision'             => $current['revision'],
 				'repository'           => $repository,

@@ -28,13 +28,6 @@ foreach ( array( 'failure', 'resource-budget', 'settings', 'media-rewriter', 'me
 	require_once __DIR__ . '/includes/class-' . $zeropress_static_component . '.php';
 }
 
-add_action(
-	'plugins_loaded',
-	static function () {
-		// Bundled translations also work when installed from a ZIP outside WordPress.org.
-		load_plugin_textdomain( 'zeropress-static', false, dirname( plugin_basename( PLUGIN_FILE ) ) . '/languages' );
-		Admin::register();
-	}
-);
+add_action( 'plugins_loaded', array( Admin::class, 'register' ) );
 
 Comments::register();

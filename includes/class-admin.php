@@ -63,23 +63,8 @@ final class Admin {
 		if ( ! in_array( $hook, self::$screen_hooks, true ) ) {
 			return;
 		}
-		$editors      = array();
-		$dependencies = array( 'wp-element', 'wp-components' );
-		if ( ( self::$screen_hooks['settings'] ?? '' ) === $hook ) {
-			foreach ( array(
-				'text/css'  => 'edit_css',
-				'text/html' => 'unfiltered_html',
-			) as $type => $capability ) {
-				if ( current_user_can( $capability ) ) {
-					$editors[ $type ] = wp_enqueue_code_editor( array( 'type' => $type ) );
-				}
-			}
-			if ( array_filter( $editors ) ) {
-				$dependencies[] = 'code-editor';
-			}
-		}
 		wp_enqueue_style( 'zeropress-static', plugins_url( 'assets/admin.css', PLUGIN_FILE ), array( 'wp-components' ), VERSION );
-		wp_enqueue_script( 'zeropress-static', plugins_url( 'assets/admin.js', PLUGIN_FILE ), $dependencies, VERSION, true );
+		wp_enqueue_script( 'zeropress-static', plugins_url( 'assets/admin.js', PLUGIN_FILE ), array( 'wp-element', 'wp-components' ), VERSION, true );
 		wp_add_inline_script(
 			'zeropress-static',
 			'var zeroPressPublisher = ' . wp_json_encode(
@@ -88,7 +73,6 @@ final class Admin {
 					'nonce'    => wp_create_nonce( 'zeropress_static' ),
 					'settings' => Settings::public_view(),
 					'menus'    => Menus::catalog(),
-					'editors'  => $editors,
 					'messages' => self::messages(),
 				),
 				JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
@@ -226,23 +210,6 @@ final class Admin {
 		<?php
 	}
 
-
-
-	/**
-	 * Render an empty code textarea; JavaScript assigns saved code as a value.
-	 *
-	 * @param string $name Settings field.
-	 * @param string $label Translated accessible label.
-	 * @param string $type Editor MIME type.
-	 */
-	private static function code_field( string $name, string $label, string $type ): void {
-		?>
-		<p><label id="zpsp-<?php echo esc_attr( $name ); ?>-label" for="zpsp-<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $label ); ?></label></p>
-		<textarea class="large-text code zpsp-code" rows="10" id="zpsp-<?php echo esc_attr( $name ); ?>" name="<?php echo esc_attr( $name ); ?>" data-code-type="<?php echo esc_attr( $type ); ?>" spellcheck="false" aria-describedby="zpsp-<?php echo esc_attr( $name ); ?>-help"></textarea>
-		<p id="zpsp-<?php echo esc_attr( $name ); ?>-help" class="description"><?php esc_html_e( 'Up to 65,536 characters.', 'zeropress-static' ); ?></p>
-		<?php
-	}
-
 	/**
 	 * Render a section's save action and adjacent feedback.
 	 *
@@ -347,12 +314,6 @@ final class Admin {
 			'newsletter'     => __( 'Newsletter connection', 'zeropress-static' ),
 			'information'    => __( 'Display and credits', 'zeropress-static' ),
 		);
-		if ( current_user_can( 'edit_css' ) ) {
-			$sections['custom_css'] = __( 'Custom CSS', 'zeropress-static' );
-		}
-		if ( current_user_can( 'unfiltered_html' ) ) {
-			$sections['custom_html'] = __( 'Custom HTML', 'zeropress-static' );
-		}
 		?>
 		<nav class="zpsp-settings-nav" aria-label="<?php esc_attr_e( 'Settings sections', 'zeropress-static' ); ?>">
 			<ul>
@@ -370,12 +331,6 @@ final class Admin {
 		self::comments_panel();
 		self::newsletter_panel();
 		self::information_panel();
-		if ( current_user_can( 'edit_css' ) ) {
-			self::custom_css_panel();
-		}
-		if ( current_user_can( 'unfiltered_html' ) ) {
-			self::custom_html_panel();
-		}
 	}
 
 	/** Render the site settings section. */
@@ -581,6 +536,7 @@ final class Admin {
 							</div>
 						</div>
 						<div class="zpsp-turnstile-help">
+							<?php // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- External dashboard link; no remote resource is loaded. ?>
 							<p><a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Manage Cloudflare Turnstile', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
 							<p class="description"><?php esc_html_e( 'Register the static site domain in your Turnstile widget.', 'zeropress-static' ); ?></p>
 						</div>
@@ -639,38 +595,6 @@ final class Admin {
 				<?php self::check( 'attribution', __( 'Show ZeroPress attribution', 'zeropress-static' ), __( 'Displays <code>Published with ZeroPress</code> in the theme footer.', 'zeropress-static' ) ); ?>
 				<?php self::check( 'expose_generator', __( 'Show ZeroPress generator information', 'zeropress-static' ), __( 'Adds <code>&lt;meta name="generator"&gt;</code> to the HTML.', 'zeropress-static' ) ); ?>
 				<?php self::section_actions( 'information', __( 'Save display and credit settings', 'zeropress-static' ) ); ?>
-			</fieldset>
-		</form>
-		<?php
-	}
-
-	/** Render the custom css settings section. */
-	private static function custom_css_panel(): void {
-		?>
-		<form id="zpsp-custom_css" class="zpsp-panel" data-section="custom_css" aria-labelledby="zpsp-custom-css-heading">
-			<fieldset disabled>
-				<h2 id="zpsp-custom-css-heading"><span class="dashicons dashicons-editor-code" aria-hidden="true"></span> <?php esc_html_e( 'Custom CSS', 'zeropress-static' ); ?></h2>
-				<p><?php esc_html_e( 'Custom CSS lets you adjust the appearance of your static site. Examples include fonts, colors, and spacing.', 'zeropress-static' ); ?></p>
-				<?php self::check( 'custom_css_enabled', __( 'Apply custom CSS', 'zeropress-static' ) ); ?>
-				<?php self::code_field( 'custom_css_content', __( 'CSS', 'zeropress-static' ), 'text/css' ); ?>
-				<?php self::section_actions( 'custom_css', __( 'Save custom CSS', 'zeropress-static' ) ); ?>
-			</fieldset>
-		</form>
-		<?php
-	}
-
-	/** Render the custom html settings section. */
-	private static function custom_html_panel(): void {
-		?>
-		<form id="zpsp-custom_html" class="zpsp-panel" data-section="custom_html" aria-labelledby="zpsp-custom-html-heading">
-			<fieldset disabled>
-				<h2 id="zpsp-custom-html-heading"><span class="dashicons dashicons-editor-code" aria-hidden="true"></span> <?php esc_html_e( 'Custom HTML', 'zeropress-static' ); ?></h2>
-				<p><?php esc_html_e( 'Custom HTML lets you add markup or scripts to your static site. Examples include analytics integrations and external widgets.', 'zeropress-static' ); ?></p>
-				<?php self::check( 'custom_html_head_end_enabled', __( 'Apply HTML before </head>', 'zeropress-static' ) ); ?>
-				<?php self::code_field( 'custom_html_head_end', __( 'Before </head>', 'zeropress-static' ), 'text/html' ); ?>
-				<?php self::check( 'custom_html_body_end_enabled', __( 'Apply HTML before </body>', 'zeropress-static' ) ); ?>
-				<?php self::code_field( 'custom_html_body_end', __( 'Before </body>', 'zeropress-static' ), 'text/html' ); ?>
-				<?php self::section_actions( 'custom_html', __( 'Save custom HTML', 'zeropress-static' ) ); ?>
 			</fieldset>
 		</form>
 		<?php
@@ -812,10 +736,6 @@ final class Admin {
 	/** Translate browser messages on the server. */
 	private static function messages(): array {
 		return array(
-			'editor_tab_help'                 => __( 'Press Esc, then Tab to move out of the code editor.', 'zeropress-static' ),
-			'INVALID_CUSTOM_CSS_CONTENT'      => __( 'Enter CSS of up to 65,536 characters.', 'zeropress-static' ),
-			'INVALID_CUSTOM_HTML_HEAD_END'    => __( 'Enter HTML of up to 65,536 characters.', 'zeropress-static' ),
-			'INVALID_CUSTOM_HTML_BODY_END'    => __( 'Enter HTML of up to 65,536 characters.', 'zeropress-static' ),
 			'NEWSLETTER_URL_REQUIRED'         => __( 'Enter a signup page URL or an embedded signup page URL.', 'zeropress-static' ),
 			'INVALID_NEWSLETTER_TITLE'        => __( 'Enter a title of up to 200 characters.', 'zeropress-static' ),
 			'INVALID_NEWSLETTER_DESCRIPTION'  => __( 'Enter a description of up to 2,000 characters.', 'zeropress-static' ),
