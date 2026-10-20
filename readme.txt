@@ -113,6 +113,17 @@ blank. The default build then omits sitemap.xml, feed.xml and the
 `<link rel="canonical">` tag that identifies the page's preferred URL.
 RSS also needs this URL even when its checkbox is enabled.
 
+= Can WordPress and the static site use different addresses? =
+
+Yes. With a static site URL set, the exported WXR uses it for the site addresses,
+post and page links, and menu links within the WordPress site's address. Paths
+relative to the WordPress home address are retained, removing any installation
+subdirectory. Queries and fragments are preserved. With the setting blank, the
+WXR retains the WordPress addresses.
+
+Links within article bodies keep their saved addresses. Media URLs follow the
+media replacement rules, and comments use the configured WordPress REST API URL.
+
 = What does Allow search engine crawling do? =
 
 When unchecked (the default), Disallow: / is written to the static site's

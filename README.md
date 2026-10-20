@@ -86,6 +86,17 @@ Enter the static site's address without a path, for example
 Otherwise, leaving it blank omits `sitemap.xml`, `feed.xml` and the
 `<link rel="canonical">` tag that identifies a page's preferred URL.
 
+When set, this address is also used for the WXR site addresses, post and page
+links, and menu links within the WordPress site's address. Paths relative to the
+WordPress home address are kept, with any WordPress installation subdirectory
+removed. Queries and fragments are preserved. WordPress can therefore use a
+separate hostname for administration while the static site keeps its address.
+With no static site URL, the WXR retains the WordPress addresses.
+
+This applies to WXR link fields. Links within article bodies keep their saved
+addresses. Media URLs follow the media replacement rules, and comments use the
+configured WordPress REST API URL.
+
 **Allow search engine crawling** starts off. When unchecked, the default build
 writes `Disallow: /` in the static site's `robots.txt`; checking it writes
 `Allow: /`. A custom `public/robots.txt` in your build project takes precedence.

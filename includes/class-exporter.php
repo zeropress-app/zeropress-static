@@ -22,6 +22,18 @@ final class Exporter {
 	 */
 	private Media_Rewriter $rewriter;
 	/**
+	 * Parsed WordPress home address for matching visitor links.
+	 *
+	 * @var array
+	 */
+	private array $source_site;
+	/**
+	 * Optional static site origin.
+	 *
+	 * @var string
+	 */
+	private string $public_url;
+	/**
 	 * Authors.
 	 *
 	 * @var array
@@ -82,9 +94,13 @@ final class Exporter {
 	 */
 	public function generate( array $settings, ?int $now = null ): array {
 		$this->budget->check();
-		$this->rewriter = new Media_Rewriter( $settings['media_rules'] );
-		$items          = '';
-		$page           = 1;
+		$source            = untrailingslashit( home_url( '/' ) );
+		$source_site       = wp_parse_url( $source );
+		$this->source_site = is_array( $source_site ) ? $source_site : array();
+		$this->public_url  = $settings['public_url'];
+		$this->rewriter    = new Media_Rewriter( $settings['media_rules'] );
+		$items             = '';
+		$page              = 1;
 		do {
 			$this->budget->check( strlen( $items ) );
 			$query = new \WP_Query(
@@ -125,7 +141,7 @@ final class Exporter {
 			$items .= $this->attachment( $id );
 			$this->budget->check( strlen( $items ) );
 		}
-		$source  = untrailingslashit( home_url( '/' ) );
+		$source  = '' !== $this->public_url ? $this->public_url : $source;
 		$site    = self::site_metadata();
 		$channel = $this->element( 'title', $site['title'] )
 			. $this->element( 'description', $site['description'] )
@@ -194,7 +210,7 @@ final class Exporter {
 		$user                                = get_userdata( $post->post_author );
 		$this->authors[ $post->post_author ] = $user ? self::display_text( $user->display_name ) : __( 'Unknown author', 'zeropress-static' );
 		$xml                                 = "<item>\n" . $this->element( 'title', self::display_text( $post->post_title ) )
-			. $this->element( 'link', get_permalink( $post ) )
+			. $this->element( 'link', $this->site_link( get_permalink( $post ) ) )
 			. $this->element( 'dc:creator', 'author-' . $post->post_author )
 			. $this->element( 'content:encoded', $this->rewriter->content( $post->post_content ) )
 			. $this->element( 'excerpt:encoded', self::html_text( $this->rewriter->content( $post->post_excerpt ) ) );
@@ -245,6 +261,49 @@ final class Exporter {
 			}
 		}
 		return $xml . "</item>\n";
+	}
+
+	/**
+	 * Project a WordPress visitor link onto the root-hosted static site.
+	 *
+	 * @param string $url Post, page or menu URL.
+	 * @return string
+	 */
+	private function site_link( string $url ): string {
+		if ( '' === $this->public_url || preg_match( '/[\x00-\x20\x7f\\\\]/', $url ) ) {
+			return $url;
+		}
+		$parts = wp_parse_url( $url );
+		if ( ! is_array( $parts ) || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
+			return $url;
+		}
+		$relative = str_starts_with( $url, '/' ) && ! str_starts_with( $url, '//' );
+		if ( ! $relative ) {
+			$scheme = strtolower( $parts['scheme'] ?? '' );
+			if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || empty( $parts['host'] ) ) {
+				return $url;
+			}
+			foreach ( array( 'scheme', 'host' ) as $key ) {
+				if ( strtolower( $parts[ $key ] ) !== strtolower( $this->source_site[ $key ] ?? '' ) ) {
+					return $url;
+				}
+			}
+			$default_port = 'https' === $scheme ? 443 : 80;
+			if ( ( $parts['port'] ?? $default_port ) !== ( $this->source_site['port'] ?? $default_port ) ) {
+				return $url;
+			}
+		}
+		$base_path = untrailingslashit( $this->source_site['path'] ?? '' );
+		$path      = $parts['path'] ?? '/';
+		if ( '' !== $base_path ) {
+			if ( $path !== $base_path && ! str_starts_with( $path, $base_path . '/' ) ) {
+				return $url;
+			}
+			$path = substr( $path, strlen( $base_path ) );
+		}
+		return $this->public_url . ( '' === $path ? '/' : $path )
+			. ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' )
+			. ( isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '' );
 	}
 
 	/**
@@ -394,7 +453,7 @@ final class Exporter {
 					'_menu_item_object_id'        => $entry->object_id,
 					'_menu_item_target'           => $entry->target,
 					'_menu_item_type'             => $entry->type,
-					'_menu_item_url'              => $entry->url,
+					'_menu_item_url'              => $this->site_link( $entry->url ),
 				) as $key => $value ) {
 					$items .= $this->meta( $key, (string) $value );
 				}
