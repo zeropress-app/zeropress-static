@@ -75,8 +75,10 @@ hosting are configured in your starter project.
 
 After GitHub publishing is configured, administrators can publish without leaving
 the post or page editor. In the classic editor, select **GitHub** beside **Update**
-or **Publish**. In the block editor, select **GitHub publish** in the **ZeroPress**
-panel in the post settings sidebar.
+or **Publish**. In the block editor, select the cloud upload icon beside **Save**
+or **Publish** (tooltip: **Open GitHub publishing**), or choose **ZeroPress publish**
+from the **⋮** options menu. The menu entry is also available on small screens,
+where the toolbar icon is hidden.
 
 Save your changes in WordPress, open the dialog, and select **Prepare publishing
 data**. Review the result and select **Publish to GitHub**. This publishes all

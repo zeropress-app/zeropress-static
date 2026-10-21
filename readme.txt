@@ -106,8 +106,11 @@ Install ZeroPress Static from the WordPress Plugin Directory:
 = Publish from the editor =
 
 With GitHub publishing configured, administrators can select **GitHub** beside
-Update or Publish in the classic editor, or **GitHub publish** in the block
-editor's ZeroPress sidebar panel.
+Update or Publish in the classic editor. In the block editor, select the cloud
+upload icon beside Save or Publish (tooltip: **Open GitHub publishing**), or choose
+**ZeroPress publish** from the **⋮** options menu. The menu entry is also available
+on small screens, where the toolbar icon is hidden.
+
 Save changes in WordPress, prepare publishing data in the dialog, review the
 result, then select **Publish to GitHub**. This publishes all saved public posts
 and pages. Unsaved changes block preparation and publication.

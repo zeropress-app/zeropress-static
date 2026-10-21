@@ -28,7 +28,7 @@ final class Admin {
 	/** Register publishing and settings in navigation order. */
 	public static function menu(): void {
 		$slug                           = 'zeropress-static';
-		self::$screen_hooks['publish']  = add_menu_page( __( 'Publish', 'zeropress-static' ), __( 'ZeroPress', 'zeropress-static' ), 'manage_options', $slug, array( self::class, 'screen' ), 'dashicons-upload' );
+		self::$screen_hooks['publish']  = add_menu_page( __( 'Publish', 'zeropress-static' ), __( 'ZeroPress', 'zeropress-static' ), 'manage_options', $slug, array( self::class, 'screen' ), 'dashicons-cloud-upload' );
 		self::$screen_hooks[]           = add_submenu_page( $slug, __( 'Publish', 'zeropress-static' ), __( 'Publish', 'zeropress-static' ), 'manage_options', $slug, array( self::class, 'screen' ) );
 		self::$screen_hooks['settings'] = add_submenu_page( $slug, __( 'Settings', 'zeropress-static' ), __( 'Settings', 'zeropress-static' ), 'manage_options', $slug . '-settings', array( self::class, 'settings_screen' ) );
 	}
@@ -819,7 +819,7 @@ final class Admin {
 			'turnstile_delete_help'           => __( 'Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile.', 'zeropress-static' ),
 			'turnstile_delete_confirm'        => __( 'Delete saved keys', 'zeropress-static' ),
 			'editor_title'                    => __( 'ZeroPress publish', 'zeropress-static' ),
-			'editor_open'                     => __( 'GitHub publish', 'zeropress-static' ),
+			'editor_open'                     => __( 'Open GitHub publishing', 'zeropress-static' ),
 			'editor_scope'                    => __( 'Publish all saved public posts and pages.', 'zeropress-static' ),
 			'editor_site'                     => __( 'View on static site', 'zeropress-static' ),
 			'editor_unsaved'                  => __( 'Save your post changes before preparing or publishing.', 'zeropress-static' ),

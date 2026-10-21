@@ -274,9 +274,6 @@ msgstr ""
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr ""
 
-msgid "GitHub publish"
-msgstr ""
-
 msgid "GitHub publishing"
 msgstr ""
 

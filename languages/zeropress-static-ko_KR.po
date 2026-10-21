@@ -277,9 +277,6 @@ msgstr "GitHub에서 등록된 토큰을 인증하지 못했습니다. 토큰을
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "GitHub를 일시적으로 사용할 수 없거나 요청 시간이 초과되었습니다."
 
-msgid "GitHub publish"
-msgstr "GitHub 발행"
-
 msgid "GitHub publishing"
 msgstr "GitHub 발행"
 

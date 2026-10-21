@@ -113,6 +113,13 @@
 /* Core's invisible save spinner otherwise reserves space and pushes GitHub onto a new row. */
 #major-publishing-actions.zpsp-editor-actions #publishing-action .spinner:not(.is-active) { display: none; }
 #zpsp-editor-open { margin-inline-start: auto; }
+.zpsp-editor-launcher { display: none; flex-shrink: 0; }
+.zpsp-editor-icon { width: 24px; height: 24px; flex-shrink: 0; }
+.show-icon-labels .zpsp-editor-launcher .zpsp-editor-icon { display: none; }
+/* On small screens, the permanent Options menu item keeps publishing reachable. */
+@media (min-width: 600px) {
+	.zpsp-editor-launcher { display: flex; }
+}
 .zpsp-editor-modal { width: 680px; max-width: 100%; }
 .zpsp-editor-modal .zpsp-editor-result { border-top: 1px solid #dcdcde; margin-top: 20px; padding-top: 16px; }
 .zpsp-editor-modal .zpsp-editor-result h2 { font-size: 16px; margin: 0 0 12px; }
