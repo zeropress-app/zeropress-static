@@ -310,6 +310,9 @@ msgstr "WordPress에서 가져온 정보"
 msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
 msgstr "저장소 최상위에 <code>wordpress-export.xml</code>과 <code>wxr-import-base.json</code>을 유지하세요. GitHub에 발행하면 이 두 파일을 교체합니다."
 
+msgid "Learn more about API protection"
+msgstr "API 보호 자세히 알아보기"
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr "비워두면 <code>sitemap.xml</code>, <code>feed.xml</code>과 페이지의 대표 주소를 지정하는 <code>&lt;link rel=\"canonical\"&gt;</code> 태그를 생성하지 않습니다."
 

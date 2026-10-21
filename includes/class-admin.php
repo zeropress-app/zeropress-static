@@ -603,6 +603,7 @@ final class Admin {
 				<?php self::check( 'restrict_public_rest_api', __( 'Restrict public REST API access', 'zeropress-static' ), __( 'Limit public REST API access to the APIs needed for ZeroPress Static comments.', 'zeropress-static' ) ); ?>
 				<p class="description"><?php esc_html_e( 'Other plugins that use public REST APIs may be affected.', 'zeropress-static' ); ?></p>
 				<p class="description"><?php esc_html_e( 'Settings take effect immediately after saving.', 'zeropress-static' ); ?></p>
+				<p><a href="https://github.com/zeropress-app/zeropress-static#api-access" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more about API protection', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
 				<?php self::section_actions( 'api', __( 'Save API protection settings', 'zeropress-static' ) ); ?>
 			</fieldset>
 		</form>

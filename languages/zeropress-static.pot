@@ -307,6 +307,9 @@ msgstr ""
 msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
 msgstr ""
 
+msgid "Learn more about API protection"
+msgstr ""
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr ""
 
