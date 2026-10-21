@@ -1,0 +1,776 @@
+msgid ""
+msgstr "Project-Id-Version: ZeroPress Static 0.7.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: fr_FR\nPlural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
+msgstr "Une règle de branche GitHub a refusé la publication directe. Vérifiez les règles du dépôt."
+
+msgid "A GitHub token is already registered. Reload this page to manage it."
+msgstr "Un jeton GitHub est déjà enregistré. Rechargez cette page pour le gérer."
+
+msgid "A GitHub token is registered."
+msgstr "Un jeton GitHub est enregistré."
+
+msgid "A Turnstile Secret Key is registered."
+msgstr "Une clé secrète Turnstile est enregistrée."
+
+msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
+msgstr "Un menu WordPress sélectionné n’est plus disponible. Rechargez les réglages et sélectionnez à nouveau un menu."
+
+msgid "A source media prefix has conflicting destinations."
+msgstr "Un préfixe source de médias a des destinations contradictoires."
+
+msgid "A static site URL is required to generate the feed."
+msgstr "L’URL du site statique est nécessaire pour générer le flux."
+
+msgid "A target file changed on GitHub. Review the change and prepare again."
+msgstr "Un fichier cible a changé sur GitHub. Vérifiez la modification et préparez à nouveau les données."
+
+msgid "API protection"
+msgstr "Protection de l’API"
+
+msgid "Add custom menu"
+msgstr "Ajouter un menu personnalisé"
+
+msgid "Add replacement"
+msgstr "Ajouter un remplacement"
+
+msgid "Adds <code>&lt;meta name=\"generator\"&gt;</code> to the HTML."
+msgstr "Ajoute <code>&lt;meta name=\"generator\"&gt;</code> au HTML."
+
+msgid "Allow comment writing on the static site"
+msgstr "Autoriser l’envoi de commentaires sur le site statique"
+
+msgid "Allow search engine crawling"
+msgstr "Autoriser l’exploration par les moteurs de recherche"
+
+msgid "Apple touch icon"
+msgstr "Icône tactile Apple"
+
+msgid "Applying changes on GitHub…"
+msgstr "Application des modifications sur GitHub…"
+
+msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
+msgstr "Le chiffrement authentifié n’est pas disponible. Activez OpenSSL AES-256-GCM sur le serveur avant d’enregistrer des identifiants."
+
+msgid "Both files will be updated in one commit."
+msgstr "Les deux fichiers seront mis à jour dans un seul commit."
+
+msgid "Both targets must be regular files, not directories, symlinks or submodules."
+msgstr "Les deux cibles doivent être des fichiers ordinaires, et non des répertoires, des liens symboliques ou des sous-modules."
+
+msgid "Button label"
+msgstr "Libellé du bouton"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Change keys"
+msgstr "Modifier les clés"
+
+msgid "Check the values in this section."
+msgstr "Vérifiez les valeurs de cette section."
+
+msgid "Check your GitHub settings before publishing."
+msgstr "Vérifiez vos réglages GitHub avant de publier."
+
+msgid "Checking the GitHub repository…"
+msgstr "Vérification du dépôt GitHub…"
+
+msgid "Click “Save publishing target” to save these changes."
+msgstr "Cliquez sur « Enregistrer la cible de publication » pour enregistrer ces modifications."
+
+msgid "Client-supplied REST route overrides are disabled."
+msgstr "Les remplacements de routes REST fournis par le client sont désactivés."
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Close confirmation"
+msgstr "Fermer la confirmation"
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
+
+msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
+msgstr "Cloudflare Turnstile peut aider à réduire les attaques par envoi automatisé de commentaires."
+
+msgid "Comment display and writing"
+msgstr "Affichage et envoi des commentaires"
+
+msgid "Comment request limiting is temporarily unavailable. Please try again later."
+msgstr "La limitation des requêtes de commentaires est temporairement indisponible. Veuillez réessayer plus tard."
+
+msgid "Comment writing could not be verified. Refresh the writing options and try again."
+msgstr "L’envoi du commentaire n’a pas pu être vérifié. Actualisez les options d’envoi et réessayez."
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Connection details changed. Test again to check these values."
+msgstr "Les informations de connexion ont changé. Testez à nouveau la connexion pour vérifier ces valeurs."
+
+msgid "Copyright or legal notice"
+msgstr "Droits d’auteur ou mentions légales"
+
+msgid "Create a GitHub token"
+msgstr "Créer un jeton GitHub"
+
+msgid "Data is ready to download. Configure and test GitHub to publish."
+msgstr "Les données sont prêtes à être téléchargées. Configurez et testez la connexion à GitHub pour publier."
+
+msgid "Data prepared. Review the result below."
+msgstr "Les données sont prêtes. Vérifiez le résultat ci-dessous."
+
+msgid "Delete saved keys"
+msgstr "Supprimer les clés enregistrées"
+
+msgid "Delete saved token"
+msgstr "Supprimer le jeton enregistré"
+
+msgid "Delete the saved GitHub token?"
+msgstr "Supprimer le jeton GitHub enregistré ?"
+
+msgid "Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile."
+msgstr "Supprimez la clé de site et la clé secrète enregistrées et désactivez Cloudflare Turnstile."
+
+msgid "Delete the saved Turnstile keys?"
+msgstr "Supprimer les clés Turnstile enregistrées ?"
+
+msgid "Delete token"
+msgstr "Supprimer le jeton"
+
+msgid "Deleting keys…"
+msgstr "Suppression des clés…"
+
+msgid "Deleting token…"
+msgstr "Suppression du jeton…"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Destination URL prefix"
+msgstr "Préfixe d’URL de destination"
+
+msgid "Destination URL prefix example:"
+msgstr "Exemple de préfixe d’URL de destination :"
+
+msgid "Display and credits"
+msgstr "Affichage et crédits"
+
+msgid "Displays <code>Published with ZeroPress</code> in the theme footer."
+msgstr "Affiche <code>Published with ZeroPress</code> dans le pied de page du thème."
+
+msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
+msgstr "Affiche la page d’inscription dans une fenêtre contextuelle sur votre site. Utilisez l’URL d’une page autorisant l’intégration dans une iframe."
+
+msgid "Do not publish"
+msgstr "Ne pas publier"
+
+msgid "Download WXR"
+msgstr "Télécharger le WXR"
+
+msgid "Download build settings"
+msgstr "Télécharger les réglages de compilation"
+
+msgid "Edit in WordPress settings"
+msgstr "Modifier dans les réglages WordPress"
+
+msgid "Edit publishing settings"
+msgstr "Modifier les réglages de publication"
+
+msgid "Embedded signup page URL"
+msgstr "URL de la page d’inscription intégrée"
+
+msgid "Enable JavaScript to save settings and prepare publishing data."
+msgstr "Activez JavaScript pour enregistrer les réglages et préparer les données à publier."
+
+msgid "Enable search"
+msgstr "Activer la recherche"
+
+msgid "Enter Turnstile keys without spaces or line breaks."
+msgstr "Saisissez les clés Turnstile sans espaces ni sauts de ligne."
+
+msgid "Enter a GitHub repository before testing the connection."
+msgstr "Saisissez un dépôt GitHub avant de tester la connexion."
+
+msgid "Enter a REST API URL that site visitors can access to enable comments."
+msgstr "Saisissez une URL d’API REST accessible aux visiteurs du site pour activer les commentaires."
+
+msgid "Enter a Secret Key without spaces or line breaks."
+msgstr "Saisissez une clé secrète sans espaces ni sauts de ligne."
+
+msgid "Enter a Turnstile Site Key."
+msgstr "Saisissez une clé de site Turnstile."
+
+msgid "Enter a button label of up to 200 characters."
+msgstr "Saisissez un libellé de bouton de 200 caractères maximum."
+
+msgid "Enter a description of up to 2,000 characters."
+msgstr "Saisissez une description de 2 000 caractères maximum."
+
+msgid "Enter a github.com repository URL or owner/repository."
+msgstr "Saisissez l’URL d’un dépôt github.com ou propriétaire/dépôt."
+
+msgid "Enter a signup page URL or an embedded signup page URL."
+msgstr "Saisissez l’URL d’une page d’inscription ou d’une page d’inscription intégrée."
+
+msgid "Enter a static site URL to allow comment writing."
+msgstr "Saisissez l’URL du site statique pour autoriser l’envoi de commentaires."
+
+msgid "Enter a title of up to 200 characters."
+msgstr "Saisissez un titre de 200 caractères maximum."
+
+msgid "Enter a token without spaces or line breaks."
+msgstr "Saisissez un jeton sans espaces ni sauts de ligne."
+
+msgid "Enter a valid HTTP(S) embedded signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "Saisissez une URL HTTP(S) valide de page d’inscription intégrée ou un chemin relatif au site (2 048 caractères maximum)."
+
+msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "Saisissez une URL HTTP(S) valide de page d’inscription ou un chemin relatif au site (2 048 caractères maximum)."
+
+msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
+msgstr "Saisissez une URL HTTP(S) sans identifiants, paramètres de requête ni fragment."
+
+msgid "Enter an HTTP(S) page URL or a path starting with <code>/</code>. At least one of the two URLs is required."
+msgstr "Saisissez une URL de page HTTP(S) ou un chemin commençant par <code>/</code>. Au moins une des deux URL est requise."
+
+msgid "Enter the Secret Key for this Site Key."
+msgstr "Saisissez la clé secrète correspondant à cette clé de site."
+
+msgid "Enter the publishing branch name. Tags and commit URLs are not supported."
+msgstr "Saisissez le nom de la branche de publication. Les étiquettes et les URL de commits ne sont pas prises en charge."
+
+msgid "Enter the site origin without a path."
+msgstr "Saisissez l’origine du site sans chemin."
+
+msgid "Example based on this WordPress installation: %s."
+msgstr "Exemple basé sur cette installation WordPress : %s."
+
+msgid "Examples: %1$s · %2$s · %3$s"
+msgstr "Exemples : %1$s · %2$s · %3$s"
+
+msgid "Files to update"
+msgstr "Fichiers à mettre à jour"
+
+msgid "Generate RSS feed"
+msgstr "Générer un flux RSS"
+
+msgid "Generate chronological archives"
+msgstr "Générer des archives chronologiques"
+
+msgid "Get new posts and updates by email."
+msgstr "Recevez les nouveaux articles et les actualités par e-mail."
+
+msgid "Get the latest news by email"
+msgstr "Recevez les dernières nouvelles par e-mail"
+
+msgid "GitHub already contains this data. You do not need to publish again."
+msgstr "Ces données sont déjà présentes sur GitHub. Il n’est pas nécessaire de les publier à nouveau."
+
+msgid "GitHub connection confirmed."
+msgstr "Connexion à GitHub confirmée."
+
+msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
+msgstr "GitHub n’a pas accepté le jeton enregistré. Supprimez-le, enregistrez à nouveau un jeton, puis testez la connexion."
+
+msgid "GitHub is temporarily unavailable or the request timed out."
+msgstr "GitHub est temporairement indisponible ou le délai de la requête a été dépassé."
+
+msgid "GitHub publishing"
+msgstr "Publication sur GitHub"
+
+msgid "GitHub publishing (optional)"
+msgstr "Publication sur GitHub (facultatif)"
+
+msgid "GitHub rejected the write. Check repository permissions and branch rules."
+msgstr "GitHub a refusé l’écriture. Vérifiez les autorisations du dépôt et les règles de la branche."
+
+msgid "GitHub repository"
+msgstr "Dépôt GitHub"
+
+msgid "GitHub request limit reached. Wait before trying again."
+msgstr "La limite de requêtes GitHub est atteinte. Patientez avant de réessayer."
+
+msgid "GitHub token"
+msgstr "Jeton GitHub"
+
+msgid "GitHub token management"
+msgstr "Gestion du jeton GitHub"
+
+msgid "Icon URLs for publishing"
+msgstr "URL des icônes à publier"
+
+msgid "Information from WordPress"
+msgstr "Informations provenant de WordPress"
+
+msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
+msgstr "Conservez <code>wordpress-export.xml</code> et <code>wxr-import-base.json</code> à la racine du dépôt. La publication sur GitHub remplace ces deux fichiers."
+
+msgid "Learn more about API protection"
+msgstr "En savoir plus sur la protection de l’API"
+
+msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
+msgstr "Laissez ce champ vide pour omettre <code>sitemap.xml</code>, <code>feed.xml</code> et la balise <code>&lt;link rel=\"canonical\"&gt;</code> indiquant l’URL préférée de la page."
+
+msgid "Leave blank to omit a separate copyright or legal notice."
+msgstr "Laissez ce champ vide pour ne pas afficher de mention distincte de droits d’auteur ou de mentions légales."
+
+msgid "Leave the title, description and button label blank to use the theme defaults."
+msgstr "Laissez le titre, la description et le libellé du bouton vides pour utiliser les valeurs par défaut du thème."
+
+msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
+msgstr "Limite l’accès public à l’API REST aux API nécessaires aux commentaires de ZeroPress Static."
+
+msgid "Manage Cloudflare Turnstile"
+msgstr "Gérer Cloudflare Turnstile"
+
+msgid "Media URL replacements"
+msgstr "Remplacements des URL des médias"
+
+msgid "Media URLs are replaced according to your rules."
+msgstr "Les URL des médias sont remplacées selon vos règles."
+
+msgid "Menu ID"
+msgstr "Identifiant du menu"
+
+msgid "Menus"
+msgstr "Menus"
+
+msgid "Newsletter connection"
+msgstr "Connexion à la lettre d’information"
+
+msgid "No GitHub token is registered. Reload this page to check its current status."
+msgstr "Aucun jeton GitHub n’est enregistré. Rechargez cette page pour vérifier son état actuel."
+
+msgid "No Turnstile keys are saved. Reload this page to check their current status."
+msgstr "Aucune clé Turnstile n’est enregistrée. Rechargez cette page pour vérifier leur état actuel."
+
+msgid "No changes to publish."
+msgstr "Aucune modification à publier."
+
+msgid "Not configured"
+msgstr "Non configuré"
+
+msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgstr "Seuls les articles et pages publiés sans mot de passe sont exportés. Les codes courts et les blocs dynamiques ne sont pas exécutés."
+
+msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
+msgstr "Ouvrez <strong>Select repositories</strong> et choisissez uniquement le dépôt indiqué ci-dessus dans <strong>URL du dépôt GitHub de publication</strong>."
+
+msgid "Open GitHub publishing"
+msgstr "Ouvrir la publication sur GitHub"
+
+msgid "Opens the signup page in a new tab."
+msgstr "Ouvre la page d’inscription dans un nouvel onglet."
+
+msgid "Other plugins that use public REST APIs may be affected."
+msgstr "Les autres extensions utilisant des API REST publiques peuvent être affectées."
+
+msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
+msgstr "Limite de mémoire PHP : {limit}. Mémoire nécessaire estimée : {estimated}."
+
+msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
+msgstr "Limite de temps PHP : {limit} s. Temps alloué à la requête : {budget} s. Temps écoulé : {elapsed} s."
+
+msgid "Posts per page"
+msgstr "Articles par page"
+
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
+msgstr "Articles : {posts} · Pages : {pages} · Médias : {media} · Menus : {menus}"
+
+msgid "Prepare and publish"
+msgstr "Préparer et publier"
+
+msgid "Prepare publishing data"
+msgstr "Préparer les données"
+
+msgid "Preparing data…"
+msgstr "Préparation des données…"
+
+msgid "Preparing download…"
+msgstr "Préparation du téléchargement…"
+
+msgid "Public access to this REST API is restricted."
+msgstr "L’accès public à cette API REST est restreint."
+
+msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
+msgstr "La publication doit être vérifiée. Vérifiez le commit GitHub avant de préparer à nouveau les données ; l’écriture n’a pas été retentée."
+
+msgid "Publication result"
+msgstr "Résultat de la publication"
+
+msgid "Publish"
+msgstr "Publier"
+
+msgid "Publish all saved public posts and pages."
+msgstr "Publiez tous les articles et pages publics enregistrés."
+
+msgid "Publish to GitHub"
+msgstr "Publier sur GitHub"
+
+msgid "Publish to GitHub again"
+msgstr "Publier à nouveau sur GitHub"
+
+msgid "Publish your WordPress content to a static site with ZeroPress and GitHub."
+msgstr "Publiez votre contenu WordPress sur un site statique avec ZeroPress et GitHub."
+
+msgid "Published to GitHub"
+msgstr "Publication sur GitHub terminée"
+
+msgid "Published to GitHub."
+msgstr "Publication sur GitHub terminée."
+
+msgid "Publishing GitHub repository URL"
+msgstr "URL du dépôt GitHub de publication"
+
+msgid "Publishing branch"
+msgstr "Branche de publication"
+
+msgid "Publishing destination"
+msgstr "Destination de publication"
+
+msgid "Publishing target"
+msgstr "Cible de publication"
+
+msgid "Publishing to GitHub…"
+msgstr "Publication sur GitHub…"
+
+msgid "Reading settings"
+msgstr "Réglages de lecture"
+
+msgid "Ready to publish to {repository} ({branch})."
+msgstr "Prêt à publier dans {repository} ({branch})."
+
+msgid "Register a GitHub token to publish."
+msgstr "Enregistrez un jeton GitHub pour publier."
+
+msgid "Register a GitHub token to test or publish."
+msgstr "Enregistrez un jeton GitHub pour tester la connexion ou publier."
+
+msgid "Register the static site domain in your Turnstile widget."
+msgstr "Enregistrez le domaine du site statique dans votre widget Turnstile."
+
+msgid "Register token"
+msgstr "Enregistrer le jeton"
+
+msgid "Registering token…"
+msgstr "Enregistrement du jeton…"
+
+msgid "Remove menu assignment"
+msgstr "Supprimer l’affectation du menu"
+
+msgid "Remove replacement"
+msgstr "Supprimer le remplacement"
+
+msgid "Repository to select:"
+msgstr "Dépôt à sélectionner :"
+
+msgid "Repository, branch or required files not found. Check access and the two root files."
+msgstr "Le dépôt, la branche ou les fichiers requis sont introuvables. Vérifiez l’accès et les deux fichiers à la racine."
+
+msgid "Republish options"
+msgstr "Options de republication"
+
+msgid "Restrict public REST API access"
+msgstr "Restreindre l’accès public à l’API REST"
+
+msgid "Review prepared data"
+msgstr "Vérifier les données préparées"
+
+msgid "Save API protection settings"
+msgstr "Enregistrer les réglages de protection de l’API"
+
+msgid "Save Turnstile settings"
+msgstr "Enregistrer les réglages Turnstile"
+
+msgid "Save a Site Key and Secret Key together to use Turnstile."
+msgstr "Enregistrez ensemble une clé de site et une clé secrète pour utiliser Turnstile."
+
+msgid "Save a static site URL in the Site section to allow comment writing."
+msgstr "Enregistrez l’URL du site statique dans la section Site pour autoriser l’envoi de commentaires."
+
+msgid "Save comment settings"
+msgstr "Enregistrer les réglages des commentaires"
+
+msgid "Save display and credit settings"
+msgstr "Enregistrer les réglages d’affichage et de crédits"
+
+msgid "Save media settings"
+msgstr "Enregistrer les réglages des médias"
+
+msgid "Save menu settings"
+msgstr "Enregistrer les réglages des menus"
+
+msgid "Save newsletter settings"
+msgstr "Enregistrer les réglages de la lettre d’information"
+
+msgid "Save publishing target"
+msgstr "Enregistrer la cible de publication"
+
+msgid "Save search and navigation settings"
+msgstr "Enregistrer les réglages de recherche et de navigation"
+
+msgid "Save site settings"
+msgstr "Enregistrer les réglages du site"
+
+msgid "Save your post changes before preparing or publishing."
+msgstr "Enregistrez les modifications de votre article avant de préparer les données ou de publier."
+
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+msgid "Search and archive display depends on your theme."
+msgstr "L’affichage de la recherche et des archives dépend de votre thème."
+
+msgid "Search and content navigation"
+msgstr "Recherche et navigation dans le contenu"
+
+msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
+msgstr "Sélectionnez les menus classiques WordPress à publier. Les identifiants de menu relient ces choix au thème de votre site statique."
+
+msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
+msgstr "Définissez <strong>Contents</strong> sur <strong>Read and write</strong>."
+
+msgid "Set up a WXR starter repository"
+msgstr "Configurer un dépôt de démarrage WXR"
+
+msgid "Settings"
+msgstr "Réglages"
+
+msgid "Settings changed in another window. Reload before saving."
+msgstr "Les réglages ont été modifiés dans une autre fenêtre. Rechargez la page avant d’enregistrer."
+
+msgid "Settings sections"
+msgstr "Sections des réglages"
+
+msgid "Settings take effect immediately after saving."
+msgstr "Les réglages prennent effet dès leur enregistrement."
+
+msgid "Show WordPress comments on the static site"
+msgstr "Afficher les commentaires WordPress sur le site statique"
+
+msgid "Show ZeroPress attribution"
+msgstr "Afficher la mention ZeroPress"
+
+msgid "Show ZeroPress generator information"
+msgstr "Afficher les informations du générateur ZeroPress"
+
+msgid "Show newsletter signup"
+msgstr "Afficher l’inscription à la lettre d’information"
+
+msgid "Sign up with a newsletter service such as Hostinger Reach, Omnisend or Mailchimp and prepare a signup page. Enter the page URL below to display a signup prompt on your static site."
+msgstr "Inscrivez-vous à un service de lettre d’information comme Hostinger Reach, Omnisend ou Mailchimp et préparez une page d’inscription. Saisissez son URL ci-dessous pour afficher une invitation à s’inscrire sur votre site statique."
+
+msgid "Signup page URL"
+msgstr "URL de la page d’inscription"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Site description"
+msgstr "Description du site"
+
+msgid "Site icon"
+msgstr "Icône du site"
+
+msgid "Site icon preview"
+msgstr "Aperçu de l’icône du site"
+
+msgid "Site language"
+msgstr "Langue du site"
+
+msgid "Site title"
+msgstr "Titre du site"
+
+msgid "Source URL prefix"
+msgstr "Préfixe d’URL source"
+
+msgid "Source URL prefix example:"
+msgstr "Exemple de préfixe d’URL source :"
+
+msgid "Static site URL"
+msgstr "URL du site statique"
+
+msgid "Subscribe"
+msgstr "S’inscrire"
+
+msgid "Test connection"
+msgstr "Tester la connexion"
+
+msgid "Testing connection…"
+msgstr "Test de la connexion…"
+
+msgid "The GitHub branch changed concurrently. Review it and prepare again."
+msgstr "La branche GitHub a été modifiée simultanément. Vérifiez-la et préparez à nouveau les données."
+
+msgid "The GitHub token is registered."
+msgstr "Le jeton GitHub a été enregistré."
+
+msgid "The REST API URL must end in /wp-json/wp/v2."
+msgstr "L’URL de l’API REST doit se terminer par /wp-json/wp/v2."
+
+msgid "The confirmation dialog could not be loaded. Reload this page and try again."
+msgstr "La fenêtre de confirmation n’a pas pu être chargée. Rechargez cette page et réessayez."
+
+msgid "The download is ready. Check your browser downloads."
+msgstr "Le téléchargement est prêt. Consultez les téléchargements de votre navigateur."
+
+msgid "The preparation expired or settings changed. Prepare again."
+msgstr "Les données préparées ont expiré ou les réglages ont changé. Préparez à nouveau les données."
+
+msgid "The preparation is invalid. Prepare again."
+msgstr "Les données préparées ne sont pas valides. Préparez-les à nouveau."
+
+msgid "The request could not be completed. Please retry."
+msgstr "La requête n’a pas pu aboutir. Veuillez réessayer."
+
+msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
+msgstr "La requête a atteint le temps alloué par le serveur. Augmentez le temps autorisé sur le serveur et préparez à nouveau les données."
+
+msgid "The saved GitHub token was deleted."
+msgstr "Le jeton GitHub enregistré a été supprimé."
+
+msgid "The saved keys were deleted and Cloudflare Turnstile is off."
+msgstr "Les clés enregistrées ont été supprimées et Cloudflare Turnstile est désactivé."
+
+msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
+msgstr "Le jeton enregistré ne peut pas être déchiffré. Supprimez-le et enregistrez-le à nouveau ; les clés secrètes de WordPress ont peut-être changé."
+
+msgid "The token cannot access this repository. Check its selected repositories and permissions."
+msgstr "Le jeton ne peut pas accéder à ce dépôt. Vérifiez les dépôts sélectionnés et ses autorisations."
+
+msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
+msgstr "La mémoire PHP est insuffisante pour terminer cette requête. Augmentez la mémoire autorisée sur le serveur et préparez à nouveau les données."
+
+msgid "These values are read from WordPress when preparing publishing data."
+msgstr "Ces valeurs sont lues depuis WordPress lors de la préparation des données à publier."
+
+msgid "This WordPress installation: %s."
+msgstr "Cette installation WordPress : %s."
+
+msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
+msgstr "Cette installation n’utilise pas le format d’URL pris en charge <code>/wp-json/wp/v2</code>. Configurez une API accessible aux visiteurs avec ce chemin ; les URL REST utilisant des paramètres de requête ne sont pas prises en charge."
+
+msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
+msgstr "Cette action supprime le jeton stocké dans cette extension. Enregistrez à nouveau un jeton pour publier sur GitHub."
+
+msgid "This section is saved."
+msgstr "Cette section a été enregistrée."
+
+msgid "This section is saved. API protection applies immediately."
+msgstr "Cette section a été enregistrée. La protection de l’API s’applique immédiatement."
+
+msgid "This section is saved. Changes apply to new comment requests."
+msgstr "Cette section a été enregistrée. Les modifications s’appliquent aux nouvelles requêtes de commentaires."
+
+msgid "This section is saved. Changes take effect after the next publication."
+msgstr "Cette section a été enregistrée. Les modifications prendront effet après la prochaine publication."
+
+msgid "This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately."
+msgstr "Cette section a été enregistrée. Les modifications d’affichage des commentaires prendront effet après la prochaine publication ; les réglages d’accès à l’API et d’envoi s’appliquent immédiatement."
+
+msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
+msgstr "Cette section a été enregistrée. Les modifications d’affichage des commentaires prendront effet après la prochaine publication ; les réglages d’envoi s’appliquent aux nouvelles requêtes de commentaires."
+
+msgid "This version supports single-site WordPress only."
+msgstr "Cette version prend uniquement en charge les installations WordPress avec un seul site."
+
+msgid "Timezone"
+msgstr "Fuseau horaire"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr "Pour autoriser l’envoi de commentaires, enregistrez l’URL du site statique dans la section Site. L’origine des requêtes est vérifiée par rapport à cette adresse."
+
+msgid "Too many comment requests. Please try again shortly."
+msgstr "Trop de requêtes de commentaires. Veuillez réessayer dans un instant."
+
+msgid "Turnstile Secret Key"
+msgstr "Clé secrète Turnstile"
+
+msgid "Turnstile Site Key"
+msgstr "Clé de site Turnstile"
+
+msgid "Unavailable menu (ID {id})"
+msgstr "Menu indisponible (ID {id})"
+
+msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
+msgstr "Dans <strong>Repository access</strong>, choisissez <strong>Only select repositories</strong>."
+
+msgid "Unknown author"
+msgstr "Auteur inconnu"
+
+msgid "Unsaved changes"
+msgstr "Modifications non enregistrées"
+
+msgid "Update the WXR generation time and create a new commit without changing the content."
+msgstr "Actualisez la date de génération du WXR et créez un nouveau commit sans modifier le contenu."
+
+msgid "Uploading files to GitHub…"
+msgstr "Envoi des fichiers vers GitHub…"
+
+msgid "Use Cloudflare Turnstile"
+msgstr "Utiliser Cloudflare Turnstile"
+
+msgid "Use an API URL that site visitors can access."
+msgstr "Utilisez une URL d’API accessible aux visiteurs du site."
+
+msgid "Use primary for the main navigation and footer for footer links. Custom IDs must match the menu IDs used by your theme."
+msgstr "Utilisez primary pour la navigation principale et footer pour les liens de pied de page. Les identifiants personnalisés doivent correspondre aux identifiants de menu de votre thème."
+
+msgid "Use unique menu IDs starting with a lowercase letter, followed by lowercase letters, numbers, hyphens or underscores (up to 64 characters)."
+msgstr "Utilisez des identifiants de menu uniques commençant par une lettre minuscule, suivie de lettres minuscules, de chiffres, de traits d’union ou de tirets bas (64 caractères maximum)."
+
+msgid "Use up to 50 complete source and destination URL pairs."
+msgstr "Utilisez jusqu’à 50 paires complètes d’URL source et de destination."
+
+msgid "Verifying publishing data…"
+msgstr "Vérification des données à publier…"
+
+msgid "Verifying the GitHub publication result…"
+msgstr "Vérification du résultat de la publication sur GitHub…"
+
+msgid "View commit"
+msgstr "Voir le commit"
+
+msgid "View on static site"
+msgstr "Voir sur le site statique"
+
+msgid "View saved publishing repository"
+msgstr "Voir le dépôt de publication enregistré"
+
+msgid "Wait for WordPress to finish saving your post."
+msgstr "Attendez que WordPress ait terminé d’enregistrer votre article."
+
+msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
+msgstr "Lorsque cette option est décochée, <code>Disallow: /</code> est ajouté au fichier <code>robots.txt</code> du site statique."
+
+msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
+msgstr "Lorsque l’envoi est désactivé, les commentaires sont uniquement affichés. Vos réglages de commentaires WordPress restent applicables."
+
+msgid "WordPress REST API URL"
+msgstr "URL de l’API REST WordPress"
+
+msgid "WordPress content changed. Prepare again to include the latest data."
+msgstr "Le contenu WordPress a changé. Préparez à nouveau les données pour inclure les dernières modifications."
+
+msgid "WordPress menu"
+msgstr "Menu WordPress"
+
+msgid "Working…"
+msgstr "Traitement en cours…"
+
+msgid "ZeroPress"
+msgstr "ZeroPress"
+
+msgid "ZeroPress Static"
+msgstr "ZeroPress Static"
+
+msgid "ZeroPress Static – Static Site Publisher"
+msgstr "ZeroPress Static – Publication de sites statiques"
+
+msgid "ZeroPress publish"
+msgstr "Publication ZeroPress"

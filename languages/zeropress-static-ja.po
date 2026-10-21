@@ -1,0 +1,776 @@
+msgid ""
+msgstr "Project-Id-Version: ZeroPress Static 0.7.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: ja\nPlural-Forms: nplurals=1; plural=0;\n"
+
+msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
+msgstr "GitHub のブランチルールにより、直接の発行が拒否されました。リポジトリのルールを確認してください。"
+
+msgid "A GitHub token is already registered. Reload this page to manage it."
+msgstr "GitHub トークンはすでに登録されています。管理するには、このページを再読み込みしてください。"
+
+msgid "A GitHub token is registered."
+msgstr "GitHub トークンが登録されています。"
+
+msgid "A Turnstile Secret Key is registered."
+msgstr "Turnstile Secret Key が登録されています。"
+
+msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
+msgstr "選択した WordPress メニューを利用できません。設定を再読み込みし、メニューを選び直してください。"
+
+msgid "A source media prefix has conflicting destinations."
+msgstr "同じメディア URL の接頭辞に、異なる置換先が設定されています。"
+
+msgid "A static site URL is required to generate the feed."
+msgstr "フィードの生成には静的サイト URL が必要です。"
+
+msgid "A target file changed on GitHub. Review the change and prepare again."
+msgstr "GitHub の対象ファイルが変更されました。変更内容を確認してから、もう一度準備してください。"
+
+msgid "API protection"
+msgstr "API 保護"
+
+msgid "Add custom menu"
+msgstr "カスタムメニューを追加"
+
+msgid "Add replacement"
+msgstr "置換ルールを追加"
+
+msgid "Adds <code>&lt;meta name=\"generator\"&gt;</code> to the HTML."
+msgstr "HTML に <code>&lt;meta name=\"generator\"&gt;</code> を追加します。"
+
+msgid "Allow comment writing on the static site"
+msgstr "静的サイトでコメントの投稿を許可"
+
+msgid "Allow search engine crawling"
+msgstr "検索エンジンのクロールを許可"
+
+msgid "Apple touch icon"
+msgstr "Apple Touch アイコン"
+
+msgid "Applying changes on GitHub…"
+msgstr "GitHub に変更を反映中…"
+
+msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
+msgstr "認証付き暗号化を利用できません。認証情報を登録する前に、サーバーで OpenSSL AES-256-GCM を有効にしてください。"
+
+msgid "Both files will be updated in one commit."
+msgstr "2つのファイルを1つのコミットで更新します。"
+
+msgid "Both targets must be regular files, not directories, symlinks or submodules."
+msgstr "2つの対象は通常のファイルである必要があります。ディレクトリ、シンボリックリンク、サブモジュールは使用できません。"
+
+msgid "Button label"
+msgstr "ボタンのラベル"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Change keys"
+msgstr "キーを変更"
+
+msgid "Check the values in this section."
+msgstr "このセクションの入力値を確認してください。"
+
+msgid "Check your GitHub settings before publishing."
+msgstr "発行する前に GitHub の設定を確認してください。"
+
+msgid "Checking the GitHub repository…"
+msgstr "GitHub リポジトリを確認中…"
+
+msgid "Click “Save publishing target” to save these changes."
+msgstr "「発行先を保存」をクリックして変更を保存してください。"
+
+msgid "Client-supplied REST route overrides are disabled."
+msgstr "クライアントによる REST ルートの上書きは無効になっています。"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "Close confirmation"
+msgstr "確認画面を閉じる"
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
+
+msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
+msgstr "Cloudflare Turnstile は、自動化されたコメント投稿攻撃の軽減に役立ちます。"
+
+msgid "Comment display and writing"
+msgstr "コメントの表示と投稿"
+
+msgid "Comment request limiting is temporarily unavailable. Please try again later."
+msgstr "コメントのリクエスト制限を一時的に利用できません。時間をおいて、もう一度お試しください。"
+
+msgid "Comment writing could not be verified. Refresh the writing options and try again."
+msgstr "コメントの投稿を検証できませんでした。投稿オプションを再読み込みしてから、もう一度お試しください。"
+
+msgid "Comments"
+msgstr "コメント"
+
+msgid "Connection details changed. Test again to check these values."
+msgstr "接続情報が変更されました。変更後の値で接続を再確認してください。"
+
+msgid "Copyright or legal notice"
+msgstr "著作権・法的表示"
+
+msgid "Create a GitHub token"
+msgstr "GitHub トークンを作成"
+
+msgid "Data is ready to download. Configure and test GitHub to publish."
+msgstr "データをダウンロードできます。発行するには GitHub を設定し、接続を確認してください。"
+
+msgid "Data prepared. Review the result below."
+msgstr "データを準備しました。以下の結果を確認してください。"
+
+msgid "Delete saved keys"
+msgstr "保存済みキーを削除"
+
+msgid "Delete saved token"
+msgstr "保存済みトークンを削除"
+
+msgid "Delete the saved GitHub token?"
+msgstr "保存済みの GitHub トークンを削除しますか ?"
+
+msgid "Delete the saved Site Key and Secret Key and turn off Cloudflare Turnstile."
+msgstr "保存済みの Site Key と Secret Key を削除し、Cloudflare Turnstile を無効にします。"
+
+msgid "Delete the saved Turnstile keys?"
+msgstr "保存済みの Turnstile キーを削除しますか ?"
+
+msgid "Delete token"
+msgstr "トークンを削除"
+
+msgid "Deleting keys…"
+msgstr "キーを削除中…"
+
+msgid "Deleting token…"
+msgstr "トークンを削除中…"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Destination URL prefix"
+msgstr "置換先 URL の接頭辞"
+
+msgid "Destination URL prefix example:"
+msgstr "置換先 URL の接頭辞の例:"
+
+msgid "Display and credits"
+msgstr "表示とクレジット"
+
+msgid "Displays <code>Published with ZeroPress</code> in the theme footer."
+msgstr "テーマのフッターに <code>Published with ZeroPress</code> を表示します。"
+
+msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
+msgstr "サイト上のポップアップに登録ページを表示します。iframe への埋め込みを許可しているページの URL を使用してください。"
+
+msgid "Do not publish"
+msgstr "発行しない"
+
+msgid "Download WXR"
+msgstr "WXR をダウンロード"
+
+msgid "Download build settings"
+msgstr "ビルド設定をダウンロード"
+
+msgid "Edit in WordPress settings"
+msgstr "WordPress の設定で編集"
+
+msgid "Edit publishing settings"
+msgstr "発行設定を編集"
+
+msgid "Embedded signup page URL"
+msgstr "埋め込み用登録ページ URL"
+
+msgid "Enable JavaScript to save settings and prepare publishing data."
+msgstr "設定の保存と発行データの準備には、JavaScript を有効にしてください。"
+
+msgid "Enable search"
+msgstr "検索を有効化"
+
+msgid "Enter Turnstile keys without spaces or line breaks."
+msgstr "空白や改行を含めずに Turnstile のキーを入力してください。"
+
+msgid "Enter a GitHub repository before testing the connection."
+msgstr "接続を確認する前に GitHub リポジトリを入力してください。"
+
+msgid "Enter a REST API URL that site visitors can access to enable comments."
+msgstr "コメントを有効にするには、サイトの訪問者がアクセスできる REST API URL を入力してください。"
+
+msgid "Enter a Secret Key without spaces or line breaks."
+msgstr "空白や改行を含めずに Secret Key を入力してください。"
+
+msgid "Enter a Turnstile Site Key."
+msgstr "Turnstile Site Key を入力してください。"
+
+msgid "Enter a button label of up to 200 characters."
+msgstr "ボタンのラベルは200文字以内で入力してください。"
+
+msgid "Enter a description of up to 2,000 characters."
+msgstr "説明は2,000文字以内で入力してください。"
+
+msgid "Enter a github.com repository URL or owner/repository."
+msgstr "github.com のリポジトリ URL または owner/repository を入力してください。"
+
+msgid "Enter a signup page URL or an embedded signup page URL."
+msgstr "登録ページ URL または埋め込み用登録ページ URL を入力してください。"
+
+msgid "Enter a static site URL to allow comment writing."
+msgstr "コメントの投稿を許可するには、静的サイト URL を入力してください。"
+
+msgid "Enter a title of up to 200 characters."
+msgstr "タイトルは200文字以内で入力してください。"
+
+msgid "Enter a token without spaces or line breaks."
+msgstr "空白や改行を含めずにトークンを入力してください。"
+
+msgid "Enter a valid HTTP(S) embedded signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "有効な HTTP(S) の埋め込み用登録ページ URL またはサイト内の相対パスを入力してください (最大2,048文字)。"
+
+msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
+msgstr "有効な HTTP(S) の登録ページ URL またはサイト内の相対パスを入力してください (最大2,048文字)。"
+
+msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
+msgstr "認証情報、クエリー、フラグメントを含まない HTTP(S) URL を入力してください。"
+
+msgid "Enter an HTTP(S) page URL or a path starting with <code>/</code>. At least one of the two URLs is required."
+msgstr "HTTP(S) のページ URL または <code>/</code> で始まるパスを入力してください。2つの URL のうち、少なくとも一方が必要です。"
+
+msgid "Enter the Secret Key for this Site Key."
+msgstr "この Site Key に対応する Secret Key を入力してください。"
+
+msgid "Enter the publishing branch name. Tags and commit URLs are not supported."
+msgstr "発行先のブランチ名を入力してください。タグとコミット URL はサポートされていません。"
+
+msgid "Enter the site origin without a path."
+msgstr "パスを含めずにサイトのオリジンを入力してください。"
+
+msgid "Example based on this WordPress installation: %s."
+msgstr "この WordPress のアドレスを使った例: %s。"
+
+msgid "Examples: %1$s · %2$s · %3$s"
+msgstr "例: %1$s · %2$s · %3$s"
+
+msgid "Files to update"
+msgstr "更新するファイル"
+
+msgid "Generate RSS feed"
+msgstr "RSS フィードを生成"
+
+msgid "Generate chronological archives"
+msgstr "日付別アーカイブを生成"
+
+msgid "Get new posts and updates by email."
+msgstr "新しい投稿や更新情報をメールでお届けします。"
+
+msgid "Get the latest news by email"
+msgstr "最新情報をメールで受け取る"
+
+msgid "GitHub already contains this data. You do not need to publish again."
+msgstr "同じデータがすでに GitHub に反映されています。再発行は不要です。"
+
+msgid "GitHub connection confirmed."
+msgstr "GitHub への接続を確認しました。"
+
+msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
+msgstr "GitHub が登録済みのトークンを受け付けませんでした。削除してトークンを再登録し、接続を確認してください。"
+
+msgid "GitHub is temporarily unavailable or the request timed out."
+msgstr "GitHub を一時的に利用できないか、リクエストがタイムアウトしました。"
+
+msgid "GitHub publishing"
+msgstr "GitHub への発行"
+
+msgid "GitHub publishing (optional)"
+msgstr "GitHub への発行 (任意)"
+
+msgid "GitHub rejected the write. Check repository permissions and branch rules."
+msgstr "GitHub が書き込みを拒否しました。リポジトリの権限とブランチのルールを確認してください。"
+
+msgid "GitHub repository"
+msgstr "GitHub リポジトリ"
+
+msgid "GitHub request limit reached. Wait before trying again."
+msgstr "GitHub のリクエスト上限に達しました。しばらく待ってから、もう一度お試しください。"
+
+msgid "GitHub token"
+msgstr "GitHub トークン"
+
+msgid "GitHub token management"
+msgstr "GitHub トークン管理"
+
+msgid "Icon URLs for publishing"
+msgstr "発行に使用するアイコン URL"
+
+msgid "Information from WordPress"
+msgstr "WordPress の情報"
+
+msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
+msgstr "リポジトリのルートに <code>wordpress-export.xml</code> と <code>wxr-import-base.json</code> を配置してください。GitHub への発行時に、この2つのファイルを置き換えます。"
+
+msgid "Learn more about API protection"
+msgstr "API 保護について詳しく見る"
+
+msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
+msgstr "空欄にすると、<code>sitemap.xml</code>、<code>feed.xml</code>、ページの正規 URL を指定する <code>&lt;link rel=\"canonical\"&gt;</code> タグは生成されません。"
+
+msgid "Leave blank to omit a separate copyright or legal notice."
+msgstr "空欄にすると、独自の著作権・法的表示は追加されません。"
+
+msgid "Leave the title, description and button label blank to use the theme defaults."
+msgstr "タイトル、説明、ボタンのラベルを空欄にすると、テーマの既定値を使用します。"
+
+msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
+msgstr "ZeroPress Static のコメント機能に必要な API のみを公開します。"
+
+msgid "Manage Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile を管理"
+
+msgid "Media URL replacements"
+msgstr "メディア URL の置換"
+
+msgid "Media URLs are replaced according to your rules."
+msgstr "設定したルールに従ってメディア URL を置き換えます。"
+
+msgid "Menu ID"
+msgstr "メニュー ID"
+
+msgid "Menus"
+msgstr "メニュー"
+
+msgid "Newsletter connection"
+msgstr "ニュースレター連携"
+
+msgid "No GitHub token is registered. Reload this page to check its current status."
+msgstr "GitHub トークンが登録されていません。このページを再読み込みして、現在の状態を確認してください。"
+
+msgid "No Turnstile keys are saved. Reload this page to check their current status."
+msgstr "Turnstile のキーが保存されていません。このページを再読み込みして、現在の状態を確認してください。"
+
+msgid "No changes to publish."
+msgstr "発行する変更はありません。"
+
+msgid "Not configured"
+msgstr "未設定"
+
+msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgstr "パスワードで保護されていない公開済みの投稿と固定ページのみをエクスポートします。ショートコードと動的ブロックは実行されません。"
+
+msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
+msgstr "<strong>Select repositories</strong> を開き、上の <strong>発行先 GitHub リポジトリ URL</strong> に入力したリポジトリのみを選択してください。"
+
+msgid "Open GitHub publishing"
+msgstr "GitHub の発行画面を開く"
+
+msgid "Opens the signup page in a new tab."
+msgstr "登録ページを新しいタブで開きます。"
+
+msgid "Other plugins that use public REST APIs may be affected."
+msgstr "公開 REST API を使用する他のプラグインに影響する可能性があります。"
+
+msgid "PHP memory limit: {limit}. Estimated memory required: {estimated}."
+msgstr "PHP メモリー上限: {limit}。推定必要メモリー: {estimated}。"
+
+msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
+msgstr "PHP 実行時間上限: {limit}秒。リクエストの処理時間上限: {budget}秒。経過時間: {elapsed}秒。"
+
+msgid "Posts per page"
+msgstr "1ページあたりの投稿数"
+
+msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
+msgstr "投稿: {posts}件 · 固定ページ: {pages}件 · メディア: {media}件 · メニュー: {menus}件"
+
+msgid "Prepare and publish"
+msgstr "準備と発行"
+
+msgid "Prepare publishing data"
+msgstr "発行データを準備"
+
+msgid "Preparing data…"
+msgstr "データを準備中…"
+
+msgid "Preparing download…"
+msgstr "ダウンロードを準備中…"
+
+msgid "Public access to this REST API is restricted."
+msgstr "この REST API への公開アクセスは制限されています。"
+
+msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
+msgstr "反映状況の確認が必要です。再度準備する前に GitHub のコミットを確認してください。書き込みの再試行は行っていません。"
+
+msgid "Publication result"
+msgstr "発行結果"
+
+msgid "Publish"
+msgstr "発行"
+
+msgid "Publish all saved public posts and pages."
+msgstr "保存されている公開済みの投稿と固定ページをすべて発行します。"
+
+msgid "Publish to GitHub"
+msgstr "GitHub に発行"
+
+msgid "Publish to GitHub again"
+msgstr "GitHub に再発行"
+
+msgid "Publish your WordPress content to a static site with ZeroPress and GitHub."
+msgstr "ZeroPress と GitHub を使って、WordPress のコンテンツを静的サイトとして公開します。"
+
+msgid "Published to GitHub"
+msgstr "GitHub への発行が完了しました"
+
+msgid "Published to GitHub."
+msgstr "GitHub に発行しました。"
+
+msgid "Publishing GitHub repository URL"
+msgstr "発行先 GitHub リポジトリ URL"
+
+msgid "Publishing branch"
+msgstr "発行先ブランチ"
+
+msgid "Publishing destination"
+msgstr "発行先"
+
+msgid "Publishing target"
+msgstr "発行先"
+
+msgid "Publishing to GitHub…"
+msgstr "GitHub に発行中…"
+
+msgid "Reading settings"
+msgstr "表示設定"
+
+msgid "Ready to publish to {repository} ({branch})."
+msgstr "{repository} ({branch}) に発行する準備ができました。"
+
+msgid "Register a GitHub token to publish."
+msgstr "発行するには GitHub トークンを登録してください。"
+
+msgid "Register a GitHub token to test or publish."
+msgstr "接続の確認や発行を行うには、GitHub トークンを登録してください。"
+
+msgid "Register the static site domain in your Turnstile widget."
+msgstr "Turnstile ウィジェットに静的サイトのドメインを登録してください。"
+
+msgid "Register token"
+msgstr "トークンを登録"
+
+msgid "Registering token…"
+msgstr "トークンを登録中…"
+
+msgid "Remove menu assignment"
+msgstr "メニューの割り当てを解除"
+
+msgid "Remove replacement"
+msgstr "置換ルールを削除"
+
+msgid "Repository to select:"
+msgstr "選択するリポジトリ:"
+
+msgid "Repository, branch or required files not found. Check access and the two root files."
+msgstr "リポジトリ、ブランチ、または必要なファイルが見つかりません。アクセス権限とルートにある2つのファイルを確認してください。"
+
+msgid "Republish options"
+msgstr "再発行オプション"
+
+msgid "Restrict public REST API access"
+msgstr "公開 REST API へのアクセスを制限"
+
+msgid "Review prepared data"
+msgstr "準備したデータを確認"
+
+msgid "Save API protection settings"
+msgstr "API 保護設定を保存"
+
+msgid "Save Turnstile settings"
+msgstr "Turnstile 設定を保存"
+
+msgid "Save a Site Key and Secret Key together to use Turnstile."
+msgstr "Turnstile を使用するには、Site Key と Secret Key を一緒に保存してください。"
+
+msgid "Save a static site URL in the Site section to allow comment writing."
+msgstr "コメントの投稿を許可するには、「サイト」セクションで静的サイト URL を保存してください。"
+
+msgid "Save comment settings"
+msgstr "コメント設定を保存"
+
+msgid "Save display and credit settings"
+msgstr "表示とクレジット設定を保存"
+
+msgid "Save media settings"
+msgstr "メディア設定を保存"
+
+msgid "Save menu settings"
+msgstr "メニュー設定を保存"
+
+msgid "Save newsletter settings"
+msgstr "ニュースレター設定を保存"
+
+msgid "Save publishing target"
+msgstr "発行先を保存"
+
+msgid "Save search and navigation settings"
+msgstr "検索とナビゲーション設定を保存"
+
+msgid "Save site settings"
+msgstr "サイト設定を保存"
+
+msgid "Save your post changes before preparing or publishing."
+msgstr "準備や発行を行う前に、投稿の変更を保存してください。"
+
+msgid "Saving…"
+msgstr "保存中…"
+
+msgid "Search and archive display depends on your theme."
+msgstr "検索とアーカイブの表示はテーマによって異なります。"
+
+msgid "Search and content navigation"
+msgstr "検索とコンテンツナビゲーション"
+
+msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
+msgstr "発行する WordPress のクラシックメニューを選択してください。メニュー ID によって、選択したメニューを静的サイトのテーマに対応付けます。"
+
+msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
+msgstr "<strong>Contents</strong> の権限を <strong>Read and write</strong> に設定してください。"
+
+msgid "Set up a WXR starter repository"
+msgstr "WXR スターターリポジトリを準備"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Settings changed in another window. Reload before saving."
+msgstr "別の画面で設定が変更されました。再読み込みしてから保存してください。"
+
+msgid "Settings sections"
+msgstr "設定セクション"
+
+msgid "Settings take effect immediately after saving."
+msgstr "設定は保存後すぐに適用されます。"
+
+msgid "Show WordPress comments on the static site"
+msgstr "静的サイトに WordPress のコメントを表示"
+
+msgid "Show ZeroPress attribution"
+msgstr "ZeroPress のクレジットを表示"
+
+msgid "Show ZeroPress generator information"
+msgstr "ZeroPress の生成元情報を表示"
+
+msgid "Show newsletter signup"
+msgstr "ニュースレター登録を表示"
+
+msgid "Sign up with a newsletter service such as Hostinger Reach, Omnisend or Mailchimp and prepare a signup page. Enter the page URL below to display a signup prompt on your static site."
+msgstr "Hostinger Reach、Omnisend、Mailchimp などのニュースレターサービスでアカウントを作成し、読者の登録ページを用意してください。そのページの URL を以下に入力すると、静的サイトに登録案内を表示できます。"
+
+msgid "Signup page URL"
+msgstr "登録ページ URL"
+
+msgid "Site"
+msgstr "サイト"
+
+msgid "Site description"
+msgstr "サイトの説明"
+
+msgid "Site icon"
+msgstr "サイトアイコン"
+
+msgid "Site icon preview"
+msgstr "サイトアイコンのプレビュー"
+
+msgid "Site language"
+msgstr "サイトの言語"
+
+msgid "Site title"
+msgstr "サイトのタイトル"
+
+msgid "Source URL prefix"
+msgstr "置換元 URL の接頭辞"
+
+msgid "Source URL prefix example:"
+msgstr "置換元 URL の接頭辞の例:"
+
+msgid "Static site URL"
+msgstr "静的サイト URL"
+
+msgid "Subscribe"
+msgstr "登録する"
+
+msgid "Test connection"
+msgstr "接続を確認"
+
+msgid "Testing connection…"
+msgstr "接続を確認中…"
+
+msgid "The GitHub branch changed concurrently. Review it and prepare again."
+msgstr "処理中に GitHub のブランチが変更されました。内容を確認してから、もう一度準備してください。"
+
+msgid "The GitHub token is registered."
+msgstr "GitHub トークンを登録しました。"
+
+msgid "The REST API URL must end in /wp-json/wp/v2."
+msgstr "REST API URL の末尾は /wp-json/wp/v2 にしてください。"
+
+msgid "The confirmation dialog could not be loaded. Reload this page and try again."
+msgstr "確認画面を読み込めませんでした。このページを再読み込みしてから、もう一度お試しください。"
+
+msgid "The download is ready. Check your browser downloads."
+msgstr "ダウンロードの準備ができました。ブラウザーのダウンロード一覧を確認してください。"
+
+msgid "The preparation expired or settings changed. Prepare again."
+msgstr "準備したデータの有効期限が切れたか、設定が変更されました。もう一度準備してください。"
+
+msgid "The preparation is invalid. Prepare again."
+msgstr "準備したデータが無効です。もう一度準備してください。"
+
+msgid "The request could not be completed. Please retry."
+msgstr "リクエストを完了できませんでした。もう一度お試しください。"
+
+msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
+msgstr "サーバーの設定に基づく処理時間の上限に達しました。サーバーの実行時間上限を延ばしてから、もう一度準備してください。"
+
+msgid "The saved GitHub token was deleted."
+msgstr "保存済みの GitHub トークンを削除しました。"
+
+msgid "The saved keys were deleted and Cloudflare Turnstile is off."
+msgstr "保存済みのキーを削除し、Cloudflare Turnstile を無効にしました。"
+
+msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
+msgstr "保存済みのトークンを復号できません。削除して再登録してください。WordPress の認証用キーが変更された可能性があります。"
+
+msgid "The token cannot access this repository. Check its selected repositories and permissions."
+msgstr "このトークンではリポジトリにアクセスできません。トークンで選択したリポジトリと権限を確認してください。"
+
+msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
+msgstr "リクエストを完了するための PHP メモリーが不足しています。サーバーのメモリー上限を増やしてから、もう一度準備してください。"
+
+msgid "These values are read from WordPress when preparing publishing data."
+msgstr "発行データの準備時に、これらの値を WordPress から読み込みます。"
+
+msgid "This WordPress installation: %s."
+msgstr "この WordPress のアドレス: %s。"
+
+msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
+msgstr "この WordPress は、サポート対象の <code>/wp-json/wp/v2</code> URL 形式を使用していません。このパスで訪問者がアクセスできる API を設定してください。クエリー形式の REST URL はサポートされていません。"
+
+msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
+msgstr "このプラグインに保存されているトークンを削除します。GitHub に発行するには、トークンを再登録してください。"
+
+msgid "This section is saved."
+msgstr "このセクションの設定を保存しました。"
+
+msgid "This section is saved. API protection applies immediately."
+msgstr "このセクションの設定を保存しました。API 保護はすぐに適用されます。"
+
+msgid "This section is saved. Changes apply to new comment requests."
+msgstr "このセクションの設定を保存しました。変更は新しいコメントリクエストに適用されます。"
+
+msgid "This section is saved. Changes take effect after the next publication."
+msgstr "このセクションの設定を保存しました。変更は次回の発行後に反映されます。"
+
+msgid "This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately."
+msgstr "このセクションの設定を保存しました。コメント表示の変更は次回の発行後に反映されます。API アクセスと投稿の設定はすぐに適用されます。"
+
+msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
+msgstr "このセクションの設定を保存しました。コメント表示の変更は次回の発行後に反映されます。投稿設定は新しいコメントリクエストに適用されます。"
+
+msgid "This version supports single-site WordPress only."
+msgstr "このバージョンは WordPress のシングルサイト構成のみをサポートしています。"
+
+msgid "Timezone"
+msgstr "タイムゾーン"
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr "コメントの投稿を許可するには、「サイト」セクションで静的サイト URL を保存してください。このアドレスを基準にリクエストのオリジンを確認します。"
+
+msgid "Too many comment requests. Please try again shortly."
+msgstr "コメントのリクエストが多すぎます。しばらく待ってから、もう一度お試しください。"
+
+msgid "Turnstile Secret Key"
+msgstr "Turnstile Secret Key"
+
+msgid "Turnstile Site Key"
+msgstr "Turnstile Site Key"
+
+msgid "Unavailable menu (ID {id})"
+msgstr "利用できないメニュー (ID {id})"
+
+msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
+msgstr "<strong>Repository access</strong> で <strong>Only select repositories</strong> を選択してください。"
+
+msgid "Unknown author"
+msgstr "不明な投稿者"
+
+msgid "Unsaved changes"
+msgstr "未保存の変更"
+
+msgid "Update the WXR generation time and create a new commit without changing the content."
+msgstr "コンテンツを変更せずに、WXR の生成日時を更新して新しいコミットを作成します。"
+
+msgid "Uploading files to GitHub…"
+msgstr "GitHub にファイルをアップロード中…"
+
+msgid "Use Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile を使用"
+
+msgid "Use an API URL that site visitors can access."
+msgstr "サイトの訪問者がアクセスできる API URL を使用してください。"
+
+msgid "Use primary for the main navigation and footer for footer links. Custom IDs must match the menu IDs used by your theme."
+msgstr "メインナビゲーションには primary、フッターリンクには footer を使用してください。カスタム ID は、テーマで使用しているメニュー ID と一致させてください。"
+
+msgid "Use unique menu IDs starting with a lowercase letter, followed by lowercase letters, numbers, hyphens or underscores (up to 64 characters)."
+msgstr "メニュー ID は重複しない値にしてください。先頭は半角英小文字とし、続く文字には半角英小文字、数字、ハイフン、アンダースコアを使用できます (最大64文字)。"
+
+msgid "Use up to 50 complete source and destination URL pairs."
+msgstr "置換元 URL と置換先 URL の両方を入力してください。最大50組まで設定できます。"
+
+msgid "Verifying publishing data…"
+msgstr "発行データを確認中…"
+
+msgid "Verifying the GitHub publication result…"
+msgstr "GitHub の発行結果を確認中…"
+
+msgid "View commit"
+msgstr "コミットを表示"
+
+msgid "View on static site"
+msgstr "静的サイトで表示"
+
+msgid "View saved publishing repository"
+msgstr "保存済みの発行先リポジトリを表示"
+
+msgid "Wait for WordPress to finish saving your post."
+msgstr "WordPress が投稿の保存を完了するまでお待ちください。"
+
+msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
+msgstr "チェックを外すと、静的サイトの <code>robots.txt</code> に <code>Disallow: /</code> を記録します。"
+
+msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
+msgstr "投稿を無効にすると、コメントの表示のみになります。WordPress の既存のコメント設定も適用されます。"
+
+msgid "WordPress REST API URL"
+msgstr "WordPress REST API URL"
+
+msgid "WordPress content changed. Prepare again to include the latest data."
+msgstr "WordPress のコンテンツが変更されました。最新のデータを反映するには、もう一度準備してください。"
+
+msgid "WordPress menu"
+msgstr "WordPress メニュー"
+
+msgid "Working…"
+msgstr "処理中…"
+
+msgid "ZeroPress"
+msgstr "ZeroPress"
+
+msgid "ZeroPress Static"
+msgstr "ZeroPress Static"
+
+msgid "ZeroPress Static – Static Site Publisher"
+msgstr "ZeroPress Static – 静的サイトの発行"
+
+msgid "ZeroPress publish"
+msgstr "ZeroPress 発行"

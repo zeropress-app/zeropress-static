@@ -29,7 +29,7 @@ The static site uses a ZeroPress theme. Your active WordPress theme is not expor
 * Search, RSS, archives, footer credits and newsletter signup links.
 * Optional WordPress comments, with separate display and writing settings and Cloudflare Turnstile support.
 * Optional public REST API restriction for a WordPress authoring backend.
-* English and Korean admin screens, section navigation and independent save buttons.
+* English, Korean, Japanese, Spanish (Spain), German, French and Portuguese (Brazil) admin screens, section navigation and independent save buttons.
 
 All options are in ZeroPress → Settings. The Site section shows the title,
 description, language, timezone, posts per page and icon read from WordPress.
@@ -290,4 +290,4 @@ temporary verification records.
 * Configure search, RSS, archives, footer credits, generator information and newsletter signup pages.
 * Display and accept WordPress comments with proof-of-work or Cloudflare Turnstile verification and per-IP request limits.
 * Optionally restrict public REST API access and reject client-supplied REST route overrides.
-* Provide English and Korean admin screens and use WordPress and PHP resource settings for publishing limits.
+* Provide English, Korean, Japanese, Spanish (Spain), German, French and Portuguese (Brazil) admin screens and use WordPress and PHP resource settings for publishing limits.

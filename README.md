@@ -13,6 +13,10 @@ Saving GitHub tokens and Turnstile secret keys requires PHP OpenSSL with
 AES-256-GCM support.
 License: GPL-2.0-or-later.
 
+The admin interface is available in English, Korean, Japanese, Spanish (Spain),
+German, French and Portuguese (Brazil). It follows
+your WordPress user language, or the site language when no user language is set.
+
 ## Publishing flow
 
 ZeroPress Static generates `wordpress-export.xml` and `wxr-import-base.json`.

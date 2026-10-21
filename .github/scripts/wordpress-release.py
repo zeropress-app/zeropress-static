@@ -99,9 +99,11 @@ def plugin_version(files):
             "Plugin Version, VERSION constant and Stable tag must agree.")
     require(" * Text Domain: " + SLUG in header, "Unexpected plugin text domain.")
     translation = ("Project-Id-Version: ZeroPress Static " + version).encode()
-    require(translation + b"\\n" in files.get("languages/" + SLUG + "-ko_KR.po", b"")
-            and translation + b"\n" in files.get("languages/" + SLUG + "-ko_KR.mo", b""),
-            "Translation versions must match the plugin.")
+    for locale in ("ko_KR", "ja", "es_ES", "de_DE", "fr_FR", "pt_BR"):
+        prefix = "languages/" + SLUG + "-" + locale
+        require(translation + b"\\n" in files.get(prefix + ".po", b"")
+                and translation + b"\n" in files.get(prefix + ".mo", b""),
+                "Translation versions must match the plugin: " + locale)
     changelog(readme, version)
     return version
 

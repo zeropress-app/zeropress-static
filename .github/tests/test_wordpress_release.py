@@ -16,6 +16,12 @@ SPEC = importlib.util.spec_from_file_location("wordpress_release", Path(__file__
 release = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(release)
 
+TRANSLATION_FILES = [
+    "languages/zeropress-static-" + locale + "." + extension
+    for locale in ("ko_KR", "ja", "es_ES", "de_DE", "fr_FR", "pt_BR")
+    for extension in ("po", "mo")
+]
+
 
 class ReleaseTest(unittest.TestCase):
     def setUp(self):
@@ -42,9 +48,10 @@ class ReleaseTest(unittest.TestCase):
             "readme.txt": "Stable tag: 0.7.0\n\n== Changelog ==\n\n= 0.7.0 =\n* Initial release.\n",
             "assets/admin.js": "'use strict';\n",
             "README.md": "# ZeroPress Static\n",
-            "languages/zeropress-static-ko_KR.po": '"Project-Id-Version: ZeroPress Static 0.7.0\\n"\n',
-            "languages/zeropress-static-ko_KR.mo": "Project-Id-Version: ZeroPress Static 0.7.0\n",
         }
+        for name in TRANSLATION_FILES:
+            files[name] = ('"Project-Id-Version: ZeroPress Static 0.7.0\\n"\n' if name.endswith('.po')
+                           else "Project-Id-Version: ZeroPress Static 0.7.0\n")
         for name, content in files.items():
             target = self.repo / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -71,8 +78,7 @@ class ReleaseTest(unittest.TestCase):
         manifest = self.prepare()
         self.assertEqual((self.output / "payload/assets/admin.js").read_bytes(), original)
         self.assertEqual(set(manifest["files"]), {
-            "zeropress-static.php", "readme.txt", "README.md", "assets/admin.js",
-            "languages/zeropress-static-ko_KR.po", "languages/zeropress-static-ko_KR.mo"})
+            "zeropress-static.php", "readme.txt", "README.md", "assets/admin.js", *TRANSLATION_FILES})
         self.assertEqual(release.verify_package(self.repo, self.output), manifest)
         second = self.root / "again"
         with patch("sys.stdout", new_callable=io.StringIO):
@@ -96,10 +102,13 @@ class ReleaseTest(unittest.TestCase):
 
     def test_version_translation_and_changelog_must_match(self):
         _, _, files = release.source_files(self.repo)
-        for filename in ["zeropress-static.php", "readme.txt", "languages/zeropress-static-ko_KR.po", "languages/zeropress-static-ko_KR.mo"]:
+        for filename in ["zeropress-static.php", "readme.txt", *TRANSLATION_FILES]:
             with self.subTest(filename=filename):
                 changed = dict(files)
                 changed[filename] = changed[filename].replace(b"0.7.0", b"0.7.1", 1)
+                with self.assertRaises(release.ReleaseError):
+                    release.plugin_version(changed)
+                del changed[filename]
                 with self.assertRaises(release.ReleaseError):
                     release.plugin_version(changed)
         changed = dict(files)
