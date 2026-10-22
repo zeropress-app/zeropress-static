@@ -4,7 +4,7 @@ Tags: static site, publish, export, github, zeropress
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.7.0
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -281,7 +281,7 @@ temporary verification records.
 
 == Changelog ==
 
-= 0.7.0 =
+= 1.0.0 =
 
 * Initial release: export published posts and pages, selected classic menus and media references for ZeroPress WXR Starter.
 * Download WXR and build settings, or publish both files to GitHub in one commit with progress feedback and change detection.

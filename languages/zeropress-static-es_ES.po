@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ZeroPress Static 0.7.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: es_ES\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+msgstr "Project-Id-Version: ZeroPress Static 1.0.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: es_ES\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
 msgstr "Una regla de la rama de GitHub ha rechazado la publicación directa. Revisa las reglas del repositorio."
