@@ -2,9 +2,10 @@
 
 Keep WordPress as your editor and publish a static site with
 [ZeroPress WXR Starter](https://github.com/zeropress-app/zeropress-starter-wxr).
-ZeroPress Static exports published content and build settings. You can download
-the files or publish them to GitHub, where your configured build service can
-build and deploy the site.
+ZeroPress Static publishes your content and build settings to GitHub, where your
+connected build service can build and deploy the site. For your first site, we recommend
+GitHub publishing with Cloudflare hosting. Follow the [first-publication
+walkthrough](#first-publication-with-github-and-cloudflare) below.
 
 The static site uses a ZeroPress theme. Your active WordPress theme is not exported.
 
@@ -16,6 +17,15 @@ License: GPL-2.0-or-later.
 The admin interface is available in English, Korean, Japanese, Spanish (Spain),
 German, French and Portuguese (Brazil). It follows
 your WordPress user language, or the site language when no user language is set.
+
+## Cost and accounts
+
+ZeroPress Static is free and open source. All features are included, with no paid plans,
+subscriptions or hidden fees. You do not need a ZeroPress account.
+
+Our recommended setup uses your own GitHub and Cloudflare accounts. Both services offer
+free plans with usage limits. Paid options, WordPress hosting, custom domains and
+newsletter services may have separate costs under each provider's pricing and terms.
 
 ## Publishing flow
 
@@ -32,8 +42,6 @@ flowchart LR
 
     style Inputs stroke-width:3px
 ```
-
-You can also download both files and run the WXR starter build yourself.
 
 ## Installation
 
@@ -57,23 +65,47 @@ For a source checkout, copy this directory to
 `wp-content/plugins/zeropress-static/` and activate it in WordPress. The plugin
 files are ready to use; installation requires no Node.js, Composer or build step.
 
-## First publication
+## First publication with GitHub and Cloudflare
 
-1. Set up a project from the
-   [WXR starter](https://github.com/zeropress-app/zeropress-starter-wxr). For GitHub
-   publishing, keep `wordpress-export.xml` and `wxr-import-base.json` in the root
-   of the existing branch you intend to use.
-2. Open **ZeroPress → Settings**, configure the sections you need, and save them.
-3. To use **Publish to GitHub**, configure [GitHub publishing](#github-publishing).
-4. Open **ZeroPress → Publish** and select **Prepare publishing data**. Review
-   the content counts and publishing destination.
-5. Download the files, or select **Publish to GitHub** and confirm the repository,
-   branch and files in the dialog.
+We recommend GitHub publishing with Cloudflare hosting for your first site. This setup
+connects publication to automatic builds and deployments, so you can update your site
+from WordPress. Create an account with each service before starting. Cloudflare provides
+a site address, so you can start without a custom domain.
 
-GitHub publishing replaces both files in one commit. Manage their settings in
-the plugin; direct edits to the generated files are replaced on the next
-publication. A successful publication confirms the GitHub update. Building and
-hosting are configured in your starter project.
+1. **Deploy the sample site.** Open [ZeroPress WXR
+   Starter](https://github.com/zeropress-app/zeropress-starter-wxr) and select **Deploy
+   to Cloudflare**. Connect your GitHub account, choose **Create private Git
+   repository**, and keep the Starter's default build and deployment settings. When
+   deployment finishes, open the site address provided by Cloudflare and confirm that
+   the sample site appears.
+2. **Return to WordPress.** After the sample deployment, continue here with the plugin;
+   it prepares your content export for you. Open **ZeroPress → Settings → Site**, enter
+   the new site's address under **Static site URL**, and select **Save site settings**.
+   Leave the other settings at their defaults for this first publication.
+3. **Connect your repository.** Under **GitHub publishing**, enter the URL of the
+   repository created in step 1. Set **Publishing branch** to the branch Cloudflare
+   builds for the live site, usually `main`, and select **Save publishing target**.
+4. **Register a GitHub token.** Select **Create a GitHub token**. Choose **Only select
+   repositories**, select your publishing repository, and grant **Contents: Read and
+   write**. Copy the generated token back to WordPress, select **Register token**, then
+   **Test connection**. Continue when the test succeeds.
+5. **Publish your content.** Make sure WordPress has at least one public, published post
+   or page. Open **ZeroPress → Publish**, select **Prepare publishing data**, and review
+   the content counts and destination. Select **Publish to GitHub** and confirm.
+6. **Check your live site.** GitHub publication updates the repository; Cloudflare then
+   builds and deploys the site. In Cloudflare, open your project under **Workers &
+   Pages** and wait for the new build and deployment to succeed. Open or refresh the
+   site address from step 1 and check that your own posts and images appear in place of
+   the sample content.
+
+After checking the site, enable **Allow search engine crawling** under **Site** if you
+want search engines to crawl it. This option starts off. Save the site settings, then
+prepare and publish again. You can configure menus, comments, newsletters and media URL
+replacements later as needed.
+
+GitHub publishing replaces `wordpress-export.xml` and `wxr-import-base.json` in one
+commit. Manage their settings in the plugin; direct edits to the generated files are
+replaced on the next publication.
 
 ## Publish from the editor
 
@@ -350,6 +382,12 @@ A lost browser response or a terminated server request may prevent confirmation.
 If **Publication needs verification** appears, inspect the publishing branch
 before preparing and publishing again.
 
+### Manual downloads
+
+For a custom build or hosting setup, prepare and download `wordpress-export.xml` and
+`wxr-import-base.json` from **ZeroPress → Publish**. Place both files in the WXR Starter
+project root, then follow your host's build and deployment instructions.
+
 ## Export scope and limits
 
 The export includes published posts and pages without passwords, their used
@@ -403,6 +441,11 @@ was updated from a lost response.
 
 ## Stored data and external services
 
+The plugin does not send your site's content or usage statistics to ZeroPress.
+
+When you use GitHub publishing or enable optional integrations, data is exchanged with
+those services as described below.
+
 GitHub tokens and Turnstile secrets use authenticated AES-256-GCM encryption with
 separate keys derived from WordPress secrets. Their plaintext is never
 returned to the admin screen. If the WordPress secrets change, register the
@@ -411,38 +454,59 @@ settings, credentials and temporary verification records.
 
 ### GitHub
 
-Connection tests, preparation with a configured GitHub connection, and confirmed
-publication contact `https://api.github.com`. The token authenticates requests;
-publication sends the WXR content and generated build settings. There is no
-telemetry or scheduled synchronization.
+If you configure GitHub publishing, the plugin contacts the GitHub API
+(`https://api.github.com`) when you test the connection, prepare publishing data or
+confirm publication. Your registered token authenticates these requests. Publication
+sends the WXR content and generated build settings. There is no telemetry or scheduled
+synchronization.
 
 - [GitHub terms](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service)
 - [GitHub privacy](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
 
 ### Cloudflare Turnstile
 
-When selected for comment writing, the static theme loads
-`https://challenges.cloudflare.com/turnstile/v0/api.js`. WordPress sends the
-widget token and Secret Key to
-`https://challenges.cloudflare.com/turnstile/v0/siteverify` for verification. The
-optional visitor-IP parameter is not sent. PoW and read-only comments do not use
-this service. Turnstile verification failures do not switch to unprotected writing.
+Cloudflare Turnstile is off by default. If you enable comment writing and select **Use
+Cloudflare Turnstile**, the static theme loads
+`https://challenges.cloudflare.com/turnstile/v0/api.js` to display the verification
+widget.
+
+When a visitor submits a comment with Turnstile verification, WordPress sends the widget
+token and Secret Key to `https://challenges.cloudflare.com/turnstile/v0/siteverify`. The
+optional visitor-IP parameter is not sent. Proof-of-work verification and read-only
+comments do not use this service. Turnstile verification failures do not switch to
+unprotected writing.
 
 - [Cloudflare terms](https://www.cloudflare.com/terms/)
 - [Cloudflare privacy](https://www.cloudflare.com/privacypolicy/)
 
 ### Newsletter pages
 
-Newsletter URLs are exported for use by the static theme. Subscriptions and
-visitor data submitted on those pages are handled by the newsletter service you
-choose.
+Newsletter signup is off by default. If you enable **Show newsletter signup** and
+configure a page from a service such as Hostinger Reach, Omnisend or Mailchimp, the
+plugin exports its URL for the static theme. Visitors connect to that service when they
+open the signup page or load its embedded page; the service handles subscriptions, mail
+delivery and submitted visitor data.
 
 ## Support
 
-Use [GitHub Issues](https://github.com/zeropress-app/zeropress-static/issues) for
-questions, bug reports and feature requests. Include the plugin, WordPress and
-PHP versions, steps to reproduce, and expected and actual results. Remove
-credentials and personal data from attachments.
+For setup instructions, see
+[First publication](#first-publication-with-github-and-cloudflare) and
+[Settings](#settings).
 
-Report security vulnerabilities through
-[private vulnerability reporting](https://github.com/zeropress-app/zeropress-static/security/advisories/new).
+Questions, bug reports and feature requests are welcome through:
+
+- [GitHub Issues](https://github.com/zeropress-app/zeropress-static/issues): Our
+  preferred channel.
+- [WordPress.org support forum](https://wordpress.org/support/plugin/zeropress-static/).
+- Email: Use the address listed on the [ZeroPress GitHub
+  profile](https://github.com/zeropress-app). No special format is required.
+
+Write in the language you are most comfortable with. You do not need to write in
+English; we will reply in the same language.
+
+Please remove passwords, API tokens and personal data from your message, logs and
+attachments. For bug reports, include your plugin, WordPress and PHP versions and steps
+to reproduce, if available.
+
+Report security vulnerabilities through [private vulnerability
+reporting](https://github.com/zeropress-app/zeropress-static/security/advisories/new).
