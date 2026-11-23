@@ -16,10 +16,13 @@ final class Publisher {
 	 * @return array
 	 */
 	public static function prepare( ?Resource_Budget $budget = null ): array {
-		$budget         ??= Resource_Budget::from_request();
-		$settings         = Settings::read();
-		$generated_at     = time();
-		$export           = ( new Exporter( $budget ) )->generate( $settings, $generated_at );
+		$budget     ??= Resource_Budget::from_request();
+		$settings     = Settings::read();
+		$generated_at = time();
+		$export       = ( new Exporter( $budget ) )->generate_files( $settings, $generated_at );
+		// Preparation retains only review metadata while inspecting the remote target.
+		$export['wxr']->close();
+		unset( $export['wxr'], $export['base'] );
 		$snapshot         = null;
 		$connection_error = null;
 		$error_details    = array();
@@ -45,6 +48,7 @@ final class Publisher {
 			'counts'           => $export['counts'],
 			'bytes'            => $export['bytes'],
 			'rewritten_values' => $export['rewritten_values'],
+			'warnings'         => $export['warnings'],
 			'target'           => $snapshot ? array(
 				'repository' => $snapshot['repository'],
 				'branch'     => $snapshot['branch'],
@@ -69,6 +73,7 @@ final class Publisher {
 	 */
 	private static function validate( string $receipt, Resource_Budget $budget, bool $refresh_time = false ): array {
 		$budget->check();
+		Export_Storage::recover_once( $budget );
 		if ( strlen( $receipt ) > 20000 || 1 !== substr_count( $receipt, '.' ) ) {
 			throw new Failure( 'PREPARATION_INVALID', 409 );
 		}
@@ -82,8 +87,9 @@ final class Publisher {
 			( $value['expires'] ?? 0 ) < time() || ( $value['revision'] ?? '' ) !== $settings['revision'] ) {
 			throw new Failure( 'PREPARATION_EXPIRED', 409 );
 		}
-		$export = ( new Exporter( $budget ) )->generate( $settings, $refresh_time ? time() : $value['generated_at'] );
+		$export = ( new Exporter( $budget ) )->generate_files( $settings, $refresh_time ? time() : $value['generated_at'] );
 		if ( $export['data_hash'] !== $value['hash'] ) {
+			$export['wxr']->close();
 			throw new Failure( 'CONTENT_CHANGED', 409 );
 		}
 		return array( $settings, $value, $export );
@@ -99,12 +105,43 @@ final class Publisher {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public static function download( string $receipt, string $file, ?Resource_Budget $budget = null ): string {
+		$content = self::download_file( $receipt, $file, $budget );
+		try {
+			return $content->contents();
+		} finally {
+			$content->close();
+		}
+	}
+
+	/**
+	 * Validate completely before exposing a download; the caller owns its handle.
+	 *
+	 * @param string               $receipt Signed preparation receipt.
+	 * @param string               $file Allowlisted export key.
+	 * @param Resource_Budget|null $budget Shared request resource budget.
+	 * @return Export_File
+	 * @throws Failure If validation or storage fails.
+	 * @throws \Throwable If writing build settings fails.
+	 */
+	public static function download_file( string $receipt, string $file, ?Resource_Budget $budget = null ): Export_File {
 		$budget ??= Resource_Budget::from_request();
+		Export_Storage::recover_once( $budget );
 		if ( ! isset( GitHub::FILES[ $file ] ) ) {
 			throw new Failure( 'INVALID_FILE' );
 		}
 		list( , , $export ) = self::validate( $receipt, $budget );
-		return $export[ $file ];
+		if ( 'wxr' === $file ) {
+			return $export['wxr'];
+		}
+		$export['wxr']->close();
+		$content = new Export_File( $budget );
+		try {
+			$content->write( $export['base'] );
+			return $content;
+		} catch ( \Throwable $error ) {
+			$content->close();
+			throw $error;
+		}
 	}
 
 	/**
@@ -119,6 +156,7 @@ final class Publisher {
 	 */
 	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null ): array {
 		$budget ??= Resource_Budget::from_request();
+		Export_Storage::recover_once( $budget );
 		try {
 			$progress?->update( 'validating' );
 			list( $settings, $prepared, $export ) = self::validate( $receipt, $budget, $republish );
@@ -137,8 +175,11 @@ final class Publisher {
 			if ( ! $republish && $current['data_hash'] === $export['data_hash'] ) {
 				return array( 'state' => 'unchanged' );
 			}
-			if ( $republish && GitHub::blob_sha( $export['wxr'] ) === $current['files']['wxr'] ) {
+			if ( $republish && $export['wxr']->blob_sha() === $current['files']['wxr'] ) {
 				$progress?->update( 'validating' );
+				// Release the previous bodies before generating their replacements.
+				$export['wxr']->close();
+				unset( $export );
 				// WXR dates have second precision. Wait once so an immediate repeat changes the file too.
 				$budget->check();
 				usleep( 1000000 );
@@ -147,7 +188,21 @@ final class Publisher {
 			// Include unrelated intervening commits by publishing on the current verified tree.
 			return $github->publish( $current, $export, $republish, $progress );
 		} finally {
+			if ( isset( $export['wxr'] ) ) {
+				$export['wxr']->close();
+			}
 			$progress?->clear();
 		}
+	}
+
+	/**
+	 * Close every request-owned artifact.
+	 *
+	 * @param array $export Request-owned generated artifacts.
+	 * @return void
+	 */
+	public static function close_export( array $export ): void {
+		( $export['wxr'] ?? null )?->close();
+		( $export['bundle'] ?? null )?->close();
 	}
 }

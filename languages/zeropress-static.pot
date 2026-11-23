@@ -10,6 +10,9 @@ msgstr ""
 msgid "A Turnstile Secret Key is registered."
 msgstr ""
 
+msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
+msgstr ""
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr ""
 
@@ -370,6 +373,9 @@ msgstr ""
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr ""
 
+msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
+msgstr ""
+
 msgid "Posts per page"
 msgstr ""
 
@@ -425,6 +431,9 @@ msgid "Publishing branch"
 msgstr ""
 
 msgid "Publishing destination"
+msgstr ""
+
+msgid "Publishing help"
 msgstr ""
 
 msgid "Publishing target"
@@ -592,6 +601,9 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
+msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
+msgstr ""
+
 msgid "Test connection"
 msgstr ""
 
@@ -754,6 +766,9 @@ msgstr ""
 msgid "WordPress content changed. Prepare again to include the latest data."
 msgstr ""
 
+msgid "WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again."
+msgstr ""
+
 msgid "WordPress menu"
 msgstr ""
 
@@ -770,4 +785,7 @@ msgid "ZeroPress Static – Static Site Publisher"
 msgstr ""
 
 msgid "ZeroPress publish"
+msgstr ""
+
+msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
 msgstr ""

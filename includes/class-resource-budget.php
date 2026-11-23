@@ -103,6 +103,15 @@ final class Resource_Budget {
 	}
 
 	/**
+	 * Check only the shared deadline after a failed HTTP request.
+	 *
+	 * @throws Failure If the request has reached its soft deadline.
+	 */
+	public function check_time(): void {
+		$this->remaining();
+	}
+
+	/**
 	 * Return remaining wall time, or null when PHP has no execution-time limit.
 	 *
 	 * @return float|null
@@ -129,6 +138,32 @@ final class Resource_Budget {
 			// phpcs:enable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 		return $budget - $elapsed;
+	}
+
+	/**
+	 * Stop before uploads if their minimum pacing cannot fit.
+	 *
+	 * @param float $seconds Minimum time needed for paced writes.
+	 * @return void
+	 * @throws Failure If validation, storage or the request budget fails.
+	 */
+	public function require_time( float $seconds ): void {
+		$remaining = $this->remaining();
+		if ( null !== $remaining && $seconds >= $remaining ) {
+			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Numeric details are allowlisted and JSON encoded by the AJAX boundary.
+			throw new Failure(
+				'REQUEST_TIME_LIMIT_EXCEEDED',
+				503,
+				array(
+					'time_limit_seconds'     => $this->time_limit,
+					'time_budget_seconds'    => max( 0, $this->time_limit - 5 ),
+					'elapsed_seconds'        => round( max( 0, ( $this->clock )() - $this->started ), 2 ),
+					'remaining_time_seconds' => round( $remaining, 2 ),
+					'minimum_time_seconds'   => $seconds,
+				)
+			);
+			// phpcs:enable WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
 	}
 
 	/**

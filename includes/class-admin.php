@@ -183,13 +183,19 @@ final class Admin {
 					break;
 				case 'download':
 					$file    = Settings::string( $input, 'file' );
-					$content = Publisher::download( Settings::string( $input, 'receipt' ), $file, Resource_Budget::from_request( true ) );
+					$content = Publisher::download_file( Settings::string( $input, 'receipt' ), $file, Resource_Budget::from_request( true ) );
 					header( 'Content-Type: application/octet-stream' );
 					header( 'X-Content-Type-Options: nosniff' );
 					header( 'Content-Disposition: attachment; filename="' . GitHub::FILES[ $file ] . '"' );
-					// The export is an attachment, not rendered HTML. Escaping would corrupt WXR/JSON.
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo $content;
+					try {
+						foreach ( $content->chunks() as $chunk ) {
+							// The attachment must retain its original XML/JSON bytes.
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $chunk;
+						}
+					} finally {
+						$content->close();
+					}
 					exit;
 				default:
 					throw new Failure( 'INVALID_REQUEST' );
@@ -911,6 +917,12 @@ final class Admin {
 			'TOKEN_UNREADABLE'                => __( 'The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed.', 'zeropress-static' ),
 			'ENCRYPTION_UNAVAILABLE'          => __( 'Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials.', 'zeropress-static' ),
 			'MEDIA_RULE_CONFLICT'             => __( 'A source media prefix has conflicting destinations.', 'zeropress-static' ),
+			'CONTENT_BODY_TOO_LARGE'          => __( 'A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again.', 'zeropress-static' ),
+			'SOURCE_READ_UNBOUNDED'           => __( 'WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again.', 'zeropress-static' ),
+			'body_details'                    => __( 'Post ID: {id}. Body size: {bytes} UTF-8 bytes.', 'zeropress-static' ),
+			'body_warning'                    => __( '{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}.', 'zeropress-static' ),
+			'publishing_help'                 => __( 'Publishing help', 'zeropress-static' ),
+			'EXPORT_STORAGE_UNAVAILABLE'      => __( 'Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again.', 'zeropress-static' ),
 			'MEMORY_LIMIT_EXCEEDED'           => __( 'There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again.', 'zeropress-static' ),
 			'memory_details'                  => __( 'PHP memory limit: {limit}. Estimated memory required: {estimated}.', 'zeropress-static' ),
 			'REQUEST_TIME_LIMIT_EXCEEDED'     => __( 'The request reached its server-based time budget. Increase the server time allowance and prepare again.', 'zeropress-static' ),

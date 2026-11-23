@@ -16,6 +16,24 @@ final class Media_Rewriter {
 	 */
 	private array $map;
 	/**
+	 * Existing request allocation guard.
+	 *
+	 * @var Resource_Budget|null
+	 */
+	private ?Resource_Budget $budget;
+	/**
+	 * Conservative accumulated replacement bytes for the current fragment.
+	 *
+	 * @var int
+	 */
+	private int $working_bytes = 0;
+	/**
+	 * Whether URL replacements belong to a retained content fragment.
+	 *
+	 * @var bool
+	 */
+	private bool $rewriting_content = false;
+	/**
 	 * Replacements.
 	 *
 	 * @var int
@@ -25,11 +43,13 @@ final class Media_Rewriter {
 	/**
 	 * Initialize this service with validated input.
 	 *
-	 * @param array $rules Source and destination URL prefix pairs.
+	 * @param array                $rules Source and destination URL prefix pairs.
 	 * @throws Failure If validation or the operation cannot be completed.
+	 * @param Resource_Budget|null $budget Optional request allocation guard.
 	 */
-	public function __construct( array $rules ) {
-		$this->map = array();
+	public function __construct( array $rules, ?Resource_Budget $budget = null ) {
+		$this->budget = $budget;
+		$this->map    = array();
 		foreach ( self::normalize( $rules ) as $pair ) {
 			$this->map[ $pair[0] ] = $pair[1];
 		}
@@ -93,6 +113,13 @@ final class Media_Rewriter {
 			return $value;
 		}
 		$prefix = $matches[0];
+		// Decoded HTML/JSON attributes can hide prefixes from the initial raw scan.
+		// Charge each actual expansion before concatenating or retaining it.
+		$growth = max( 0, strlen( $this->map[ $prefix ] ) * 6 - strlen( $prefix ) );
+		if ( $this->rewriting_content ) {
+			$this->working_bytes += $growth;
+		}
+		$this->budget?->check( ( $this->rewriting_content ? $this->working_bytes : $growth ) + strlen( $value ) );
 		$result = $this->map[ $prefix ] . substr( $value, strlen( $prefix ) );
 		if ( $result !== $value ) {
 			++$this->replacements;
@@ -108,12 +135,26 @@ final class Media_Rewriter {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public function content( string $value ): string {
+		$this->working_bytes = strlen( $value );
 		if ( ! $this->map ) {
 			return $value;
 		}
+		// Reserve copies and encoded replacement growth before the block parser or
+		// tag processor materializes output. Existing resource limits remain in force.
+		$projected = strlen( $value );
+		foreach ( $this->map as $from => $to ) {
+			$projected += substr_count( $value, $from ) * max( 0, strlen( $to ) * 6 - strlen( $from ) );
+		}
+		$this->budget?->check( $projected );
 		// Process HTML and JSON attributes independently; never run the map twice.
-		$blocks = parse_blocks( $value );
-		return serialize_blocks( $this->blocks( $blocks ) );
+		$this->rewriting_content = true;
+		try {
+			$blocks = parse_blocks( $value );
+			return serialize_blocks( $this->blocks( $blocks ) );
+		} finally {
+			$this->rewriting_content = false;
+			$this->working_bytes     = 0;
+		}
 	}
 
 	/**

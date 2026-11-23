@@ -13,6 +13,9 @@ msgstr "GitHub 토큰이 등록되어 있습니다."
 msgid "A Turnstile Secret Key is registered."
 msgstr "Turnstile Secret Key가 등록되어 있습니다."
 
+msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
+msgstr "글 또는 페이지 본문이 4 MiB 한도를 초과했습니다. 본문을 나누거나 줄인 후 다시 준비하세요."
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "선택한 WordPress 메뉴를 사용할 수 없습니다. 설정을 새로고침하고 메뉴를 다시 선택하세요."
 
@@ -373,6 +376,9 @@ msgstr "PHP 메모리 제한: {limit}. 추정 필요 메모리: {estimated}."
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 시간 제한: {limit}초. 요청 처리 예산: {budget}초. 경과 시간: {elapsed}초."
 
+msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
+msgstr "글 ID: {id}. 본문 크기: UTF-8 기준 {bytes}바이트."
+
 msgid "Posts per page"
 msgstr "페이지당 글 수"
 
@@ -429,6 +435,9 @@ msgstr "발행 브랜치"
 
 msgid "Publishing destination"
 msgstr "발행 대상"
+
+msgid "Publishing help"
+msgstr "발행 문제 해결"
 
 msgid "Publishing target"
 msgstr "발행 대상"
@@ -595,6 +604,9 @@ msgstr "정적 사이트 URL"
 msgid "Subscribe"
 msgstr "구독하기"
 
+msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
+msgstr "내보내기용 임시 저장 공간을 사용할 수 없습니다. 호스팅 업체에 디스크 여유 공간과 PHP 임시 파일 권한 확인을 요청한 뒤 다시 준비하세요."
+
 msgid "Test connection"
 msgstr "연결 확인"
 
@@ -757,6 +769,9 @@ msgstr "WordPress REST API URL"
 msgid "WordPress content changed. Prepare again to include the latest data."
 msgstr "WordPress 콘텐츠가 변경되었습니다. 최신 데이터를 반영하려면 다시 준비하세요."
 
+msgid "WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again."
+msgstr "WordPress 데이터를 안전하게 읽을 수 없습니다. 특이한 메타데이터와 콘텐츠·미디어를 변경하는 플러그인을 확인한 후 다시 준비하세요."
+
 msgid "WordPress menu"
 msgstr "WordPress 메뉴"
 
@@ -774,3 +789,6 @@ msgstr "ZeroPress Static – 정적 사이트 발행"
 
 msgid "ZeroPress publish"
 msgstr "ZeroPress 발행"
+
+msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
+msgstr "본문이 256 KiB 이상인 글 또는 페이지가 {count}개 있습니다(최대: UTF-8 기준 {bytes}바이트). 더 작은 글로 나누는 것을 권장합니다. 예시 ID: {ids}."

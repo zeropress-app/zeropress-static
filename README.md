@@ -390,6 +390,69 @@ project root, then follow your host's build and deployment instructions.
 
 ## Export scope and limits
 
+Each eligible post/page body warns from **256 KiB (262,144 UTF-8 bytes)** and
+blocks preparation/publication above **4 MiB (4,194,304 bytes)**. Exactly 4 MiB is
+allowed. Markup, whitespace and inline data count; linked media files do not.
+The stored body and its media-rewritten form are checked. Split or shorten the
+identified post, then prepare again. Saving/editing the WordPress post remains
+available; the plugin never truncates it or silently leaves it out of an export.
+Increasing PHP memory does not bypass this plugin policy. The importer and
+builder warn at the same threshold but have no fixed body maximum by default;
+their callers can set `--max-body-bytes` / `maxBodyBytes`. Studio retains its
+separate 1 MiB write limit. This change does not add Base64 image support.
+
+The 4 MiB allowance does not replace the export or resource guards. XML overhead
+and JSON escaping still count toward the separate WXR part and encoded GitHub
+request limits, so an accepted body can still produce a controlled export or
+upload-size error.
+
+Preparation shows an aggregate warning with a count, largest body and at most
+20 example post IDs; it does not require extra approval. Warnings are excluded
+from signed content, hashes and export files. A refusal before branch mutation
+leaves the previous publication intact. An already uncertain publication keeps
+its verification flow rather than being declared unsuccessful by a body error.
+
+The reader selects bounded ID windows, reads UTF-8 row lengths, and then loads
+complete rows in byte-budgeted batches (2 MiB target, reduced by the existing
+memory guard). An admitted row larger than the target is loaded alone after
+the whole-row memory check; the batch target is not raised to 4 MiB. Every
+fetched variable column counts, including titles/excerpts.
+The payload SELECT rechecks body and row sizes, so growth after preflight returns
+a controlled size/source-change error instead of an oversized payload or an
+omitted post. An unusually large non-body field can still trigger the resource
+guard; it is not mislabeled as a body-policy error.
+
+Normal SQL selection filters remain active. `posts_results` and `the_posts` run
+on each admitted byte batch; a batch may contain fewer than 100 posts. Result
+filters may only retain/reorder/modify selected posts. Query short circuits,
+unsafe projections and added/duplicate result IDs fail with `SOURCE_READ_UNBOUNDED`
+instead of falling back to an unbounded query. Third-party callbacks can allocate
+memory themselves; these protections do not impose a global memory bound on
+other plugins. Original cache, deadline and source/receipt checks remain in force.
+
+Required metadata and attachment fields are admitted before the database sends
+large values to PHP. Reads use private batches of up to 100 IDs with a 2 MiB
+payload target, reduced when live memory headroom requires it. Unused independent
+metadata keys and unexported attachment bodies are not loaded. Referenced media
+URLs are checked first; full attachment metadata is read only for featured
+images. Body-only media do not load dimensions or alternative text unless another
+WordPress callback explicitly requests those values through the same guarded
+reader. All referenced URLs retain their existing validation even when their
+attachment records are omitted. Complete metadata
+values needed by WordPress filters and site-icon selection are preserved; their
+serialized size and array expansion are checked before decoding. An unused member
+inside a required value still counts. A value that cannot fit produces a controlled
+memory error instead of a partial export. There is no new fixed metadata-size limit.
+
+First-value metadata behavior, missing/default values, attachment URLs, taxonomy
+filters and menu order are preserved. Partial metadata or attachment projections
+are never put into WordPress's shared whole-object caches. Unsafe custom query
+shapes or serialized objects fail with `SOURCE_READ_UNBOUNDED`; review unusual
+metadata and plugins that customize content or media before preparing again.
+These checks cannot bound allocations performed inside third-party callbacks.
+They do not change private file ownership, cleanup, final source validation or
+verification of an uncertain GitHub publication.
+
 The export includes published posts and pages without passwords, their used
 categories and tags, public author display names, selected classic menus, and
 required media metadata. Drafts, private or scheduled content, comment records,
@@ -407,10 +470,47 @@ separate requests; downloads and publication regenerate the data to check for
 changes. Each request shares its resource budget across generation and GitHub
 communication.
 
+WXR records are written to registered, request-owned files in a private subdirectory
+of PHP's system temporary directory, then assembled into a single XML. Downloads replay that file in bounded buffers after receipt and content
+validation. Each open file retains an exclusive lock until its last read and
+close. Files are never stored in WordPress uploads or exposed by URL.
+
+Normal close removes the registered file. If a worker is terminated or deletion
+fails, a later authorized preparation, download, publication
+can reclaim abandoned files after verifying their signed ownership, file identity
+and available lock. Recovery is bounded per request and may take several requests.
+It never deletes a live locked file, follows a link, repairs foreign ownership,
+or sweeps generic `php*` files. Deactivation and uninstall also attempt one
+bounded pass.
+
+Export spools require a Linux/Unix-style filesystem with POSIX permissions and working
+cross-process locks, writable by the PHP worker. Windows drive-letter and UNC paths
+are not supported. PHP and WordPress version checks alone do not establish storage support. Export spools use
+PHP's `sys_get_temp_dir()`; WordPress's `WP_TEMP_DIR` does not redirect them.
+
+The host must provide private local temporary storage with stable file identities,
+working cross-process locks, and room for the item spool and assembled WXR
+(approximately twice the WXR size during assembly). Public paths, permissive
+permissions and unsupported storage fail with the existing controlled storage
+error.
+Small ownership/lock/cursor controls remain after cleanup. A quiet site, invalid
+or incomplete registrations, a large backlog, or files from an earlier plugin
+storage format or WordPress salt generation can still require host-assisted
+review. This recovery does not guarantee a time-based purge or support for
+multi-node storage.
+
+The exporter releases in-memory object caches between batches when the active
+cache implementation supports runtime-only flushing. It never substitutes a
+flush of shared persistent caches. Without runtime-flush support, it suspends
+cache additions during export and restores the prior setting afterwards;
+third-party cache implementations can still have different memory behavior.
+
 For these operations, the plugin requests WordPress's administrator memory
 allowance (`WP_MAX_MEMORY_LIMIT`) and checks the effective PHP `memory_limit`.
-File size is governed by available memory, including conservative headroom for
-serialization and transport. The memory estimate is a preflight check, not a
+Generation and downloads check working records and replay buffers instead of
+charging disk-resident WXR as a live string. Large individual records and
+collected metadata still consume memory. Publication reads the XML into a UTF-8 JSON request and checks memory before materialization.
+The estimate retains its conservative headroom; it is a preflight check, not a
 measurement of peak usage. Increase the server's PHP memory allowance and, when
 needed, `WP_MAX_MEMORY_LIMIT` if this check stops an export. Hosting restrictions
 may prevent WordPress from raising the limit.
@@ -434,10 +534,9 @@ add_filter( 'zeropress_static_github_request_timeout', static function () {
 } );
 ```
 
-Controlled resource errors show the applicable limits next to the action.
-If the server terminates a publication request before returning its result,
-check GitHub before preparing again; the plugin cannot infer whether the branch
-was updated from a lost response.
+Controlled errors distinguish memory/time limits, unavailable temporary storage and
+GitHub payload-size rejection. The existing uncertainty handling remains in force;
+a lost response does not prove whether the branch was updated.
 
 ## Stored data and external services
 

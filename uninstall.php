@@ -7,6 +7,11 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+require_once __DIR__ . '/includes/class-failure.php';
+require_once __DIR__ . '/includes/class-resource-budget.php';
+require_once __DIR__ . '/includes/class-settings.php';
+require_once __DIR__ . '/includes/class-export-storage.php';
+\ZeroPress\StaticPublisher\Export_Storage::cleanup();
 delete_option( 'zeropress_static_settings' );
 
 // Only non-autoloaded, short-lived records owned by this plugin.

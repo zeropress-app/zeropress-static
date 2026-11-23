@@ -13,6 +13,9 @@ msgstr "GitHub トークンが登録されています。"
 msgid "A Turnstile Secret Key is registered."
 msgstr "Turnstile Secret Key が登録されています。"
 
+msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
+msgstr "投稿または固定ページの本文が 4 MiB の上限を超えています。本文を分割または短縮してから、再度準備してください。"
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "選択した WordPress メニューを利用できません。設定を再読み込みし、メニューを選び直してください。"
 
@@ -373,6 +376,9 @@ msgstr "PHP メモリー上限: {limit}。推定必要メモリー: {estimated}�
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 実行時間上限: {limit}秒。リクエストの処理時間上限: {budget}秒。経過時間: {elapsed}秒。"
 
+msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
+msgstr "投稿 ID: {id}。本文のサイズ: UTF-8 で {bytes} バイト。"
+
 msgid "Posts per page"
 msgstr "1ページあたりの投稿数"
 
@@ -429,6 +435,9 @@ msgstr "発行先ブランチ"
 
 msgid "Publishing destination"
 msgstr "発行先"
+
+msgid "Publishing help"
+msgstr "公開のヘルプ"
 
 msgid "Publishing target"
 msgstr "発行先"
@@ -595,6 +604,9 @@ msgstr "静的サイト URL"
 msgid "Subscribe"
 msgstr "登録する"
 
+msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
+msgstr "エクスポート用の一時保存領域を利用できません。ホスティング会社にディスク空き容量とPHP一時ファイルの権限を確認してもらい、もう一度準備してください。"
+
 msgid "Test connection"
 msgstr "接続を確認"
 
@@ -757,6 +769,9 @@ msgstr "WordPress REST API URL"
 msgid "WordPress content changed. Prepare again to include the latest data."
 msgstr "WordPress のコンテンツが変更されました。最新のデータを反映するには、もう一度準備してください。"
 
+msgid "WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again."
+msgstr "WordPress のデータを安全に読み込めませんでした。特殊なメタデータや、コンテンツ・メディアを変更するプラグインを確認してから、再度準備してください。"
+
 msgid "WordPress menu"
 msgstr "WordPress メニュー"
 
@@ -774,3 +789,6 @@ msgstr "ZeroPress Static – 静的サイトの発行"
 
 msgid "ZeroPress publish"
 msgstr "ZeroPress 発行"
+
+msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
+msgstr "本文が 256 KiB 以上の投稿または固定ページが {count} 件あります（最大: UTF-8 で {bytes} バイト）。小さな投稿への分割をご検討ください。ID の例: {ids}。"

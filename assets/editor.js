@@ -139,14 +139,14 @@
 					}
 					setPrepared(data);
 					setFeedback(data.state === 'download_only' ? {
-						kind: 'error', text: data.connection_error ? publication.failureMessage(data.connection_error, data.connection_error_details) : message('editor_unavailable'),
+						kind: 'error', code: data.connection_error, text: data.connection_error ? publication.failureMessage(data.connection_error, data.connection_error_details) : message('editor_unavailable'),
 					} : { kind: data.state === 'unchanged' ? 'success' : 'info', text: message(data.state === 'unchanged' ? 'unchanged' : 'prepared') });
 				} else {
 					const result = await publication.publish(receipt, false, (text) => setFeedback({ kind: 'info', text }));
 					setFeedback({ kind: result.state === 'unknown' ? 'warning' : 'success', text: message(result.state), commitUrl: result.commit_url });
 				}
 			} catch (error) {
-				setFeedback({ kind: 'error', text: error.message });
+				setFeedback({ kind: 'error', code: error.code, text: error.message });
 			} finally {
 				running.current = false;
 				setBusy('');
@@ -177,6 +177,7 @@
 				busy === 'prepare' && el('span', { className: 'zpsp-loading-spinner' }, el(Spinner, { 'aria-hidden': true })),
 				el('span', { className: 'zpsp-feedback-message' }, feedback.text),
 				prepared?.state === 'unchanged' && el('p', null, message('unchanged_description')),
+				publication.helpUrl(feedback.code) && el('p', null, el(ExternalLink, { href: publication.helpUrl(feedback.code) }, message('publishing_help'))),
 				feedback.commitUrl && el('p', null, el(ExternalLink, { href: feedback.commitUrl }, message('commit'))),
 				busy === 'publish' && el('div', { className: 'zpsp-loading-progress' }, el(ProgressBar, { className: 'zpsp-progress-bar', 'aria-label': message('publishing') })))),
 			el('div', { className: 'zpsp-actions' },

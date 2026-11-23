@@ -143,16 +143,20 @@ final class GitHub {
 		$entries = array();
 		$blobs   = array();
 		foreach ( self::FILES as $key => $path ) {
-			$this->budget->check( strlen( $export[ $key ] ) );
-			$expected = self::blob_sha( $export[ $key ] );
-			$blob     = $this->request(
+			$file = $export[ $key ];
+			$this->budget->check( $file instanceof Export_File ? $file->size() : strlen( $file ) );
+			$expected = $file instanceof Export_File ? $file->blob_sha() : self::blob_sha( $file );
+			// WordPress HTTP currently requires the full UTF-8 JSON body.
+			$content = $file instanceof Export_File ? $file->contents() : $file;
+			$blob    = $this->request(
 				'POST',
 				'/git/blobs',
 				array(
-					'content'  => base64_encode( $export[ $key ] ),
-					'encoding' => 'base64',
+					'content'  => $content,
+					'encoding' => 'utf-8',
 				)
 			);
+			unset( $content );
 			if ( ( $blob['sha'] ?? '' ) !== $expected ) {
 				throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
 			}
@@ -318,8 +322,10 @@ final class GitHub {
 		);
 		if ( null !== $body ) {
 			$args['headers']['Content-Type'] = 'application/json';
-			$args['body']                    = wp_json_encode( $body );
-			if ( false === $args['body'] ) {
+			try {
+				// Throw before WordPress can repair invalid UTF-8: Git blobs must preserve every byte.
+				$args['body'] = wp_json_encode( $body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR );
+			} catch ( \JsonException $error ) {
 				throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
 			}
 			unset( $body );

@@ -27,7 +27,7 @@
 		loadingIndicators.delete(id);
 		$(id + '-notice').querySelector('.zpsp-loading')?.remove();
 	}
-	function notice(id, text, error = false, commitUrl = '') {
+	function notice(id, text, error = false, commitUrl = '', code = '') {
 		stopLoading(id);
 		const element = $(id + '-notice');
 		element.textContent = '';
@@ -38,12 +38,13 @@
 			element.append(label);
 		}
 		element.className = 'zpsp-feedback' + (text ? ' notice ' + (error ? 'notice-error' : 'notice-info') : '');
-		if (commitUrl) {
+		const help = publication.helpUrl(code);
+		if (commitUrl || help) {
 			const link = document.createElement('a');
-			link.href = commitUrl;
+			link.href = commitUrl || help;
 			link.target = '_blank';
 			link.rel = 'noopener noreferrer';
-			link.textContent = message('commit');
+			link.textContent = message(commitUrl ? 'commit' : 'publishing_help');
 			const icon = document.createElement('span');
 			icon.className = 'dashicons dashicons-external';
 			icon.setAttribute('aria-hidden', 'true');
@@ -330,7 +331,7 @@
 			input.setAttribute('aria-describedby', [help?.id, errorId].filter(Boolean).join(' '));
 			input.focus();
 		} else {
-			notice(id, text, true);
+			notice(id, text, true, '', error.code);
 			$(id + '-notice').focus();
 		}
 	}
@@ -553,7 +554,7 @@
 			} else state.textContent = message(prepared.state, prepared.target || {});
 			$('state').hidden = false;
 			$('result').hidden = false;
-			notice('prepare', prepared.connection_error ? failureMessage(prepared.connection_error, prepared.connection_error_details) : unchanged ? '' : message('prepared'), !!prepared.connection_error);
+			notice('prepare', prepared.connection_error ? failureMessage(prepared.connection_error, prepared.connection_error_details) : unchanged ? '' : message('prepared'), !!prepared.connection_error, '', prepared.connection_error);
 			$(unchanged ? 'state' : 'result-heading').focus();
 		});
 	});

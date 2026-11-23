@@ -15,6 +15,17 @@ final class Exporter {
 	 * @var Resource_Budget
 	 */
 	private Resource_Budget $budget;
+	/** Generation-local auxiliary readers.
+	 *
+	 * @var Export_Reads
+	 */
+	private Export_Reads $reads;
+	/**
+	 * Per-export size diagnostics.
+	 *
+	 * @var Content_Body
+	 */
+	private Content_Body $body_policy;
 	/**
 	 * Rewriter.
 	 *
@@ -52,7 +63,7 @@ final class Exporter {
 	 */
 	private array $tags = array();
 	/**
-	 * Attachments.
+	 * Referenced attachment IDs; true for featured images, false for body-only media.
 	 *
 	 * @var array
 	 */
@@ -93,57 +104,131 @@ final class Exporter {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public function generate( array $settings, ?int $now = null ): array {
+		$export = $this->generate_files( $settings, $now );
+		$file   = $export['wxr'];
+		try {
+			$export['wxr'] = $file->contents();
+			return $export;
+		} finally {
+			$file->close();
+		}
+	}
+
+	/**
+	 * Generate request-owned WXR storage; callers must close returned file or bundle handles.
+	 *
+	 * @param array  $settings Validated settings snapshot.
+	 * @param int    $now Optional fixed generation time.
+	 * @param string $mode Single, automatic or established bundle transport.
+	 * @return array
+	 */
+	public function generate_files( array $settings, ?int $now = null, string $mode = 'single' ): array {
 		$this->budget->check();
+		$writer    = new Wxr_Writer( $this->budget, $mode );
+		$runtime   = wp_cache_supports( 'flush_runtime' );
+		$suspended = wp_suspend_cache_addition();
+		if ( ! $runtime ) {
+			// Do not fall back to flushing a shared Redis/Memcached cache.
+			wp_suspend_cache_addition( true );
+		}
+		try {
+			return Export_Reads::scope(
+				function ( Export_Reads $reads ) use ( $settings, $now, $writer ) {
+					$this->reads = $reads;
+					return $this->write_export( $settings, $now, $writer );
+				},
+				$this->budget
+			);
+		} finally {
+			$writer->close();
+			$this->release_cache();
+			wp_suspend_cache_addition( $suspended );
+		}
+	}
+
+	/**
+	 * Release only the request's runtime cache when its implementation supports it.
+	 */
+	private function release_cache(): void {
+		if ( wp_cache_supports( 'flush_runtime' ) ) {
+			wp_cache_flush_runtime();
+		}
+	}
+
+	/**
+	 * Extract records independently of how the writer stores complete items.
+	 *
+	 * @param array      $settings Validated settings snapshot.
+	 * @param int|null   $now Optional fixed generation time.
+	 * @param Wxr_Writer $writer Output owner.
+	 * @return array
+	 */
+	private function write_export( array $settings, ?int $now, Wxr_Writer $writer ): array {
 		$source            = untrailingslashit( home_url( '/' ) );
 		$source_site       = wp_parse_url( $source );
 		$this->source_site = is_array( $source_site ) ? $source_site : array();
 		$this->public_url  = $settings['public_url'];
-		$this->rewriter    = new Media_Rewriter( $settings['media_rules'] );
-		$items             = '';
-		$page              = 1;
-		do {
-			$this->budget->check( strlen( $items ) );
-			$query = new \WP_Query(
-				array(
-					'post_type'           => array( 'post', 'page' ),
-					'post_status'         => 'publish',
-					'has_password'        => false,
-					'posts_per_page'      => 100,
-					'paged'               => $page++,
-					'orderby'             => 'ID',
-					'order'               => 'ASC',
-					'no_found_rows'       => true,
-					'ignore_sticky_posts' => true,
-					'suppress_filters'    => false,
-				)
-			);
-			$posts = $query->posts;
-			foreach ( $posts as $post ) {
-				if ( 'publish' !== $post->post_status || '' !== $post->post_password || ! in_array( $post->post_type, array( 'post', 'page' ), true ) ) {
-					continue;
+		$this->rewriter    = new Media_Rewriter( $settings['media_rules'], $this->budget );
+		$this->authors     = array();
+		$this->categories  = array();
+		$this->tags        = array();
+		$this->attachments = array();
+		$this->public_ids  = array();
+		$this->counts      = array_fill_keys( array( 'posts', 'pages', 'media', 'menus' ), 0 );
+		$this->body_policy = new Content_Body();
+		foreach ( ( new Content_Reader( $this->budget ) )->pages() as $page ) {
+			foreach ( $this->reads->documents( $page ) as $posts ) {
+				foreach ( $posts as $post ) {
+					if ( 'publish' !== $post->post_status || '' !== $post->post_password || ! in_array( $post->post_type, array( 'post', 'page' ), true ) ) {
+						continue; }
+					$this->public_ids[ $post->ID ] = $post->post_type;
+					++$this->counts[ 'post' === $post->post_type ? 'posts' : 'pages' ];
+					$this->budget->check( strlen( $post->post_content ) + strlen( $post->post_excerpt ) );
+					$writer->item( $this->document( $post ), (int) $post->ID );
 				}
-				$this->public_ids[ $post->ID ] = $post->post_type;
-				++$this->counts[ 'post' === $post->post_type ? 'posts' : 'pages' ];
-				$this->budget->check( strlen( $items ) + strlen( $post->post_content ) + strlen( $post->post_excerpt ) );
-				$items .= $this->document( $post );
-				$this->budget->check( strlen( $items ) );
+				unset( $posts, $post );
+				$this->release_cache();
 			}
-			$batch_count = count( $posts );
-			unset( $query, $posts, $post );
-		} while ( 100 === $batch_count );
-
-		$menu_data = $this->menus( Menus::normalize( $settings['menu_mapping'] ?? array() ) );
-		$this->budget->check( strlen( $items ) + strlen( $menu_data['items'] ) );
-		$items .= $menu_data['items'];
-		ksort( $this->attachments, SORT_NUMERIC );
-		foreach ( array_keys( $this->attachments ) as $id ) {
-			$this->budget->check( strlen( $items ) );
-			$items .= $this->attachment( $id );
-			$this->budget->check( strlen( $items ) );
+			unset( $page );
 		}
-		$source  = '' !== $this->public_url ? $this->public_url : $source;
-		$site    = self::site_metadata();
-		$channel = $this->element( 'title', $site['title'] )
+
+		$menu_terms = $this->menus( Menus::normalize( $settings['menu_mapping'] ?? array() ), $writer );
+		$this->release_cache();
+		$this->write_media( $writer );
+		$base   = self::json( $this->base( $settings ) );
+		$source = '' !== $this->public_url ? $this->public_url : $source;
+		$this->budget->check( strlen( $base ) );
+		$result = $writer->finish(
+			$this->channel( $source, $menu_terms ),
+			$this->element( 'pubDate', gmdate( 'D, d M Y H:i:s +0000', $now ?? time() ) ),
+			$base,
+			$now
+		);
+		return array_merge(
+			$result,
+			array(
+				'base'             => $base,
+				'counts'           => $this->counts,
+				'bytes'            => array(
+					'wxr'  => $result['wxr_bytes'],
+					'base' => strlen( $base ),
+				),
+				'rewritten_values' => $this->rewriter->replacements,
+				'warnings'         => $this->body_policy->warnings(),
+			)
+		);
+	}
+
+	/**
+	 * Yield channel metadata in the original order, before item records.
+	 *
+	 * @param string $source Public site URL.
+	 * @param array  $menu_terms Menu taxonomy XML.
+	 * @return \Generator<string>
+	 */
+	private function channel( string $source, array $menu_terms ): \Generator {
+		$site = self::site_metadata();
+		yield $this->element( 'title', $site['title'] )
 			. $this->element( 'description', $site['description'] )
 			. $this->element( 'link', $source )
 			. $this->element( 'language', $site['locale'] )
@@ -152,51 +237,39 @@ final class Exporter {
 			. $this->element( 'wp:base_blog_url', $source );
 		ksort( $this->authors, SORT_NUMERIC );
 		foreach ( $this->authors as $id => $name ) {
-			$channel .= "<wp:author>\n"
-				. $this->element( 'wp:author_id', (string) $id )
-				. $this->element( 'wp:author_login', 'author-' . $id )
-				. $this->element( 'wp:author_display_name', $name ) . "</wp:author>\n";
+			yield array(
+				'kind' => 'authors',
+				'id'   => (int) $id,
+				'xml'  => "<wp:author>\n"
+									. $this->element( 'wp:author_id', (string) $id )
+									. $this->element( 'wp:author_login', 'author-' . $id )
+									. $this->element( 'wp:author_display_name', $name ) . "</wp:author>\n",
+			);
 		}
 		ksort( $this->categories, SORT_NUMERIC );
 		foreach ( $this->categories as $term ) {
-			$parent   = $term->parent ? get_term( $term->parent, 'category' ) : null;
-			$channel .= "<wp:category>\n" . $this->element( 'wp:term_id', (string) $term->term_id )
-				. $this->element( 'wp:category_nicename', $term->slug )
-				. $this->element( 'wp:cat_name', self::display_text( $term->name ) )
-				. $this->element( 'wp:category_parent', $parent instanceof \WP_Term ? $parent->slug : '' )
-				. $this->element( 'wp:category_description', self::html_text( $term->description ) ) . "</wp:category>\n";
+			$parent = $term->parent ? $this->reads->term( (int) $term->parent, 'category' ) : null;
+			yield array(
+				'kind' => 'categories',
+				'id'   => (int) $term->term_id,
+				'xml'  => "<wp:category>\n" . $this->element( 'wp:term_id', (string) $term->term_id )
+					. $this->element( 'wp:category_nicename', $term->slug )
+					. $this->element( 'wp:cat_name', self::display_text( $term->name ) )
+					. $this->element( 'wp:category_parent', $parent instanceof \WP_Term ? $parent->slug : '' )
+					. $this->element( 'wp:category_description', self::html_text( $term->description ) ) . "</wp:category>\n",
+			);
 		}
 		ksort( $this->tags, SORT_NUMERIC );
 		foreach ( $this->tags as $term ) {
-			$channel .= "<wp:tag>\n" . $this->element( 'wp:term_id', (string) $term->term_id )
-				. $this->element( 'wp:tag_slug', $term->slug ) . $this->element( 'wp:tag_name', self::display_text( $term->name ) )
-				. $this->element( 'wp:tag_description', self::html_text( $term->description ) ) . "</wp:tag>\n";
+			yield array(
+				'kind' => 'tags',
+				'id'   => (int) $term->term_id,
+				'xml'  => "<wp:tag>\n" . $this->element( 'wp:term_id', (string) $term->term_id )
+					. $this->element( 'wp:tag_slug', $term->slug ) . $this->element( 'wp:tag_name', self::display_text( $term->name ) )
+					. $this->element( 'wp:tag_description', self::html_text( $term->description ) ) . "</wp:tag>\n",
+			);
 		}
-		$this->budget->check( strlen( $channel ) + strlen( $menu_data['terms'] ) + strlen( $items ) );
-		$body = $channel . $menu_data['terms'] . $items;
-		unset( $channel, $menu_data, $items );
-		$prefix = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
-			. '<rss version="2.0" xmlns:wp="http://wordpress.org/export/1.2/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:dc="http://purl.org/dc/elements/1.1/">' . "\n<channel>\n";
-		$wxr    = $prefix . $this->element( 'pubDate', gmdate( 'D, d M Y H:i:s +0000', $now ?? time() ) ) . $body . "</channel>\n</rss>\n";
-		$base   = self::json( $this->base( $settings ) );
-		$this->budget->check( strlen( $wxr ) + strlen( $base ) );
-		$hash = hash_init( 'sha256' );
-		hash_update( $hash, "zeropress-wordpress-wxr-v1\0" . $prefix );
-		hash_update( $hash, $body );
-		hash_update( $hash, "</channel>\n</rss>\n\0" );
-		hash_update( $hash, $base );
-		unset( $body );
-		return array(
-			'wxr'              => $wxr,
-			'base'             => $base,
-			'data_hash'        => hash_final( $hash ),
-			'counts'           => $this->counts,
-			'bytes'            => array(
-				'wxr'  => strlen( $wxr ),
-				'base' => strlen( $base ),
-			),
-			'rewritten_values' => $this->rewriter->replacements,
-		);
+		yield from $menu_terms;
 	}
 
 	/**
@@ -207,12 +280,15 @@ final class Exporter {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	private function document( \WP_Post $post ): string {
+		Content_Body::check( strlen( $post->post_content ), (int) $post->ID );
+		$content = $this->rewriter->content( $post->post_content );
+		$this->body_policy->record( max( strlen( $post->post_content ), strlen( $content ) ), (int) $post->ID );
 		$user                                = get_userdata( $post->post_author );
 		$this->authors[ $post->post_author ] = $user ? self::display_text( $user->display_name ) : __( 'Unknown author', 'zeropress-static' );
 		$xml                                 = "<item>\n" . $this->element( 'title', self::display_text( $post->post_title ) )
 			. $this->element( 'link', $this->site_link( get_permalink( $post ) ) )
 			. $this->element( 'dc:creator', 'author-' . $post->post_author )
-			. $this->element( 'content:encoded', $this->rewriter->content( $post->post_content ) )
+			. $this->element( 'content:encoded', $content )
 			. $this->element( 'excerpt:encoded', self::html_text( $this->rewriter->content( $post->post_excerpt ) ) );
 		foreach ( array(
 			'post_id'           => $post->ID,
@@ -235,6 +311,7 @@ final class Exporter {
 			$terms = false === $terms ? array() : $terms;
 			usort( $terms, static fn( $a, $b ) => $a->term_id <=> $b->term_id );
 			foreach ( $terms as $term ) {
+				$this->budget->check( strlen( $term->name ) + strlen( $term->slug ) );
 				if ( 'category' === $taxonomy ) {
 					$this->add_category( $term );
 				} else {
@@ -250,7 +327,7 @@ final class Exporter {
 		}
 		if ( preg_match_all( '/\bwp-image-(\d+)\b/', $post->post_content, $matches ) ) {
 			foreach ( $matches[1] as $id ) {
-				$this->attachments[ (int) $id ] = true;
+				$this->attachments[ (int) $id ] ??= false;
 			}
 		}
 		$this->block_attachments( parse_blocks( $post->post_content ) );
@@ -318,7 +395,7 @@ final class Exporter {
 		}
 		$this->categories[ $term->term_id ] = $term;
 		if ( $term->parent ) {
-			$parent = get_term( $term->parent, 'category' );
+			$parent = $this->reads->term( (int) $term->parent, 'category' );
 			if ( $parent instanceof \WP_Term ) {
 				$this->add_category( $parent );
 			}
@@ -336,12 +413,12 @@ final class Exporter {
 			if ( in_array( $block['blockName'], array( 'core/image', 'core/audio', 'core/video', 'core/file', 'core/cover', 'core/media-text', 'core/gallery' ), true ) ) {
 				foreach ( array( 'id', 'mediaId' ) as $key ) {
 					if ( ! empty( $block['attrs'][ $key ] ) && is_numeric( $block['attrs'][ $key ] ) ) {
-						$this->attachments[ (int) $block['attrs'][ $key ] ] = true;
+						$this->attachments[ (int) $block['attrs'][ $key ] ] ??= false;
 					}
 				}
 				foreach ( (array) ( $block['attrs']['ids'] ?? array() ) as $id ) {
 					if ( is_numeric( $id ) ) {
-						$this->attachments[ (int) $id ] = true;
+						$this->attachments[ (int) $id ] ??= false;
 					}
 				}
 			}
@@ -350,28 +427,91 @@ final class Exporter {
 	}
 
 	/**
+	 * Inspect all referenced URLs, then hydrate only selected featured images.
+	 *
+	 * @param Wxr_Writer $writer Complete-item output owner.
+	 * @throws Failure If a selected featured image disappears during generation.
+	 */
+	private function write_media( Wxr_Writer $writer ): void {
+		ksort( $this->attachments, SORT_NUMERIC );
+		$references    = new Media_References( $this->budget );
+		$featured_urls = array();
+		foreach ( $this->reads->attachments( array_keys( $this->attachments ), false ) as $batch ) {
+			foreach ( $batch as $id => $post ) {
+				$url = $this->reads->attachment_url( $post );
+				if ( ! $url ) {
+					continue;
+				}
+				// Preserve admission even for a URL whose record will be omitted.
+				Settings::url( strtok( $url, '?#' ) );
+				$references->add( (int) $id, $this->rewriter->url( $url ), $this->attachments[ $id ] );
+				if ( $this->attachments[ $id ] ) {
+					$featured_urls[ $id ] = $url;
+				}
+			}
+			unset( $batch, $post );
+			$this->release_cache();
+		}
+		$selected = $references->selected();
+		unset( $references );
+		$featured = array_keys( array_filter( array_intersect_key( $this->attachments, $selected ) ) );
+		$details  = $this->featured_media( $featured );
+		foreach ( $selected as $id => $url ) {
+			$this->budget->check();
+			if ( $this->attachments[ $id ] ) {
+				if ( ! $details->valid() || $id !== $details->key() ||
+					$this->reads->attachment_url( $details->current() ) !== $featured_urls[ $id ] ) {
+					throw new Failure( 'CONTENT_CHANGED', 409 );
+				}
+				$xml = $this->attachment( $id, $details->current(), $url );
+			} else {
+				// A real attachment URL preserves inference without unused metadata.
+				$xml = "<item>\n" . $this->element( 'wp:post_id', (string) $id )
+					. $this->element( 'wp:post_type', 'attachment' )
+					. $this->element( 'wp:status', 'inherit' )
+					. $this->element( 'wp:attachment_url', $url ) . "</item>\n";
+				++$this->counts['media'];
+			}
+			$writer->item( $xml, $id, 'attachments' );
+			if ( $this->attachments[ $id ] ) {
+				$details->next();
+			}
+		}
+	}
+
+	/**
+	 * Keep featured metadata scoped to the current admitted batch.
+	 *
+	 * @param array $ids Selected featured attachment IDs.
+	 * @return \Generator<int,object>
+	 */
+	private function featured_media( array $ids ): \Generator {
+		foreach ( $this->reads->attachments( $ids ) as $batch ) {
+			yield from $batch;
+			unset( $batch );
+			$this->release_cache();
+		}
+	}
+
+	/**
 	 * Export only required attachment metadata.
 	 *
-	 * @param int $id WordPress object ID.
+	 * @param int    $id WordPress object ID.
+	 * @param object $post Admitted private attachment projection.
+	 * @param string $url Previously admitted and rewritten URL.
 	 * @return string
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
-	private function attachment( int $id ): string {
-		$post = get_post( $id );
+	private function attachment( int $id, object $post, string $url ): string {
 		if ( ! $post || 'attachment' !== $post->post_type || ! in_array( $post->post_status, array( 'inherit', 'publish' ), true ) || '' !== $post->post_password ) {
 			return '';
 		}
-		$url = wp_get_attachment_url( $id );
-		if ( ! $url ) {
-			return '';
-		}
-		Settings::url( strtok( $url, '?#' ) );
 		$xml      = "<item>\n" . $this->element( 'title', self::display_text( $post->post_title ) )
 			. $this->element( 'wp:post_id', (string) $id )
 			. $this->element( 'wp:post_type', 'attachment' )
 			. $this->element( 'wp:status', 'inherit' )
 			. $this->element( 'wp:post_modified_gmt', $post->post_modified_gmt )
-			. $this->element( 'wp:attachment_url', $this->rewriter->url( $url ) );
+			. $this->element( 'wp:attachment_url', $url );
 		$metadata = wp_get_attachment_metadata( $id );
 		if ( is_array( $metadata ) ) {
 			$allowed = array();
@@ -412,14 +552,15 @@ final class Exporter {
 	/**
 	 * Export selected classic menus, excluding private content targets.
 	 *
-	 * @param array $mapping Output-to-source menu mapping.
+	 * @param array      $mapping Output-to-source menu mapping.
+	 * @param Wxr_Writer $writer Complete-item output owner.
+	 * @return array Menu taxonomy XML records.
 	 */
-	private function menus( array $mapping ): array {
-		$terms = '';
-		$items = '';
+	private function menus( array $mapping, Wxr_Writer $writer ): array {
+		$terms = array();
 		$menus = Menus::selected( $mapping );
 		foreach ( $menus as $menu ) {
-			$entries = wp_get_nav_menu_items( $menu, array( 'post_status' => 'publish' ) );
+			$entries = $this->reads->menu_items( $menu );
 			$entries = array_filter(
 				is_array( $entries ) ? $entries : array(),
 				function ( $entry ) {
@@ -437,13 +578,17 @@ final class Exporter {
 				}
 			);
 			++$this->counts['menus'];
-			$terms .= "<wp:term>\n" . $this->element( 'wp:term_id', (string) $menu->term_id )
-				. $this->element( 'wp:term_taxonomy', 'nav_menu' )
-				. $this->element( 'wp:term_slug', $menu->slug ) . $this->element( 'wp:term_name', self::display_text( $menu->name ) ) . "</wp:term>\n";
-			$ids    = array_fill_keys( array_map( static fn( $entry ) => $entry->ID, $entries ), true );
+			$terms[] = array(
+				'kind' => 'terms',
+				'id'   => (int) $menu->term_id,
+				'xml'  => "<wp:term>\n" . $this->element( 'wp:term_id', (string) $menu->term_id )
+					. $this->element( 'wp:term_taxonomy', 'nav_menu' )
+					. $this->element( 'wp:term_slug', $menu->slug ) . $this->element( 'wp:term_name', self::display_text( $menu->name ) ) . "</wp:term>\n",
+			);
+			$ids     = array_fill_keys( array_map( static fn( $entry ) => $entry->ID, $entries ), true );
 			usort( $entries, static fn( $a, $b ) => $a->menu_order === $b->menu_order ? ( $a->ID <=> $b->ID ) : ( $a->menu_order <=> $b->menu_order ) );
 			foreach ( $entries as $entry ) {
-				$items .= "<item>\n" . $this->element( 'title', self::display_text( $entry->title ) )
+				$item = "<item>\n" . $this->element( 'title', self::display_text( $entry->title ) )
 					. $this->element( 'wp:post_id', (string) $entry->ID ) . $this->element( 'wp:post_type', 'nav_menu_item' )
 					. $this->element( 'wp:status', 'publish' ) . $this->element( 'wp:menu_order', (string) $entry->menu_order )
 					. '<category domain="nav_menu" nicename="' . self::attribute( $menu->slug ) . '">' . self::cdata( self::display_text( $menu->name ) ) . "</category>\n";
@@ -455,38 +600,40 @@ final class Exporter {
 					'_menu_item_type'             => $entry->type,
 					'_menu_item_url'              => $this->site_link( $entry->url ),
 				) as $key => $value ) {
-					$items .= $this->meta( $key, (string) $value );
+					$item .= $this->meta( $key, (string) $value );
 				}
-				$items .= "</item>\n";
-				$this->budget->check( strlen( $items ) );
+				$writer->item( $item . "</item>\n", (int) $entry->ID, 'menus' );
+				unset( $item );
 			}
 		}
-		return array(
-			'terms' => $terms,
-			'items' => $items,
-		);
+		return $terms;
 	}
 
 	/** Read WordPress site values shared by the settings summary and export. */
 	public static function site_metadata(): array {
-		$site = array(
-			'title'          => self::display_text( get_option( 'blogname' ) ),
-			'description'    => self::display_text( get_option( 'blogdescription' ) ),
-			'locale'         => str_replace( '_', '-', get_locale() ),
-			'timezone'       => wp_timezone_string(),
-			'posts_per_page' => max( 1, (int) get_option( 'posts_per_page', 10 ) ),
-			'favicon'        => array(),
-		);
-		foreach ( array(
-			'icon'             => 512,
-			'apple_touch_icon' => 180,
-		) as $key => $size ) {
-			$url = get_site_icon_url( $size );
-			if ( '' !== $url ) {
-				$site['favicon'][ $key ] = $url;
+		return Export_Reads::scope(
+			static function ( Export_Reads $reads ): array {
+				$reads->prime_posts( array( (int) get_option( 'site_icon' ) ) );
+				$site = array(
+					'title'          => self::display_text( get_option( 'blogname' ) ),
+					'description'    => self::display_text( get_option( 'blogdescription' ) ),
+					'locale'         => str_replace( '_', '-', get_locale() ),
+					'timezone'       => wp_timezone_string(),
+					'posts_per_page' => max( 1, (int) get_option( 'posts_per_page', 10 ) ),
+					'favicon'        => array(),
+				);
+				foreach ( array(
+					'icon'             => 512,
+					'apple_touch_icon' => 180,
+				) as $key => $size ) {
+					$url = get_site_icon_url( $size );
+					if ( '' !== $url ) {
+						$site['favicon'][ $key ] = $url;
+					}
+				}
+				return $site;
 			}
-		}
-		return $site;
+		);
 	}
 
 	/**
@@ -585,6 +732,7 @@ final class Exporter {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	private function element( string $tag, string $text ): string {
+		$this->budget->check( strlen( $text ) );
 		return '<' . $tag . '>' . self::cdata( $text ) . '</' . $tag . ">\n";
 	}
 

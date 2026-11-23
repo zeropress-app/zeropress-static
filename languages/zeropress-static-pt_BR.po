@@ -13,6 +13,9 @@ msgstr "Um token do GitHub está cadastrado."
 msgid "A Turnstile Secret Key is registered."
 msgstr "Uma chave secreta do Turnstile está cadastrada."
 
+msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
+msgstr "O conteúdo de um post ou página excede o limite de 4 MiB. Divida ou reduza o conteúdo e prepare os dados novamente."
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "Um menu do WordPress selecionado não está disponível. Recarregue as configurações e selecione um menu novamente."
 
@@ -373,6 +376,9 @@ msgstr "Limite de memória do PHP: {limit}. Memória necessária estimada: {esti
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "Limite de tempo do PHP: {limit} s. Tempo permitido para a solicitação: {budget} s. Decorrido: {elapsed} s."
 
+msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
+msgstr "ID do post: {id}. Tamanho do conteúdo: {bytes} bytes UTF-8."
+
 msgid "Posts per page"
 msgstr "Posts por página"
 
@@ -429,6 +435,9 @@ msgstr "Branch de publicação"
 
 msgid "Publishing destination"
 msgstr "Destino da publicação"
+
+msgid "Publishing help"
+msgstr "Ajuda para publicar"
 
 msgid "Publishing target"
 msgstr "Destino da publicação"
@@ -595,6 +604,9 @@ msgstr "URL do site estático"
 msgid "Subscribe"
 msgstr "Inscrever-se"
 
+msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
+msgstr "O armazenamento temporário está indisponível. Peça ao provedor de hospedagem para verificar o espaço livre e as permissões dos arquivos temporários do PHP e prepare os dados novamente."
+
 msgid "Test connection"
 msgstr "Testar conexão"
 
@@ -757,6 +769,9 @@ msgstr "URL da API REST do WordPress"
 msgid "WordPress content changed. Prepare again to include the latest data."
 msgstr "O conteúdo do WordPress foi alterado. Prepare os dados novamente para incluir as alterações mais recentes."
 
+msgid "WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again."
+msgstr "Não foi possível ler os dados do WordPress com segurança. Revise metadados incomuns e plugins que alteram conteúdo ou mídia e prepare os dados novamente."
+
 msgid "WordPress menu"
 msgstr "Menu do WordPress"
 
@@ -774,3 +789,6 @@ msgstr "ZeroPress Static – Publicador de sites estáticos"
 
 msgid "ZeroPress publish"
 msgstr "Publicação com ZeroPress"
+
+msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
+msgstr "{count} posts ou páginas têm conteúdo de 256 KiB ou mais (máximo: {bytes} bytes UTF-8). Considere dividi-los em posts menores. Exemplos de IDs: {ids}."
