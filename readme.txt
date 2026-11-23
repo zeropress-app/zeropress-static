@@ -4,7 +4,7 @@ Tags: jamstack, static site, publish
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -217,11 +217,34 @@ Your settings are stored in WordPress, with saved GitHub tokens and Turnstile Se
 == Screenshots ==
 
 1. Prepare publishing data, review the result, and publish to GitHub.
-2. Settings navigation and site information from WordPress.
-3. Control WordPress comment display, writing, and bot protection.
-4. Configure newsletter connection, display and credits.
+2. Prepare and publish without leaving the WordPress editor.
+3. Review publication history, results, and GitHub commits.
+4. Configure the static site address, posts per page, and search-engine preference.
+5. Control WordPress comment display, writing, and bot protection.
+6. Configure newsletter connection, display and credits.
 
 == Changelog ==
+
+= 1.1.0 =
+
+More control over exports and more reliable publishing for larger sites.
+
+* Choose Automatic, Single XML or Split XML for GitHub publishing.
+* Continue interrupted publications on supported Linux hosts while the original approval remains valid.
+* Check uncertain publication results from the publishing screen before trying again.
+* Reduce memory use when preparing and publishing larger sites.
+* Reuse unchanged export files and reduce the data uploaded after small content edits.
+* Verify download completion before saving a file, so interrupted transfers are not saved as complete exports.
+* Improve cleanup of temporary export files after interrupted work.
+* Support small single XML exports on Windows/IIS without external tools, and let Linux administrators choose **Memory** or **Files** processing in settings.
+* Warn when a post or page body reaches 256 KiB and stop preparation and publication if any eligible body exceeds 4 MiB. Saved WordPress content is not changed.
+* Review menus, media information and publishing data size before publishing.
+* View the latest 100 publication attempts and delete finished history records without changing GitHub commits or the deployed site.
+* Set the static site's posts per page separately from WordPress Reading settings.
+
+WXR downloads remain a single XML file, with build settings in a separate JSON file. See the [format and starter upgrade guide](https://github.com/zeropress-app/zeropress-static#split-publication-and-starter-compatibility) for existing starter projects.
+
+Windows/IIS supports small single XML exports using memory. On Linux, **Files** processing supports larger exports and publication resume; memory processing is also available in settings. See the [publishing limits and hosting requirements](https://github.com/zeropress-app/zeropress-static#export-scope-and-limits) before choosing a host.
 
 = 1.0.0 =
 

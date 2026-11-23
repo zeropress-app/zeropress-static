@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ZeroPress Static
  * Description: Publish your WordPress content to a static site with ZeroPress and GitHub.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.8
  * Requires PHP: 8.2
  * Author: ZeroPress
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSION     = '1.0.0';
+const VERSION     = '1.1.0';
 const PLUGIN_FILE = __FILE__;
 
 foreach ( array( 'failure', 'resource-budget', 'content-body', 'content-reader', 'serialized-metadata', 'export-reads', 'settings', 'media-rewriter', 'media-references', 'menu-destinations', 'menus', 'private-filesystem', 'publication-runtime', 'memory-lock', 'export-storage', 'export-file', 'wxr-bundle', 'wxr-record-store', 'wxr-part-plan', 'wxr-writer', 'export-review', 'exporter', 'github', 'publisher', 'publication-progress', 'publication-history', 'publication-store', 'publication-snapshot', 'publication-session', 'download-response', 'admin', 'comment-rate-limit', 'comments', 'rest-access' ) as $zeropress_static_component ) {

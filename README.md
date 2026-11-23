@@ -12,7 +12,6 @@ The static site uses a ZeroPress theme. Your active WordPress theme is not expor
 Requires WordPress 6.8+, PHP 8.2+, and a single-site installation.
 Saving GitHub tokens and Turnstile secret keys requires PHP OpenSSL with
 AES-256-GCM support.
-License: GPL-2.0-or-later.
 
 The admin interface is available in English, Korean, Japanese, Spanish (Spain),
 German, French and Portuguese (Brazil). It follows
@@ -104,7 +103,7 @@ want search engines to crawl it. This option starts off. Save the site settings,
 prepare and publish again. You can configure menus, comments, newsletters and media URL
 replacements later as needed.
 
-GitHub publishing replaces `wordpress-export.xml` and `wxr-import-base.json` in one
+Publishing updates the WXR files and generated build settings together in one
 commit. Manage their settings in the plugin; direct edits to the generated files are
 replaced on the next publication.
 
@@ -726,6 +725,18 @@ complete generation; do not keep XML and the manifest side by side.
 
 ## Export scope and limits
 
+The export includes published posts and pages without passwords, their used
+categories and tags, public author display names, selected classic menus, and
+required media metadata. Drafts, private or scheduled content, comment records,
+login names, user email addresses and arbitrary post metadata are excluded.
+Information written into published content remains part of that content.
+
+Saved HTML and static block markup are exported. Shortcodes, dynamic blocks and
+page builders are not executed; custom post types and block navigation are not
+converted. Excerpts and taxonomy descriptions are exported as plain text.
+Titles and other display text are decoded once to preserve characters such as
+apostrophes and ampersands.
+
 Each eligible post/page body warns from **256 KiB (262,144 UTF-8 bytes)** and
 blocks preparation/publication above **4 MiB (4,194,304 bytes)**. Exactly 4 MiB is
 allowed. Markup, whitespace and inline data count; linked media files do not.
@@ -792,19 +803,6 @@ verification of an uncertain GitHub publication.
 Downloads are saved only after the browser has received the complete file and checked its decoded byte count against the preparation result. An interrupted transfer can still start with HTTP 200; the updated plugin does not treat that status alone as success or append an error document to a partial file. If no file was saved, retry the download. If it keeps failing, ask your host to review connection and request time limits. Expired or changed preparations require preparing again.
 
 The server retains bounded reads, the original request budget and the selected backend's ownership lock throughout delivery. It sends `Content-Length` only when PHP's output path is known to preserve bytes; the browser also checks downloads with compressed or reframed responses. This is a completion check, not a content checksum, a resumable download or an extension of hosting time limits. Download failures do not retry or clear a GitHub publication whose outcome is uncertain.
-
-
-The export includes published posts and pages without passwords, their used
-categories and tags, public author display names, selected classic menus, and
-required media metadata. Drafts, private or scheduled content, comment records,
-login names, user email addresses and arbitrary post metadata are excluded.
-Information written into published content remains part of that content.
-
-Saved HTML and static block markup are exported. Shortcodes, dynamic blocks and
-page builders are not executed; custom post types and block navigation are not
-converted. Excerpts and taxonomy descriptions are exported as plain text.
-Titles and other display text are decoded once to preserve characters such as
-apostrophes and ampersands.
 
 Publishing is a manual full export. Preparation, downloads and publication are
 separate operations. Downloads regenerate the data; Files publication captures a
@@ -1126,3 +1124,7 @@ to reproduce, if available.
 
 Report security vulnerabilities through [private vulnerability
 reporting](https://github.com/zeropress-app/zeropress-static/security/advisories/new).
+
+## License
+
+[GPL-2.0-or-later](LICENSE)

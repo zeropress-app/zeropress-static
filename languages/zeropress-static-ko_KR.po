@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ZeroPress Static 1.0.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: ko_KR\nPlural-Forms: nplurals=1; plural=0;\n"
+msgstr "Project-Id-Version: ZeroPress Static 1.1.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: ko_KR\nPlural-Forms: nplurals=1; plural=0;\n"
 
 msgid "(No label)"
 msgstr "(문구 없음)"
