@@ -682,6 +682,9 @@ msgstr ""
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr ""
 
+msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
+msgstr ""
+
 msgid "The download is ready. Check your browser downloads."
 msgstr ""
 

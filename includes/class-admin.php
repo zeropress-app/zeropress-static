@@ -206,18 +206,7 @@ final class Admin {
 				case 'download':
 					$file    = Settings::string( $input, 'file' );
 					$content = Publisher::download_file( Settings::string( $input, 'receipt' ), $file, Resource_Budget::from_request( true ) );
-					header( 'Content-Type: application/octet-stream' );
-					header( 'X-Content-Type-Options: nosniff' );
-					header( 'Content-Disposition: attachment; filename="' . GitHub::FILES[ $file ] . '"' );
-					try {
-						foreach ( $content->chunks() as $chunk ) {
-							// The attachment must retain its original XML/JSON bytes.
-							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							echo $chunk;
-						}
-					} finally {
-						$content->close();
-					}
+					Download_Response::send( $content, $file );
 					exit;
 				default:
 					throw new Failure( 'INVALID_REQUEST' );
@@ -934,6 +923,7 @@ final class Admin {
 			'publish_committing'              => __( 'Applying changes on GitHub…', 'zeropress-static' ),
 			'publish_verifying'               => __( 'Verifying the GitHub publication result…', 'zeropress-static' ),
 			'downloading'                     => __( 'Preparing download…', 'zeropress-static' ),
+			'DOWNLOAD_INCOMPLETE'             => __( 'The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits.', 'zeropress-static' ),
 			'downloaded'                      => __( 'The download is ready. Check your browser downloads.', 'zeropress-static' ),
 			'test_changed'                    => __( 'Connection details changed. Test again to check these values.', 'zeropress-static' ),
 			'INVALID_SETTINGS'                => __( 'Check the values in this section.', 'zeropress-static' ),

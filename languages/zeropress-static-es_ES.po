@@ -685,6 +685,9 @@ msgstr "La URL de la API REST debe terminar en /wp-json/wp/v2."
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr "No se ha podido cargar el diálogo de confirmación. Recarga esta página y vuelve a intentarlo."
 
+msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
+msgstr "No se pudo completar la descarga, por lo que no se ha guardado ningún archivo. Intenta descargarlo de nuevo. Si el problema persiste, pide a tu proveedor de alojamiento que revise la conexión y los límites de tiempo de las solicitudes."
+
 msgid "The download is ready. Check your browser downloads."
 msgstr "La descarga está lista. Consulta las descargas de tu navegador."
 

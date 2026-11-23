@@ -29,12 +29,20 @@ window.zeroPressPublication = function createPublication(config) {
 	}
 
 	function helpUrl(code) {
-		if (['CONTENT_BODY_TOO_LARGE', 'SOURCE_READ_UNBOUNDED', 'REQUEST_TIME_LIMIT_EXCEEDED', 'PUBLICATION_STORAGE_UNAVAILABLE'].includes(code)) return 'https://github.com/zeropress-app/zeropress-static#export-scope-and-limits';
+		if (['CONTENT_BODY_TOO_LARGE', 'SOURCE_READ_UNBOUNDED', 'DOWNLOAD_INCOMPLETE', 'REQUEST_TIME_LIMIT_EXCEEDED', 'PUBLICATION_STORAGE_UNAVAILABLE'].includes(code)) return 'https://github.com/zeropress-app/zeropress-static#export-scope-and-limits';
 		return ['WXR_SPLIT_REQUIRED', 'WXR_SINGLE_MEMORY_LIMIT', 'WXR_SPLIT_UNSUPPORTED', 'WXR_TARGET_INVALID', 'WXR_RECORD_TOO_LARGE', 'WXR_BUNDLE_LIMIT_EXCEEDED', 'EXPORT_STORAGE_UNAVAILABLE', 'GITHUB_PAYLOAD_TOO_LARGE', 'MEMORY_LIMIT_EXCEEDED'].includes(code)
 			? 'https://github.com/zeropress-app/zeropress-starter-wxr#split-wxr-input' : '';
 	}
 
+	function downloadError(code = 'DOWNLOAD_INCOMPLETE') {
+		const error = new Error(failureMessage(code));
+		error.code = code;
+		return error;
+	}
 	async function request(operation, extra = {}, download = false, signal) {
+		const isDownload = operation === 'download';
+		const expectedBytes = download?.expectedBytes;
+		if (isDownload && (!Number.isSafeInteger(expectedBytes) || expectedBytes <= 0)) throw downloadError('PREPARATION_INVALID');
 		let response;
 		try {
 			response = await fetch(config.url, {
@@ -42,11 +50,29 @@ window.zeroPressPublication = function createPublication(config) {
 				body: new URLSearchParams({ action: 'zeropress_static', nonce: config.nonce, payload: JSON.stringify({ operation, ...extra }) }),
 			});
 		} catch {
+			if (isDownload) throw downloadError();
 			const error = new Error(message(operation === 'publish' ? 'unknown' : 'error'));
 			error.uncertain = operation === 'publish';
 			throw error;
 		}
-		if (download && response.ok && response.headers.get('Content-Type')?.startsWith('application/octet-stream')) return response.blob();
+		if (isDownload) {
+			const type = response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase();
+			if (response.status === 200 && type === 'application/octet-stream') {
+				let blob;
+				try { blob = await response.blob(); } catch { throw downloadError(); }
+				// Fetch decodes compression. Compare against the captured preparation,
+				// never a proxy's Content-Length or a rounded display size.
+				if (blob.size !== expectedBytes) throw downloadError();
+				return blob;
+			}
+			const failure = type === 'application/json' ? await response.json().catch(() => null) : null;
+			if (failure?.success === false && typeof failure.data?.code === 'string') {
+				const error = downloadError(failure.data.code);
+				error.message = failureMessage(failure.data.code, failure.data.details);
+				throw error;
+			}
+			throw downloadError();
+		}
 		const result = await response.json().catch(() => null);
 		if (!response.ok || !result?.success) {
 			const error = new Error(failureMessage(result?.data?.code, result?.data?.details));

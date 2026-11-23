@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 const VERSION     = '1.0.0';
 const PLUGIN_FILE = __FILE__;
 
-foreach ( array( 'failure', 'resource-budget', 'content-body', 'content-reader', 'serialized-metadata', 'export-reads', 'settings', 'media-rewriter', 'media-references', 'menus', 'export-storage', 'export-file', 'wxr-bundle', 'wxr-record-store', 'wxr-part-plan', 'wxr-writer', 'exporter', 'github', 'publisher', 'publication-progress', 'publication-store', 'publication-snapshot', 'publication-session', 'admin', 'comment-rate-limit', 'comments', 'rest-access' ) as $zeropress_static_component ) {
+foreach ( array( 'failure', 'resource-budget', 'content-body', 'content-reader', 'serialized-metadata', 'export-reads', 'settings', 'media-rewriter', 'media-references', 'menus', 'export-storage', 'export-file', 'wxr-bundle', 'wxr-record-store', 'wxr-part-plan', 'wxr-writer', 'exporter', 'github', 'publisher', 'publication-progress', 'publication-store', 'publication-snapshot', 'publication-session', 'download-response', 'admin', 'comment-rate-limit', 'comments', 'rest-access' ) as $zeropress_static_component ) {
 	require_once __DIR__ . '/includes/class-' . $zeropress_static_component . '.php';
 }
 

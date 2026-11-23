@@ -702,12 +702,15 @@
 	});
 	root.querySelectorAll('[data-download]').forEach((button) => button.addEventListener('click', () => {
 		if (!prepared || busy || confirmation) return;
+		const file = button.dataset.download;
+		const receipt = prepared.receipt;
+		const expectedBytes = prepared.bytes?.[file];
 		run(button, 'download', 'downloading', async () => {
-			const blob = await request('download', { receipt: prepared.receipt, file: button.dataset.download }, true);
+			const blob = await request('download', { receipt, file }, { expectedBytes });
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = button.dataset.download === 'wxr' ? 'wordpress-export.xml' : 'wxr-import-base.json';
+			link.download = file === 'wxr' ? 'wordpress-export.xml' : 'wxr-import-base.json';
 			link.click();
 			setTimeout(() => URL.revokeObjectURL(url), 1000);
 			notice('download', message('downloaded'));

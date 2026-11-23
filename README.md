@@ -617,6 +617,11 @@ These checks cannot bound allocations performed inside third-party callbacks.
 They do not change private file ownership, cleanup, final source validation or
 verification of an uncertain GitHub publication.
 
+Downloads are saved only after the browser has received the complete file and checked its decoded byte count against the preparation result. An interrupted transfer can still start with HTTP 200; the updated plugin does not treat that status alone as success or append an error document to a partial file. If no file was saved, retry the download. If it keeps failing, ask your host to review connection and request time limits. Expired or changed preparations require preparing again.
+
+The server retains bounded reads, the original request budget and the private file's ownership lock throughout delivery. It sends `Content-Length` only when PHP's output path is known to preserve bytes; the browser also checks downloads with compressed or reframed responses. This is a completion check, not a content checksum, a resumable download or an extension of hosting time limits. Download failures do not retry or clear a GitHub publication whose outcome is uncertain.
+
+
 The export includes published posts and pages without passwords, their used
 categories and tags, public author display names, selected classic menus, and
 required media metadata. Drafts, private or scheduled content, comment records,

@@ -685,6 +685,9 @@ msgstr "REST API URL の末尾は /wp-json/wp/v2 にしてください。"
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr "確認画面を読み込めませんでした。このページを再読み込みしてから、もう一度お試しください。"
 
+msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
+msgstr "ダウンロードを完了できなかったため、ファイルは保存されませんでした。もう一度ダウンロードしてください。問題が続く場合は、接続状況とリクエストの制限時間をホスティング事業者に確認してください。"
+
 msgid "The download is ready. Check your browser downloads."
 msgstr "ダウンロードの準備ができました。ブラウザーのダウンロード一覧を確認してください。"
 
