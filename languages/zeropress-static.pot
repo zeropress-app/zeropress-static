@@ -313,6 +313,9 @@ msgstr ""
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr ""
 
+msgid "GitHub did not return a recognized repository visibility. Check the connection and prepare again."
+msgstr ""
+
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr ""
 
@@ -344,6 +347,9 @@ msgid "Icon URLs for publishing"
 msgstr ""
 
 msgid "Information from WordPress"
+msgstr ""
+
+msgid "Internal"
 msgstr ""
 
 msgid "Learn more about API protection"
@@ -457,6 +463,9 @@ msgstr ""
 msgid "Preparing download…"
 msgstr ""
 
+msgid "Private"
+msgstr ""
+
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr ""
 
@@ -464,6 +473,9 @@ msgid "Processing method"
 msgstr ""
 
 msgid "Processing method saved. Prepare again before downloading or publishing."
+msgstr ""
+
+msgid "Public"
 msgstr ""
 
 msgid "Public access to this REST API is restricted."
@@ -557,6 +569,9 @@ msgid "Remove replacement"
 msgstr ""
 
 msgid "Repository to select:"
+msgstr ""
+
+msgid "Repository visibility"
 msgstr ""
 
 msgid "Repository, branch or required export files not found. Check access and the starter input files."
@@ -757,6 +772,9 @@ msgstr ""
 msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
 msgstr ""
 
+msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
+msgstr ""
+
 msgid "The request could not be completed. Please retry."
 msgstr ""
 
@@ -826,6 +844,9 @@ msgstr ""
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr ""
 
+msgid "This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files."
+msgstr ""
+
 msgid "This section is saved."
 msgstr ""
 
@@ -875,6 +896,9 @@ msgid "Turnstile Site Key"
 msgstr ""
 
 msgid "Unavailable menu (ID {id})"
+msgstr ""
+
+msgid "Unconfirmed"
 msgstr ""
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."

@@ -105,6 +105,7 @@ final class Export_Reads {
 	private function rows( string $sql ): array {
 		global $wpdb;
 		$this->budget->check();
+		// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter -- Internal callers use fixed identifiers, integer IDs, prepared values or WordPress-generated SQL.
 		$rows = $wpdb->get_results( $sql );
 		if ( $wpdb->last_error || ! is_array( $rows ) ) {
 			throw new Failure( 'SOURCE_READ_FAILED', 503 );
@@ -525,11 +526,13 @@ final class Export_Reads {
 			}
 		}
 		if ( ! $url ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Preserve the core GUID filter without loading the attachment body.
 			$url = apply_filters( 'get_the_guid', $post->guid, (int) $post->ID );
 		}
 		if ( is_ssl() && ! is_admin() && 'wp-login.php' !== $pagenow ) {
 			$url = set_url_scheme( $url );
 		}
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Preserve the existing core attachment URL filter for other plugins.
 		$url = apply_filters( 'wp_get_attachment_url', $url, (int) $post->ID );
 		$this->budget->check( is_string( $url ) ? strlen( $url ) : 0 );
 		return $url ? $url : false;

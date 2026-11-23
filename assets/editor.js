@@ -174,21 +174,17 @@
 				setBusy('');
 			}
 		}
-		const target = prepared?.target || config.settings;
-		const repositoryUrl = 'https://github.com/' + target.repository.split('/').map(encodeURIComponent).join('/');
+		const target = prepared ? prepared.target || config.settings : session?.target || config.settings;
 		const canPublish = !session && prepared?.state === 'ready' && !!prepared.receipt;
 		return el(Modal, {
 			title: message('editor_title'), className: 'zpsp-editor-modal', onRequestClose: close,
 			shouldCloseOnClickOutside: false, shouldCloseOnEsc: !busy, isDismissible: !busy,
 		}, el('div', { className: 'zpsp' },
 			el('p', null, message('editor_scope')),
-			el('dl', { className: 'zpsp-target' },
-				el('dt', null, message('confirm_repository')),
-				el('dd', null, el(ExternalLink, { href: repositoryUrl }, target.repository)),
-				el('dt', null, message('confirm_branch')), el('dd', null, target.branch),
-				postUrl && el(window.wp.element.Fragment, null,
-					el('dt', null, message('editor_site')),
-					el('dd', null, el(ExternalLink, { href: postUrl }, postUrl)))),
+			publication.repositoryView(el, target),
+			postUrl && el('dl', { className: 'zpsp-target' },
+				el('dt', null, message('editor_site')),
+				el('dd', null, el(ExternalLink, { href: postUrl }, postUrl))),
 			el('div', { role: 'status', 'aria-live': 'polite' }, gate && el('p', { className: 'notice notice-warning zpsp-feedback' }, message(gate))),
 			session && !publicationControl && el('section', { className: 'zpsp-publication-recovery' },
 				el('h2', null, message('session_title')), feedback?.text !== publication.resultMessage(session) && el('p', null, publication.resultMessage(session)),

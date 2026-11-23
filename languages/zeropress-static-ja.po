@@ -316,6 +316,9 @@ msgstr "GitHub への接続を確認しました。"
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr "GitHub が登録済みのトークンを受け付けませんでした。削除してトークンを再登録し、接続を確認してください。"
 
+msgid "GitHub did not return a recognized repository visibility. Check the connection and prepare again."
+msgstr "GitHub から認識できるリポジトリの公開範囲が返されませんでした。接続を確認し、もう一度準備してください。"
+
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "GitHub を一時的に利用できないか、リクエストがタイムアウトしました。"
 
@@ -348,6 +351,9 @@ msgstr "発行に使用するアイコン URL"
 
 msgid "Information from WordPress"
 msgstr "WordPress の情報"
+
+msgid "Internal"
+msgstr "内部"
 
 msgid "Learn more about API protection"
 msgstr "API 保護について詳しく見る"
@@ -460,6 +466,9 @@ msgstr "データを準備中…"
 msgid "Preparing download…"
 msgstr "ダウンロードを準備中…"
 
+msgid "Private"
+msgstr "非公開"
+
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "非公開の一時ストレージを利用できません。ホスティング事業者に権限と共有ストレージの確認を依頼し、再試行してください。"
 
@@ -468,6 +477,9 @@ msgstr "処理方式"
 
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr "処理方式を保存しました。ダウンロードや公開の前に再度準備してください。"
+
+msgid "Public"
+msgstr "公開"
 
 msgid "Public access to this REST API is restricted."
 msgstr "この REST API への公開アクセスは制限されています。"
@@ -561,6 +573,9 @@ msgstr "置換ルールを削除"
 
 msgid "Repository to select:"
 msgstr "選択するリポジトリ:"
+
+msgid "Repository visibility"
+msgstr "リポジトリの公開範囲"
 
 msgid "Repository, branch or required export files not found. Check access and the starter input files."
 msgstr "リポジトリ、ブランチ、または必要なエクスポートファイルが見つかりません。アクセス権とスターターの入力ファイルを確認してください。"
@@ -760,6 +775,9 @@ msgstr "準備したデータが無効です。もう一度準備してくださ
 msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
 msgstr "リポジトリの分割エクスポートが不完全か、変更されています。スターターの入力ファイルを確認し、完全な公開済みエクスポートを復元してから、もう一度準備してください。"
 
+msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
+msgstr "準備後にリポジトリの公開範囲が変更されました。もう一度準備し、公開範囲を確認してから公開してください。"
+
 msgid "The request could not be completed. Please retry."
 msgstr "リクエストを完了できませんでした。もう一度お試しください。"
 
@@ -829,6 +847,9 @@ msgstr "今回の公開では、既存の分割エクスポートファイルを
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "このプラグインに保存されているトークンを削除します。GitHub に発行するには、トークンを再登録してください。"
 
+msgid "This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files."
+msgstr "このリポジトリは公開されています。アップロードした WXR、サイト設定ファイル、変更履歴は誰でも閲覧できます。これらの元ファイルを公開したくない場合は、非公開リポジトリを使用してください。"
+
 msgid "This section is saved."
 msgstr "このセクションの設定を保存しました。"
 
@@ -879,6 +900,9 @@ msgstr "Turnstile Site Key"
 
 msgid "Unavailable menu (ID {id})"
 msgstr "利用できないメニュー (ID {id})"
+
+msgid "Unconfirmed"
+msgstr "未確認"
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "<strong>Repository access</strong> で <strong>Only select repositories</strong> を選択してください。"

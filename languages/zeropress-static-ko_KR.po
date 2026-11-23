@@ -316,6 +316,9 @@ msgstr "GitHub 연결을 확인했습니다."
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr "GitHub에서 등록된 토큰을 인증하지 못했습니다. 토큰을 삭제하고 다시 등록한 후 연결을 테스트하세요."
 
+msgid "GitHub did not return a recognized repository visibility. Check the connection and prepare again."
+msgstr "GitHub에서 확인 가능한 저장소 공개 범위를 반환하지 않았습니다. 연결을 확인하고 다시 준비하세요."
+
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "GitHub를 일시적으로 사용할 수 없거나 요청 시간이 초과되었습니다."
 
@@ -348,6 +351,9 @@ msgstr "발행에 사용할 아이콘 URL"
 
 msgid "Information from WordPress"
 msgstr "WordPress에서 가져온 정보"
+
+msgid "Internal"
+msgstr "내부 공개"
 
 msgid "Learn more about API protection"
 msgstr "API 보호 자세히 알아보기"
@@ -460,6 +466,9 @@ msgstr "데이터 준비 중…"
 msgid "Preparing download…"
 msgstr "다운로드 준비 중…"
 
+msgid "Private"
+msgstr "비공개"
+
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "비공개 임시 저장소를 사용할 수 없습니다. 호스팅 업체에 권한과 공유 저장소 확인을 요청한 뒤 다시 시도해 주세요."
 
@@ -468,6 +477,9 @@ msgstr "처리 방식"
 
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr "처리 방식을 저장했습니다. 다운로드하거나 발행하려면 다시 준비해 주세요."
+
+msgid "Public"
+msgstr "공개"
 
 msgid "Public access to this REST API is restricted."
 msgstr "이 REST API에 대한 공개 접근이 제한되어 있습니다."
@@ -561,6 +573,9 @@ msgstr "치환 규칙 제거"
 
 msgid "Repository to select:"
 msgstr "선택할 저장소:"
+
+msgid "Repository visibility"
+msgstr "저장소 공개 범위"
 
 msgid "Repository, branch or required export files not found. Check access and the starter input files."
 msgstr "저장소, 브랜치 또는 필수 내보내기 파일을 찾을 수 없습니다. 접근 권한과 스타터 입력 파일을 확인하세요."
@@ -760,6 +775,9 @@ msgstr "유효하지 않은 준비 결과입니다. 다시 준비하세요."
 msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
 msgstr "저장소의 분할 내보내기 파일이 불완전하거나 변경되었습니다. 스타터 입력 파일을 확인하고 완전한 발행본을 복원한 뒤 다시 준비하세요."
 
+msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
+msgstr "준비 후 저장소 공개 범위가 변경되었습니다. 다시 준비하고 공개 범위를 확인한 후 발행하세요."
+
 msgid "The request could not be completed. Please retry."
 msgstr "요청을 완료하지 못했습니다. 다시 시도해 주세요."
 
@@ -829,6 +847,9 @@ msgstr "이번 발행은 기존 분할 내보내기 파일을 하나의 XML 파�
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "이 플러그인에 저장된 토큰을 삭제합니다. GitHub에 발행하려면 토큰을 다시 등록해야 합니다."
 
+msgid "This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files."
+msgstr "이 저장소는 공개되어 있습니다. 업로드한 WXR와 사이트 설정 파일, 변경 이력을 누구나 볼 수 있습니다. 원본 파일을 공개하지 않으려면 비공개 저장소를 사용하세요."
+
 msgid "This section is saved."
 msgstr "이 섹션을 저장했습니다."
 
@@ -879,6 +900,9 @@ msgstr "Turnstile Site Key"
 
 msgid "Unavailable menu (ID {id})"
 msgstr "사용할 수 없는 메뉴 (ID {id})"
+
+msgid "Unconfirmed"
+msgstr "미확인"
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "<strong>Repository access</strong>에서 <strong>Only select repositories</strong>를 선택하세요."

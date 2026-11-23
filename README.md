@@ -166,6 +166,24 @@ by your hosting.
 
 ### GitHub publishing
 
+**Test connection**, the prepared publication, and the publishing dialogs show
+the repository's full name as a GitHub link, its branch, and an icon badge for
+its visibility: **Private**, **Public**, or **Internal**. The badge is
+**Unconfirmed** until visibility is checked. Connection results describe the
+target that was tested, including unsaved settings; editing the connection
+settings clears the previous result. A private repository is recommended for source
+files; it can still build a public website. Public repositories remain supported,
+but anyone can view uploaded WXR and site settings files and their Git history.
+Review the public-repository notice before publishing.
+
+Publication checks the reviewed visibility before sending files or other Git
+writes in each request, and again before the final branch update. If visibility
+changes, prepare again and review the new destination before publishing. An
+unavailable or unrecognized visibility is never treated as private. These checks
+cannot lock GitHub's visibility setting or prevent an owner from changing it
+later. Read-only verification of an uncertain publication remains available.
+
+
 Enter the repository URL and an existing **Publishing branch**, then select
 **Save publishing target**. The branch field starts with `main`.
 

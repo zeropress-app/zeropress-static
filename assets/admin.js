@@ -15,6 +15,7 @@
 	const baselines = new Map();
 	const dirty = new Set();
 	const loadingIndicators = new Map();
+	const repositoryViews = new Map();
 	let settings = config.settings;
 	let processingBlocked = !!$('processing');
 	let processingStatusError = '';
@@ -32,6 +33,8 @@
 	}
 	function notice(id, text, error = false, commitUrl = '', code = '') {
 		stopLoading(id);
+		repositoryViews.get(id + '-notice')?.unmount();
+		repositoryViews.delete(id + '-notice');
 		const element = $(id + '-notice');
 		element.textContent = '';
 		if (text) {
@@ -54,6 +57,13 @@
 			link.append(' ', icon);
 			element.append(' ', link);
 		}
+	}
+	function showRepository(id, target, options) {
+		const { createElement: el, createRoot } = window.wp.element;
+		const container = $(id);
+		if (!repositoryViews.has(id)) repositoryViews.set(id, createRoot(container));
+		repositoryViews.get(id).render(publication.repositoryView(el, target, options));
+		container.hidden = false;
 	}
 	function startLoading(id, progress) {
 		const component = { preparing: 'Spinner', downloading: 'Spinner', publishing: 'ProgressBar' }[progress];
@@ -565,7 +575,8 @@
 		run(event.currentTarget, 'test', 'testing', async () => {
 			const target = await request('test', { settings: input });
 			const unsaved = target.repository !== settings.repository || target.branch !== settings.branch || input.wxr_publish_format !== settings.wxr_publish_format;
-			notice('test', message('connected') + (unsaved ? ' ' + message('connected_unsaved') : ''));
+			notice('test', '');
+			showRepository('test-notice', target, { connected: true, unsaved });
 		}, form);
 	});
 	if ($('prepare')) $('prepare').disabled = false;
@@ -580,6 +591,7 @@
 		run(event.currentTarget, 'prepare', 'preparing', async () => {
 			prepared = await request('prepare');
 			$('summary').textContent = publication.summary(prepared);
+			showRepository('visibility', prepared.target);
 			const unchanged = prepared.state === 'unchanged';
 			const state = $('state');
 			state.className = unchanged ? 'notice notice-success zpsp-unchanged' : '';
@@ -723,19 +735,17 @@
 			title: message(republish ? 'republish_title' : 'confirm_title'),
 			description: message(republish ? 'republish_description' : 'confirm_description'),
 			feedback: 'result', onConfirm: () => publish(button, snapshot),
-			content: (el) => el('dl', { className: 'zpsp-confirm-target' },
-				el('dt', null, message('confirm_repository')),
-				el('dd', null, snapshot.target.repository),
-				el('dt', null, message('confirm_branch')),
-				el('dd', null, snapshot.target.branch),
-				el('dt', null, message('confirm_files')),
-				el('dd', null, publication.formatSummary(snapshot)),
-				el('dd', null, el('ul', null,
-					el('li', null, el('code', null, snapshot.publication?.format === 'bundle' ? 'wordpress-export.manifest.json' : 'wordpress-export.xml')),
-					!republish && snapshot.publication?.format === 'bundle' ? el('li', null, el('code', null, 'wordpress-export.parts/')) : null,
-					republish ? null : el('li', null, el('code', null, 'wxr-import-base.json')),
+			content: (el) => el('div', null,
+				publication.repositoryView(el, snapshot.target),
+				el('dl', { className: 'zpsp-confirm-target' },
+					el('dt', null, message('confirm_files')),
+					el('dd', null, publication.formatSummary(snapshot)),
+					el('dd', null, el('ul', null,
+						el('li', null, el('code', null, snapshot.publication?.format === 'bundle' ? 'wordpress-export.manifest.json' : 'wordpress-export.xml')),
+						!republish && snapshot.publication?.format === 'bundle' ? el('li', null, el('code', null, 'wordpress-export.parts/')) : null,
+						republish ? null : el('li', null, el('code', null, 'wxr-import-base.json')),
+					)),
 				)),
-			),
 		});
 	}
 	$('publish')?.addEventListener('click', (event) => {

@@ -344,7 +344,7 @@ final class Settings {
 			} else {
 				$query = $wpdb->prepare( "UPDATE {$wpdb->options} AS target INNER JOIN {$wpdb->options} AS control ON control.option_name = %s SET target.option_value = %s WHERE target.option_name = %s AND BINARY target.option_value = BINARY %s AND ", Publication_Store::OPTION, maybe_serialize( $next ), self::OPTION, maybe_serialize( $stored ) ) . $predicate;
 			}
-			// phpcs:ignore WordPress.DB -- Prepared values and a connection-owned journal reservation.
+			// phpcs:ignore WordPress.DB,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Values and the connection-owned journal reservation are prepared separately.
 			$saved = 1 === $wpdb->query( $query );
 			$guard->check_lock();
 			wp_cache_delete( self::OPTION, 'options' );

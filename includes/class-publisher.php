@@ -85,6 +85,7 @@ final class Publisher {
 			'target'           => $snapshot ? array(
 				'repository' => $snapshot['repository'],
 				'branch'     => $snapshot['branch'],
+				'visibility' => $snapshot['visibility'],
 			) : null,
 			'state'            => $plan && ! $connection_error ? ( $snapshot['data_hash'] === $export['data_hash'] && $snapshot['format'] === $plan['format'] ? 'unchanged' : 'ready' ) : 'download_only',
 			'publication'      => $plan ? array(
@@ -264,7 +265,8 @@ final class Publisher {
 				throw new Failure( 'PREPARATION_INVALID', 409 );
 			}
 			$progress?->update( 'inspecting' );
-			$github  = new GitHub( $settings, $budget, $observer );
+			$github = new GitHub( $settings, $budget, $observer );
+			$github->expect_visibility( $prepared['snapshot']['visibility'] ?? null );
 			$current = $github->inspect( $prepared['snapshot']['branch'] );
 			if ( $current['repository'] !== $prepared['snapshot']['repository'] || $current['files'] !== $prepared['snapshot']['files'] || $current['marker'] !== $prepared['snapshot']['marker'] ) {
 				throw new Failure( 'TARGET_CHANGED', 409 );

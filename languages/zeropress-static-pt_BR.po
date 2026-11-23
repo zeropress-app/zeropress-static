@@ -316,6 +316,9 @@ msgstr "Conexão com o GitHub confirmada."
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr "O GitHub não aceitou o token cadastrado. Exclua-o, cadastre um token novamente e teste a conexão."
 
+msgid "GitHub did not return a recognized repository visibility. Check the connection and prepare again."
+msgstr "O GitHub não retornou uma visibilidade de repositório reconhecida. Verifique a conexão e prepare novamente."
+
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "O GitHub está temporariamente indisponível ou a solicitação excedeu o tempo limite."
 
@@ -348,6 +351,9 @@ msgstr "URLs dos ícones para publicação"
 
 msgid "Information from WordPress"
 msgstr "Informações do WordPress"
+
+msgid "Internal"
+msgstr "Interno"
 
 msgid "Learn more about API protection"
 msgstr "Saiba mais sobre a proteção da API"
@@ -460,6 +466,9 @@ msgstr "Preparando dados…"
 msgid "Preparing download…"
 msgstr "Preparando download…"
 
+msgid "Private"
+msgstr "Privado"
+
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "O armazenamento temporário privado está indisponível. Peça à hospedagem para verificar as permissões e o armazenamento compartilhado e tente novamente."
 
@@ -468,6 +477,9 @@ msgstr "Método de processamento"
 
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr "Método de processamento salvo. Prepare novamente antes de baixar ou publicar."
+
+msgid "Public"
+msgstr "Público"
 
 msgid "Public access to this REST API is restricted."
 msgstr "O acesso público a esta API REST está restrito."
@@ -561,6 +573,9 @@ msgstr "Remover substituição"
 
 msgid "Repository to select:"
 msgstr "Repositório a selecionar:"
+
+msgid "Repository visibility"
+msgstr "Visibilidade do repositório"
 
 msgid "Repository, branch or required export files not found. Check access and the starter input files."
 msgstr "O repositório, a branch ou os arquivos de exportação necessários não foram encontrados. Verifique o acesso e os arquivos de entrada do modelo."
@@ -760,6 +775,9 @@ msgstr "Os dados preparados são inválidos. Prepare os dados novamente."
 msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
 msgstr "Os arquivos divididos do repositório estão incompletos ou foram alterados. Verifique os arquivos de entrada do modelo e restaure uma exportação publicada completa antes de preparar os dados novamente."
 
+msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
+msgstr "A visibilidade do repositório mudou após a preparação. Prepare novamente e confira a visibilidade antes de publicar."
+
 msgid "The request could not be completed. Please retry."
 msgstr "Não foi possível concluir a solicitação. Tente novamente."
 
@@ -829,6 +847,9 @@ msgstr "Esta publicação substitui os arquivos de exportação divididos por um
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "Isso remove o token armazenado neste plugin. Cadastre um token novamente para publicar no GitHub."
 
+msgid "This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files."
+msgstr "Este repositório é público. Qualquer pessoa pode ver os arquivos WXR e de configurações do site enviados, além do histórico deles. Use um repositório privado se não quiser compartilhar esses arquivos de origem."
+
 msgid "This section is saved."
 msgstr "Esta seção foi salva."
 
@@ -879,6 +900,9 @@ msgstr "Chave do site do Turnstile"
 
 msgid "Unavailable menu (ID {id})"
 msgstr "Menu indisponível (ID {id})"
+
+msgid "Unconfirmed"
+msgstr "Não confirmado"
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "Em <strong>Repository access</strong>, escolha <strong>Only select repositories</strong>."

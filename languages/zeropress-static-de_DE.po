@@ -316,6 +316,9 @@ msgstr "GitHub-Verbindung bestätigt."
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr "GitHub hat das hinterlegte Token nicht akzeptiert. Lösche es, hinterlege erneut ein Token und prüfe dann die Verbindung."
 
+msgid "GitHub did not return a recognized repository visibility. Check the connection and prepare again."
+msgstr "GitHub hat keine erkannte Repository-Sichtbarkeit zurückgegeben. Prüfe die Verbindung und bereite die Dateien erneut vor."
+
 msgid "GitHub is temporarily unavailable or the request timed out."
 msgstr "GitHub ist vorübergehend nicht verfügbar oder die Anfrage hat das Zeitlimit überschritten."
 
@@ -348,6 +351,9 @@ msgstr "Icon-URLs für die Veröffentlichung"
 
 msgid "Information from WordPress"
 msgstr "Informationen aus WordPress"
+
+msgid "Internal"
+msgstr "Intern"
 
 msgid "Learn more about API protection"
 msgstr "Mehr zum API-Schutz erfahren"
@@ -460,6 +466,9 @@ msgstr "Daten werden vorbereitet…"
 msgid "Preparing download…"
 msgstr "Download wird vorbereitet…"
 
+msgid "Private"
+msgstr "Privat"
+
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "Der private temporäre Speicher ist nicht verfügbar. Bitten Sie Ihren Hoster, Berechtigungen und gemeinsamen Speicher zu prüfen, und versuchen Sie es erneut."
 
@@ -468,6 +477,9 @@ msgstr "Verarbeitungsmethode"
 
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr "Verarbeitungsmethode gespeichert. Vor dem Herunterladen oder Veröffentlichen erneut vorbereiten."
+
+msgid "Public"
+msgstr "Öffentlich"
 
 msgid "Public access to this REST API is restricted."
 msgstr "Der öffentliche Zugriff auf diese REST-API ist eingeschränkt."
@@ -561,6 +573,9 @@ msgstr "Ersetzung entfernen"
 
 msgid "Repository to select:"
 msgstr "Auszuwählendes Repository:"
+
+msgid "Repository visibility"
+msgstr "Sichtbarkeit des Repositorys"
 
 msgid "Repository, branch or required export files not found. Check access and the starter input files."
 msgstr "Repository, Branch oder erforderliche Exportdateien wurden nicht gefunden. Prüfe den Zugriff und die Eingabedateien des Starters."
@@ -760,6 +775,9 @@ msgstr "Die vorbereiteten Daten sind ungültig. Bereite die Daten erneut vor."
 msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
 msgstr "Die aufgeteilten Exportdateien im Repository sind unvollständig oder verändert. Prüfe die Eingabedateien des Starters und stelle einen vollständigen veröffentlichten Export wieder her, bevor du die Daten erneut vorbereitest."
 
+msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
+msgstr "Die Sichtbarkeit des Repositorys hat sich seit der Vorbereitung geändert. Bereite die Dateien erneut vor und prüfe die Sichtbarkeit vor dem Veröffentlichen."
+
 msgid "The request could not be completed. Please retry."
 msgstr "Die Anfrage konnte nicht abgeschlossen werden. Bitte versuche es erneut."
 
@@ -829,6 +847,9 @@ msgstr "Diese Veröffentlichung ersetzt die aufgeteilten Exportdateien durch ein
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "Dadurch wird das in diesem Plugin gespeicherte Token entfernt. Hinterlege erneut ein Token, um auf GitHub zu veröffentlichen."
 
+msgid "This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files."
+msgstr "Dieses Repository ist öffentlich. Alle können die hochgeladenen WXR-Dateien, die Dateien mit den Website-Einstellungen und deren Verlauf einsehen. Verwende ein privates Repository, wenn du diese Quelldateien nicht teilen möchtest."
+
 msgid "This section is saved."
 msgstr "Dieser Abschnitt wurde gespeichert."
 
@@ -879,6 +900,9 @@ msgstr "Turnstile-Website-Schlüssel"
 
 msgid "Unavailable menu (ID {id})"
 msgstr "Nicht verfügbares Menü (ID {id})"
+
+msgid "Unconfirmed"
+msgstr "Unbestätigt"
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "Wähle unter <strong>Repository access</strong> die Option <strong>Only select repositories</strong>."

@@ -65,6 +65,51 @@ final class GitHub {
 	 * @var array|null
 	 */
 	private ?array $ref_context = null;
+	/** Visibility explicitly reviewed in the preparation receipt.
+	 *
+	 * @var string|null
+	 */
+	private ?string $approved_visibility = null;
+	/** Whether this request has checked visibility before sending content.
+	 *
+	 * @var bool
+	 */
+	private bool $visibility_checked = false;
+
+	/**
+	 * Bind writes to a reviewed visibility; old approvals require preparation again.
+	 *
+	 * @param string|null $visibility Visibility from the server-owned approval.
+	 * @throws Failure If approval did not include a recognized visibility.
+	 */
+	public function expect_visibility( ?string $visibility ): void {
+		if ( ! in_array( $visibility, array( 'public', 'private', 'internal' ), true ) ) {
+			throw new Failure( 'PREPARATION_EXPIRED', 409 );
+		}
+		$this->visibility_checked  = $this->visibility_checked && $this->approved_visibility === $visibility;
+		$this->approved_visibility = $visibility;
+	}
+
+	/**
+	 * Read current repository visibility without treating missing metadata as private.
+	 *
+	 * @return string Validated GitHub visibility.
+	 * @throws Failure If visibility is unavailable or differs from the approval.
+	 */
+	public function visibility(): string {
+		$repository = $this->request( 'GET', '' );
+		$visibility = $repository['visibility'] ?? null;
+		if ( ! in_array( $visibility, array( 'public', 'private', 'internal' ), true ) ) {
+			throw new Failure( 'GITHUB_VISIBILITY_UNAVAILABLE', 502 );
+		}
+		if ( null !== $this->approved_visibility ) {
+			if ( $visibility !== $this->approved_visibility ) {
+				throw new Failure( 'GITHUB_VISIBILITY_CHANGED', 409 );
+			}
+			$this->visibility_checked = true;
+		}
+		return $visibility;
+	}
 
 	/**
 	 * Initialize this service with validated input.
@@ -89,15 +134,17 @@ final class GitHub {
 	 * Resolve a branch and both regular files at one immutable HEAD.
 	 *
 	 * @param string $branch Explicit publishing branch name.
+	 * @param bool   $include_visibility Whether this is a new review rather than read-only reconciliation.
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
-	public function inspect( string $branch ): array {
-		$state = array();
+	public function inspect( string $branch, bool $include_visibility = true ): array {
+		$visibility = $include_visibility ? $this->visibility() : null;
+		$state      = array();
 		do {
 			$state = $this->inspect_step( $branch, $state );
 		} while ( 'done' !== $state['phase'] );
-		return $state['snapshot'];
+		return $state['snapshot'] + ( $include_visibility ? array( 'visibility' => $visibility ) : array() );
 	}
 
 	/**
@@ -280,6 +327,7 @@ final class GitHub {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public function publish( array $snapshot, array $export, bool $republish = false, ?Publication_Progress $progress = null, ?\Closure $final_guard = null ): array {
+		$this->expect_visibility( $snapshot['visibility'] ?? null );
 		if ( ! empty( $export['bundle'] ) ) {
 			return $this->publish_bundle( $snapshot, $export, $republish, $progress );
 		}
@@ -405,7 +453,7 @@ final class GitHub {
 			}
 			$progress?->update( 'verifying' );
 			try {
-				$current          = $this->inspect( $snapshot['branch'] );
+				$current          = $this->inspect( $snapshot['branch'], false );
 				$commit_confirmed = $current['head'] === $sha ||
 					in_array( $sha, array_column( $current['latest'], 'sha' ), true );
 				if ( $commit_confirmed && $current['files'] === $blobs && $current['data_hash'] === $data_hash ) {
@@ -827,6 +875,12 @@ final class GitHub {
 				throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
 			}
 			unset( $body );
+		}
+		// Recheck before the first write of every PHP request, and again before
+		// the final ref update. Do this before recording a possible write intent.
+		// Read-only reconciliation deliberately does not require new approval.
+		if ( 'GET' !== $method && null !== $this->approved_visibility && ( ! $this->visibility_checked || 'PATCH' === $method ) ) {
+			$this->visibility();
 		}
 		$args['timeout'] = $this->budget->github_timeout();
 		if ( $this->observer ) {

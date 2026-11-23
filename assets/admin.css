@@ -27,6 +27,24 @@
 .zpsp .nav-tab-wrapper { margin-bottom: 20px; }
 .zpsp .zpsp-feedback { scroll-margin-block: 60px; }
 .zpsp .zpsp-feedback:not(:empty) { margin: 12px 0 0; padding: 12px; }
+.zpsp #zpsp-test-notice:has(> .zpsp-repository) { padding: 0; }
+/* Shared by the page and WordPress modal portals outside its wrapper. */
+.zpsp-repository { margin: 12px 0; padding: 16px; border: 1px solid #c3c4c7; background: #fff; color: #1d2327; }
+.zpsp-repository .zpsp-repository-label { margin: 0 0 8px; color: #50575e; font-size: 13px; }
+.zpsp-repository-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.zpsp-repository-link { min-width: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; color: var(--wp-admin-theme-color, #2271b1); text-decoration: none; }
+.zpsp-repository-link:hover { text-decoration: underline; }
+.zpsp-repository .dashicons { flex-shrink: 0; font-size: 16px; width: 16px; height: 16px; line-height: 1; vertical-align: text-bottom; }
+.zpsp-repository .zpsp-repository-link .dashicons { font-size: 14px; width: 14px; height: 14px; text-decoration: none; }
+.zpsp-visibility-badge { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; padding: 2px 9px; border: 1px solid #c3c4c7; border-radius: 999px; background: #f6f7f7; color: #50575e; font-size: 12px; font-weight: 600; line-height: 20px; white-space: nowrap; }
+.zpsp-visibility-private { background: #f0f6fc; border-color: #b8d3e6; color: #135e96; }
+.zpsp-visibility-public { background: #fff8e5; border-color: #dba617; color: #755200; }
+.zpsp-repository-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; color: #50575e; font-size: 13px; overflow-wrap: anywhere; }
+.zpsp-repository-meta > span { min-width: 0; }
+.zpsp-repository-connected { display: inline-flex; align-items: center; gap: 5px; }
+.zpsp-repository-connected .dashicons { color: #008a20; }
+.zpsp-repository .zpsp-repository-warning { margin: 12px 0 0; padding: 10px 12px; border-left: 4px solid #dba617; background: #fff8e5; color: #594000; font-size: 13px; }
+.zpsp-repository .zpsp-repository-unsaved { margin: 12px 0 0; font-size: 13px; }
 .zpsp-loading-spinner { display: inline-flex; vertical-align: middle; margin-inline-end: 8px; }
 .zpsp-loading-spinner .components-spinner { margin: 0; }
 .zpsp-loading-progress { display: block; max-width: 360px; margin-top: 12px; }

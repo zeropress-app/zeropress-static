@@ -318,6 +318,7 @@ final class Publication_Session {
 			'target'            => array(
 				'repository' => $prepared['snapshot']['repository'],
 				'branch'     => $prepared['snapshot']['branch'],
+				'visibility' => $prepared['snapshot']['visibility'] ?? null,
 			),
 			'approved'          => $prepared['snapshot'],
 			'phase'             => 'capturing',
@@ -516,6 +517,9 @@ final class Publication_Session {
 		try {
 			$settings = $this->settings( $job, $verify );
 			$github   = new GitHub( $settings, $this->budget, $this->observer() );
+			if ( ! $verify ) {
+				$github->expect_visibility( $job['target']['visibility'] ?? null );
+			}
 			if ( $verify ) {
 				if ( empty( $job['intent'] ) ) {
 					throw new Failure( 'PUBLICATION_INVALID', 409 );
@@ -563,7 +567,7 @@ final class Publication_Session {
 	}
 
 	/**
-	 * One metadata, blob, tree or commit operation; never a ref update.
+	 * One publication step, with a visibility check before writes; never a ref update.
 	 *
 	 * @param array  $job Server-owned immutable approval and current progress.
 	 * @param GitHub $github Validated github value.
@@ -581,6 +585,8 @@ final class Publication_Session {
 				$snapshot = $inspection['snapshot'];
 				$this->accept_target( $job, $snapshot );
 				if ( ! $job['republish'] && $snapshot['data_hash'] === $job['data_hash'] && $snapshot['format'] === $job['plan']['format'] ) {
+					// A no-op still confirms the destination the user reviewed.
+					$github->visibility();
 					$this->store->finish( 'unchanged' );
 					return;
 				}

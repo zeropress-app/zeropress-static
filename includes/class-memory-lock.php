@@ -89,7 +89,7 @@ final class Memory_Lock {
 	 */
 	public function check(): void {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- predicate() returns prepared server-owned SQL.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- predicate() prepares the server-owned connection ID and lock name.
 		$value = $wpdb->get_var( 'SELECT ' . $this->predicate() );
 		if ( ! $this->acquired || $wpdb->last_error || '1' !== (string) $value ) {
 			throw new Failure( 'MEMORY_LOCK_LOST', 503 );

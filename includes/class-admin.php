@@ -167,6 +167,7 @@ final class Admin {
 					$result   = array(
 						'repository' => $target['repository'],
 						'branch'     => $target['branch'],
+						'visibility' => $target['visibility'],
 					);
 					break;
 				case 'prepare':
@@ -768,6 +769,7 @@ final class Admin {
 				<h3 tabindex="-1" id="zpsp-result-heading"><?php esc_html_e( 'Review prepared data', 'zeropress-static' ); ?></h3>
 				<div id="zpsp-state" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
 				<p id="zpsp-summary"></p>
+				<div id="zpsp-visibility" hidden></div>
 				<div id="zpsp-publish-actions" class="zpsp-actions">
 					<button type="button" class="button zpsp-icon-button" data-download="wxr"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download WXR', 'zeropress-static' ); ?></span></button>
 					<button type="button" class="button zpsp-icon-button" data-download="base"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download build settings', 'zeropress-static' ); ?></span></button>
@@ -938,6 +940,14 @@ final class Admin {
 			'saved_comments_api'              => __( 'This section is saved. Comment display changes take effect after the next publication; API access and writing settings apply immediately.', 'zeropress-static' ),
 			'saved_runtime'                   => __( 'This section is saved. Changes apply to new comment requests.', 'zeropress-static' ),
 			'saved_api'                       => __( 'This section is saved. API protection applies immediately.', 'zeropress-static' ),
+			'confirm_visibility'              => __( 'Repository visibility', 'zeropress-static' ),
+			'visibility_private'              => __( 'Private', 'zeropress-static' ),
+			'visibility_public'               => __( 'Public', 'zeropress-static' ),
+			'visibility_internal'             => __( 'Internal', 'zeropress-static' ),
+			'visibility_unknown'              => __( 'Unconfirmed', 'zeropress-static' ),
+			'visibility_public_notice'        => __( 'This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files.', 'zeropress-static' ),
+			'GITHUB_VISIBILITY_CHANGED'       => __( 'The repository visibility changed after preparation. Prepare again and review its visibility before publishing.', 'zeropress-static' ),
+			'GITHUB_VISIBILITY_UNAVAILABLE'   => __( 'GitHub did not return a recognized repository visibility. Check the connection and prepare again.', 'zeropress-static' ),
 			'connected'                       => __( 'GitHub connection confirmed.', 'zeropress-static' ),
 			'connected_unsaved'               => __( 'Click “Save publishing target” to save these changes.', 'zeropress-static' ),
 			'registering_token'               => __( 'Registering token…', 'zeropress-static' ),

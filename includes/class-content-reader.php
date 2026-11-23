@@ -91,7 +91,7 @@ final class Content_Reader {
 			if ( ! $ids ) {
 				break;
 			}
-			$inventory = $wpdb->get_results( 'SELECT ID,' . $body_size . ' AS body_bytes,(' . $row_size . ') AS row_bytes,' . $eligible . ' AS eligible FROM ' . $wpdb->posts . ' WHERE ID IN (' . implode( ',', $ids ) . ')', OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery -- IDs are validated integers; identifiers/expressions are fixed.
+			$inventory = $wpdb->get_results( 'SELECT ID,' . $body_size . ' AS body_bytes,(' . $row_size . ') AS row_bytes,' . $eligible . ' AS eligible FROM ' . $wpdb->posts . ' WHERE ID IN (' . implode( ',', $ids ) . ')', OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter -- IDs are validated integers; identifiers/expressions are fixed.
 			if ( $wpdb->last_error || count( $inventory ) !== count( $ids ) ) {
 				throw new Failure( 'SOURCE_READ_FAILED', 503 );
 			}
@@ -131,7 +131,7 @@ final class Content_Reader {
 				$bounds = 'CASE ID ' . implode( ' ', array_map( static fn( $id ) => 'WHEN ' . $id . ' THEN ' . (int) $inventory[ $id ]->row_bytes, $batch ) ) . ' END';
 				$guard  = $eligible . ' AND ' . $body_size . '<=' . Content_Body::LIMIT_BYTES . ' AND (' . $row_size . ')<=(' . $bounds . ')';
 				$fields = array_map( static fn( $column ) => 'CASE WHEN admitted.ID IS NOT NULL THEN p.' . $column . ' ELSE NULL END AS ' . $column, self::COLUMNS );
-				$rows   = $wpdb->get_results( 'SELECT p.ID,' . $body_size . ' AS zpsp_body_bytes,' . $eligible . ' AS zpsp_eligible,' . implode( ',', $fields ) . ' FROM ' . $wpdb->posts . ' p LEFT JOIN (SELECT ID FROM ' . $wpdb->posts . ' WHERE ID IN (' . implode( ',', $batch ) . ') AND ' . $guard . ' LIMIT 100) admitted ON admitted.ID=p.ID WHERE p.ID IN (' . implode( ',', $batch ) . ')', OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery -- Fixed projections and validated numeric per-row limits.
+				$rows   = $wpdb->get_results( 'SELECT p.ID,' . $body_size . ' AS zpsp_body_bytes,' . $eligible . ' AS zpsp_eligible,' . implode( ',', $fields ) . ' FROM ' . $wpdb->posts . ' p LEFT JOIN (SELECT ID FROM ' . $wpdb->posts . ' WHERE ID IN (' . implode( ',', $batch ) . ') AND ' . $guard . ' LIMIT 100) admitted ON admitted.ID=p.ID WHERE p.ID IN (' . implode( ',', $batch ) . ')', OBJECT_K ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Fixed projections and validated numeric per-row limits.
 				if ( $wpdb->last_error || count( $rows ) !== count( $batch ) ) {
 					throw new Failure( 'SOURCE_READ_FAILED', 503 );
 				}
@@ -150,8 +150,8 @@ final class Content_Reader {
 				$query->query_vars['fields'] = '';
 				$query->posts                = $posts;
 				$query->post_count           = count( $posts );
-				$posts                       = apply_filters_ref_array( 'posts_results', array( $posts, &$query ) );
-				$posts                       = apply_filters_ref_array( 'the_posts', array( $posts, &$query ) );
+				$posts                       = apply_filters_ref_array( 'posts_results', array( $posts, &$query ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Preserve the core post-results filter after bounded row hydration.
+				$posts                       = apply_filters_ref_array( 'the_posts', array( $posts, &$query ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Preserve the core final post filter for existing plugin callbacks.
 				$seen                        = array();
 				if ( ! is_array( $posts ) || count( $posts ) > count( $batch ) ) {
 					throw new Failure( 'SOURCE_READ_UNBOUNDED', 409 );

@@ -232,6 +232,32 @@ window.zeroPressPublication = function createPublication(config) {
 		const description = format === 'bundle' ? message('split_summary', { parts: numbers.format(parts) }) : message('single_summary');
 		return description + (['single', 'bundle'].includes(previous) && previous !== format ? ' ' + message('switch_to_' + format) : '');
 	}
+	function visibilityLabel(target) {
+		return message(['public', 'private', 'internal'].includes(target?.visibility) ? 'visibility_' + target.visibility : 'visibility_unknown');
+	}
+	// Use the same snapshot and presentation in connection results and both editors.
+	function repositoryView(el, target, { connected = false, unsaved = false } = {}) {
+		const visibility = ['public', 'private', 'internal'].includes(target?.visibility) ? target.visibility : 'unknown';
+		const icons = { private: 'lock', public: 'admin-site-alt3', internal: 'building', unknown: 'editor-help' };
+		const icon = (name) => el('span', { className: 'dashicons dashicons-' + name, 'aria-hidden': true });
+		const repository = target?.repository;
+		return el('div', { className: 'zpsp-repository', role: 'group', 'aria-label': message('confirm_repository') },
+			el('p', { className: 'zpsp-repository-label' }, message('confirm_repository')),
+			el('div', { className: 'zpsp-repository-heading' },
+				repository && el('a', {
+					className: 'zpsp-repository-link', href: 'https://github.com/' + repository.split('/').map(encodeURIComponent).join('/'),
+					target: '_blank', rel: 'noopener noreferrer',
+				}, repository, ' ', icon('external')),
+				el('span', {
+					className: 'zpsp-visibility-badge zpsp-visibility-' + visibility,
+					'aria-label': message('confirm_visibility') + ': ' + visibilityLabel(target),
+				}, icon(icons[visibility]), visibilityLabel(target))),
+			(target?.branch || (connected && visibility !== 'unknown')) && el('div', { className: 'zpsp-repository-meta' },
+				target?.branch && el('span', null, message('confirm_branch') + ': ', el('span', { className: 'zpsp-repository-branch' }, target.branch)),
+				connected && visibility !== 'unknown' && el('span', { className: 'zpsp-repository-connected' }, icon('yes-alt'), message('connected'))),
+			visibility === 'public' && el('p', { className: 'zpsp-repository-warning' }, message('visibility_public_notice')),
+			unsaved && el('p', { className: 'zpsp-repository-unsaved' }, message('connected_unsaved')));
+	}
 	function summary(prepared) {
 		const counts = message('summary', Object.fromEntries(Object.entries(prepared.counts).map(([key, count]) => [key, numbers.format(count)])));
 		const warning = prepared.warnings?.find((item) => item.code === 'CONTENT_BODY_LARGE');
@@ -239,5 +265,5 @@ window.zeroPressPublication = function createPublication(config) {
 		return counts + (format ? ' ' + format : '')
 			+ (warning ? ' ' + message('body_warning', { count: numbers.format(warning.count), bytes: numbers.format(warning.max_body_bytes), ids: warning.affected.map((id) => numbers.format(id)).join(', ') }) : '');
 	}
-	return { request, publish, resume, sessionStatus, cancel, resultMessage, summary, formatSummary, message, failureMessage, helpUrl };
+	return { request, publish, resume, sessionStatus, cancel, resultMessage, summary, formatSummary, visibilityLabel, repositoryView, message, failureMessage, helpUrl };
 };

@@ -152,13 +152,13 @@ final class Publication_Store {
 		$predicate = $this->memory_lock ? ' AND ' . $this->memory_lock->predicate() : '';
 		if ( null === $this->raw && $this->memory_lock ) {
 			$query = $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) SELECT %s, %s, 'no' WHERE 1=1", self::OPTION, $encoded ) . $predicate;
-			// phpcs:ignore WordPress.DB -- Prepared values and connection-owned predicate.
+			// phpcs:ignore WordPress.DB,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Both values and the connection-owned predicate are prepared separately.
 			$ok = 1 === $wpdb->query( $query );
 		} elseif ( null === $this->raw ) {
 			$ok = add_option( self::OPTION, $encoded, '', false );
 		} else {
 			$query = $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s", $encoded, self::OPTION, $this->raw ) . $predicate;
-			// phpcs:ignore WordPress.DB -- Prepared values and optional connection-owned predicate.
+			// phpcs:ignore WordPress.DB,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Values and the optional connection-owned predicate are prepared separately.
 			$ok = 1 === $wpdb->query( $query );
 		}
 		$this->memory_lock?->check();
