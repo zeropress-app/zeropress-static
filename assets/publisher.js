@@ -12,21 +12,25 @@ window.zeroPressPublication = function createPublication(config) {
 	}
 	const message = (key, values = {}) => (messages[key] || messages.error).replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
 	function failureMessage(code, details = {}) {
-		let text = message(code);
 		const numeric = (keys) => keys.every((key) => Number.isFinite(details?.[key]) && details[key] >= 0);
+		const insufficient = code === 'REQUEST_TIME_LIMIT_EXCEEDED' && numeric(['remaining_time_seconds', 'minimum_time_seconds']);
+		let text = message(insufficient ? 'time_insufficient' : code);
 		if (code === 'CONTENT_BODY_TOO_LARGE' && numeric(['post_id', 'body_bytes'])) {
 			text += ' ' + message('body_details', { id: numbers.format(details.post_id), bytes: numbers.format(details.body_bytes) });
 		}
-		if (code === 'MEMORY_LIMIT_EXCEEDED' && numeric(['memory_limit_bytes', 'estimated_memory_bytes'])) {
+		if (['MEMORY_LIMIT_EXCEEDED', 'WXR_SINGLE_MEMORY_LIMIT'].includes(code) && numeric(['memory_limit_bytes', 'estimated_memory_bytes'])) {
 			text += ' ' + message('memory_details', { limit: formatBytes(details.memory_limit_bytes, true), estimated: formatBytes(details.estimated_memory_bytes, true) });
 		} else if (code === 'REQUEST_TIME_LIMIT_EXCEEDED' && numeric(['time_limit_seconds', 'time_budget_seconds', 'elapsed_seconds'])) {
 			text += ' ' + message('time_details', { limit: numbers.format(details.time_limit_seconds), budget: numbers.format(details.time_budget_seconds), elapsed: numbers.format(details.elapsed_seconds) });
+			if (insufficient) text += ' ' + message('time_needed_details', { remaining: numbers.format(details.remaining_time_seconds), minimum: numbers.format(details.minimum_time_seconds) });
 		}
 		return text;
 	}
 
 	function helpUrl(code) {
-		return ['CONTENT_BODY_TOO_LARGE', 'SOURCE_READ_UNBOUNDED', 'EXPORT_STORAGE_UNAVAILABLE'].includes(code) ? 'https://github.com/zeropress-app/zeropress-static#export-scope-and-limits' : '';
+		if (['CONTENT_BODY_TOO_LARGE', 'SOURCE_READ_UNBOUNDED', 'REQUEST_TIME_LIMIT_EXCEEDED'].includes(code)) return 'https://github.com/zeropress-app/zeropress-static#export-scope-and-limits';
+		return ['WXR_SPLIT_REQUIRED', 'WXR_SINGLE_MEMORY_LIMIT', 'WXR_SPLIT_UNSUPPORTED', 'WXR_TARGET_INVALID', 'WXR_RECORD_TOO_LARGE', 'WXR_BUNDLE_LIMIT_EXCEEDED', 'EXPORT_STORAGE_UNAVAILABLE', 'GITHUB_PAYLOAD_TOO_LARGE', 'MEMORY_LIMIT_EXCEEDED'].includes(code)
+			? 'https://github.com/zeropress-app/zeropress-starter-wxr#split-wxr-input' : '';
 	}
 
 	async function request(operation, extra = {}, download = false, signal) {
@@ -94,11 +98,18 @@ window.zeroPressPublication = function createPublication(config) {
 			stopWatching();
 		}
 	}
+	function formatSummary(prepared) {
+		const { format, previous_format: previous, part_count: parts } = prepared.publication || {};
+		if (!['single', 'bundle'].includes(format)) return '';
+		const description = format === 'bundle' ? message('split_summary', { parts: numbers.format(parts) }) : message('single_summary');
+		return description + (['single', 'bundle'].includes(previous) && previous !== format ? ' ' + message('switch_to_' + format) : '');
+	}
 	function summary(prepared) {
 		const counts = message('summary', Object.fromEntries(Object.entries(prepared.counts).map(([key, count]) => [key, numbers.format(count)])));
 		const warning = prepared.warnings?.find((item) => item.code === 'CONTENT_BODY_LARGE');
-		return counts + (warning ? ' ' + message('body_warning', { count: numbers.format(warning.count), bytes: numbers.format(warning.max_body_bytes), ids: warning.affected.map((id) => numbers.format(id)).join(', ') }) : '');
+		const format = formatSummary(prepared);
+		return counts + (format ? ' ' + format : '')
+			+ (warning ? ' ' + message('body_warning', { count: numbers.format(warning.count), bytes: numbers.format(warning.max_body_bytes), ids: warning.affected.map((id) => numbers.format(id)).join(', ') }) : '');
 	}
-
-	return { request, publish, summary, message, failureMessage, helpUrl };
+	return { request, publish, summary, formatSummary, message, failureMessage, helpUrl };
 };

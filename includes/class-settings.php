@@ -23,6 +23,7 @@ final class Settings {
 			'revision'                 => 'unconfigured',
 			'repository'               => '',
 			'branch'                   => 'main',
+			'wxr_publish_format'       => 'auto',
 			'public_url'               => '',
 			'allow_indexing'           => false,
 			'media_rules'              => array(),
@@ -91,7 +92,7 @@ final class Settings {
 				'comments'    => array( 'comments_enabled', 'comments_api_url', 'anonymous_comments' ),
 				'api'         => array( 'restrict_public_rest_api' ),
 				'turnstile'   => array( 'comment_verification', 'turnstile_keys' ),
-				'github'      => array( 'repository', 'branch' ),
+				'github'      => array( 'repository', 'branch', 'wxr_publish_format' ),
 			);
 			if ( ! isset( $sections[ $section ] ) || array_diff( array_keys( $input ), array_merge( array( 'revision' ), $sections[ $section ] ) ) ) {
 				throw new Failure( 'INVALID_SETTINGS' );
@@ -125,6 +126,10 @@ final class Settings {
 		$repository = self::repository( self::string( $input, 'repository' ) );
 		$branch     = self::string( $input, 'branch' );
 		self::branch( $branch );
+		$publish_format = $input['wxr_publish_format'];
+		if ( ! in_array( $publish_format, array( 'auto', 'single', 'bundle' ), true ) ) {
+			throw new Failure( 'INVALID_SETTINGS' );
+		}
 		$public_url       = self::origin( self::string( $input, 'public_url' ) );
 		$api_url          = self::api_url( self::string( $input, 'comments_api_url' ) );
 		$comments_enabled = self::boolean( $input, 'comments_enabled' );
@@ -175,6 +180,7 @@ final class Settings {
 				'revision'                 => $current['revision'],
 				'repository'               => $repository,
 				'branch'                   => $branch,
+				'wxr_publish_format'       => $publish_format,
 				'public_url'               => $public_url,
 				'allow_indexing'           => self::boolean( $input, 'allow_indexing' ),
 				'media_rules'              => $rules,

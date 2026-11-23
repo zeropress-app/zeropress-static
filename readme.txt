@@ -132,6 +132,10 @@ We recommend GitHub publishing with Cloudflare hosting. GitHub stores the conten
 
 File downloads are available for custom build and hosting workflows.
 
+= Can I choose one XML file or split files for publishing? =
+
+Yes. Under **Settings → GitHub publishing**, choose **WXR publishing format**. **Automatic** keeps small exports in one XML file and uses split files when needed; an existing split export stays split. Choose **Single XML** or **Split XML** to use that format instead. Split files require an up-to-date WXR Starter. Save the publishing target, prepare again and review the format before publishing. Downloads always remain a single XML file.
+
 = Is a static site URL required? =
 
 We recommend setting it to your deployed site's address under **Settings → Site**. It is required for comment writing and RSS, and helps search engines identify the addresses of your pages.
@@ -153,6 +157,10 @@ It does not block visitors from accessing the site. If you need a private site, 
 Published posts and pages without passwords are included, along with their categories, tags, author display names, selected classic menus and media information. Drafts, private or scheduled content, user login names and user email addresses are excluded. Comments stay in WordPress and can be displayed on the static site when enabled.
 
 The plugin publishes saved content. It does not recreate page-builder layouts, shortcodes or blocks that need WordPress to generate their output. Content types beyond standard posts and pages, and menus created with the Navigation block, are not supported.
+
+= What if a post is unusually large? =
+
+ZeroPress warns when a post or page body reaches 256 KiB and stops publication if it exceeds 4 MiB. Split or shorten that post, then prepare again. Markup and other text in the body count toward the size; linked image files do not. Your saved WordPress content is not changed. See the [publishing limits guide](https://github.com/zeropress-app/zeropress-static#export-scope-and-limits) for details.
 
 = Can I restrict public REST API access? =
 

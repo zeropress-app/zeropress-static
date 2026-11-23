@@ -55,11 +55,11 @@ msgstr "Aplicando cambios en GitHub…"
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr "El cifrado autenticado no está disponible. Activa OpenSSL AES-256-GCM en el servidor antes de registrar las credenciales."
 
-msgid "Both files will be updated in one commit."
-msgstr "Ambos archivos se actualizarán en un solo commit."
+msgid "Automatic"
+msgstr "Automático"
 
-msgid "Both targets must be regular files, not directories, symlinks or submodules."
-msgstr "Ambos destinos deben ser archivos normales, no directorios, enlaces simbólicos ni submódulos."
+msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
+msgstr "Automático mantiene las exportaciones pequeñas en un solo archivo XML y usa archivos divididos cuando es necesario. Las exportaciones ya divididas mantienen ese formato. Las descargas XML siempre son un único archivo."
 
 msgid "Button label"
 msgstr "Etiqueta del botón"
@@ -253,6 +253,9 @@ msgstr "Ejemplo basado en esta instalación de WordPress: %s."
 msgid "Examples: %1$s · %2$s · %3$s"
 msgstr "Ejemplos: %1$s · %2$s · %3$s"
 
+msgid "Export inputs must be regular files, not directories, symlinks or submodules."
+msgstr "Las entradas de exportación deben ser archivos normales, no directorios, enlaces simbólicos ni submódulos."
+
 msgid "Files to update"
 msgstr "Archivos que se actualizarán"
 
@@ -286,6 +289,9 @@ msgstr "Publicación en GitHub"
 msgid "GitHub publishing (optional)"
 msgstr "Publicación en GitHub (opcional)"
 
+msgid "GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again."
+msgstr "GitHub ha rechazado un archivo o una solicitud demasiado grande. Comprueba que tu plantilla WXR admita exportaciones divididas y revisa las entradas excesivamente grandes antes de volver a preparar los datos."
+
 msgid "GitHub rejected the write. Check repository permissions and branch rules."
 msgstr "GitHub ha rechazado la escritura. Comprueba los permisos del repositorio y las reglas de la rama."
 
@@ -306,9 +312,6 @@ msgstr "URL de iconos para publicar"
 
 msgid "Information from WordPress"
 msgstr "Información de WordPress"
-
-msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
-msgstr "Mantén <code>wordpress-export.xml</code> y <code>wxr-import-base.json</code> en la raíz del repositorio. Al publicar en GitHub, se sustituyen estos dos archivos."
 
 msgid "Learn more about API protection"
 msgstr "Más información sobre la protección de la API"
@@ -354,6 +357,9 @@ msgstr "No hay cambios que publicar."
 
 msgid "Not configured"
 msgstr "Sin configurar"
+
+msgid "One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
+msgstr "Una entrada es demasiado grande para enviarla de forma segura. Reduce el contenido o los metadatos excesivos y vuelve a preparar los datos. Aumentar la memoria PHP no elimina este límite."
 
 msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
 msgstr "Solo se exportan las entradas y páginas publicadas sin contraseña. No se ejecutan los shortcodes ni los bloques dinámicos."
@@ -475,8 +481,8 @@ msgstr "Eliminar sustitución"
 msgid "Repository to select:"
 msgstr "Repositorio que debes seleccionar:"
 
-msgid "Repository, branch or required files not found. Check access and the two root files."
-msgstr "No se han encontrado el repositorio, la rama o los archivos necesarios. Comprueba el acceso y los dos archivos de la raíz."
+msgid "Repository, branch or required export files not found. Check access and the starter input files."
+msgstr "No se encuentran el repositorio, la rama o los archivos de exportación necesarios. Revisa el acceso y los archivos de entrada de la plantilla."
 
 msgid "Republish options"
 msgstr "Opciones para volver a publicar"
@@ -538,6 +544,9 @@ msgstr "Búsqueda y navegación de contenido"
 msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
 msgstr "Selecciona los menús clásicos de WordPress que quieras publicar. Los ID de menú vinculan estas selecciones con el tema de tu sitio estático."
 
+msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again."
+msgstr "Enviar este archivo XML único requiere más memoria PHP. Selecciona Automático o XML dividido con una plantilla de inicio compatible, o pide a tu proveedor de alojamiento que aumente la memoria PHP, y vuelve a preparar los datos."
+
 msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
 msgstr "Establece <strong>Contents</strong> en <strong>Read and write</strong>."
 
@@ -574,6 +583,9 @@ msgstr "Regístrate en un servicio de boletines como Hostinger Reach, Omnisend o
 msgid "Signup page URL"
 msgstr "URL de la página de suscripción"
 
+msgid "Single XML"
+msgstr "XML único"
+
 msgid "Site"
 msgstr "Sitio"
 
@@ -597,6 +609,12 @@ msgstr "Prefijo de URL de origen"
 
 msgid "Source URL prefix example:"
 msgstr "Ejemplo de prefijo de URL de origen:"
+
+msgid "Split XML"
+msgstr "XML dividido"
+
+msgid "Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json."
+msgstr "Empieza con la plantilla WXR. Al publicar se actualizan sus entradas de exportación; las plantillas compatibles usan archivos divididos automáticamente para exportaciones grandes. Guarda tus ajustes en wxr-import-base.override.json."
 
 msgid "Static site URL"
 msgstr "URL del sitio estático"
@@ -628,17 +646,20 @@ msgstr "No se ha podido cargar el diálogo de confirmación. Recarga esta págin
 msgid "The download is ready. Check your browser downloads."
 msgstr "La descarga está lista. Consulta las descargas de tu navegador."
 
+msgid "The export files will be updated together in one commit."
+msgstr "Los archivos de exportación se actualizarán juntos en un único commit."
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "Los datos preparados han caducado o los ajustes han cambiado. Vuelve a prepararlos."
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "Los datos preparados no son válidos. Vuelve a prepararlos."
 
+msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
+msgstr "Los archivos divididos del repositorio están incompletos o modificados. Revisa los archivos de entrada de la plantilla y restaura una exportación publicada completa antes de volver a preparar los datos."
+
 msgid "The request could not be completed. Please retry."
 msgstr "No se ha podido completar la solicitud. Inténtalo de nuevo."
-
-msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
-msgstr "La solicitud ha alcanzado el tiempo máximo permitido por el servidor. Aumenta el tiempo permitido en el servidor y vuelve a preparar los datos."
 
 msgid "The saved GitHub token was deleted."
 msgstr "Se ha eliminado el token de GitHub guardado."
@@ -649,11 +670,17 @@ msgstr "Se han eliminado las claves guardadas y Cloudflare Turnstile está desac
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr "No se puede descifrar el token guardado. Elimínalo y vuelve a registrarlo; es posible que las claves secretas de WordPress hayan cambiado."
 
+msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
+msgstr "El límite de tiempo del servidor ha detenido esta solicitud. Pide a tu proveedor de alojamiento que revise el límite de tiempo de las solicitudes y vuelve a preparar los datos."
+
 msgid "The token cannot access this repository. Check its selected repositories and permissions."
 msgstr "El token no puede acceder a este repositorio. Comprueba los repositorios seleccionados y sus permisos."
 
 msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
 msgstr "No hay suficiente memoria de PHP para completar esta solicitud. Aumenta la memoria permitida en el servidor y vuelve a preparar los datos."
+
+msgid "There is not enough time left on the server to complete this request. Ask your host to review the request time limit, then prepare again."
+msgstr "No queda suficiente tiempo en el servidor para completar esta solicitud. Pide a tu proveedor de alojamiento que revise el límite de tiempo de las solicitudes y vuelve a preparar los datos."
 
 msgid "These values are read from WordPress when preparing publishing data."
 msgstr "Estos valores se obtienen de WordPress al preparar los datos para publicar."
@@ -661,8 +688,26 @@ msgstr "Estos valores se obtienen de WordPress al preparar los datos para public
 msgid "This WordPress installation: %s."
 msgstr "Esta instalación de WordPress: %s."
 
+msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
+msgstr "Esta exportación supera los límites admitidos para archivos divididos. Revisa la configuración de exportación o contacta con soporte antes de volver a intentarlo."
+
+msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
+msgstr "Esta exportación es demasiado grande para un único archivo de GitHub. Selecciona Automático o XML dividido con una plantilla de inicio compatible y vuelve a preparar los datos."
+
+msgid "This export will be published as a single XML file."
+msgstr "Esta exportación se publicará como un único archivo XML."
+
+msgid "This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file."
+msgstr "Esta exportación se publicará en {parts} partes. Tu plantilla las compilará como un único sitio. La descarga XML sigue siendo un solo archivo."
+
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "Esta instalación no utiliza el formato de URL compatible <code>/wp-json/wp/v2</code>. Configura una API accesible para los visitantes con esa ruta; no se admiten las URL REST con parámetros de consulta."
+
+msgid "This publication replaces the single XML file with split export files."
+msgstr "Esta publicación sustituye el archivo XML único por archivos de exportación divididos."
+
+msgid "This publication replaces the split export files with one XML file."
+msgstr "Esta publicación sustituye los archivos de exportación divididos por un único archivo XML."
 
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "Esto elimina el token almacenado en este plugin. Vuelve a registrar un token para publicar en GitHub."
@@ -685,8 +730,14 @@ msgstr "Se ha guardado esta sección. Los cambios de visualización de comentari
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "Se ha guardado esta sección. Los cambios de visualización de comentarios se aplicarán después de la próxima publicación; los ajustes de escritura se aplican a las nuevas solicitudes de comentarios."
 
+msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
+msgstr "Esta plantilla de inicio no admite XML dividido. Actualiza la plantilla WXR completa o selecciona Automático o XML único y vuelve a preparar los datos."
+
 msgid "This version supports single-site WordPress only."
 msgstr "Esta versión solo es compatible con instalaciones de WordPress de un solo sitio."
+
+msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
+msgstr "Tiempo restante: {remaining} s. Espera mínima entre solicitudes: {minimum} s, más el tiempo de transferencia."
 
 msgid "Timezone"
 msgstr "Zona horaria"
@@ -753,6 +804,9 @@ msgstr "Ver en el sitio estático"
 
 msgid "View saved publishing repository"
 msgstr "Ver repositorio de publicación guardado"
+
+msgid "WXR publishing format"
+msgstr "Formato de publicación WXR"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "Espera a que WordPress termine de guardar tu entrada."

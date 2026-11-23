@@ -29,12 +29,14 @@ newsletter services may have separate costs under each provider's pricing and te
 
 ## Publishing flow
 
-ZeroPress Static generates `wordpress-export.xml` and `wxr-import-base.json`.
-The WXR starter builds your static site from these two files.
+ZeroPress Static generates WXR content and `wxr-import-base.json`. The starter
+builds them as one site. Small exports and downloads use `wordpress-export.xml`;
+large GitHub publications can use [split WXR files](#split-publication-and-starter-compatibility)
+with a compatible starter.
 
 ```mermaid
 flowchart LR
-    Inputs["wordpress-export.xml<br/>+ wxr-import-base.json"]
+    Inputs["Single or split WXR<br/>+ wxr-import-base.json"]
     Starter["ZeroPress WXR Starter"]
     Site["Static site"]
 
@@ -169,7 +171,7 @@ Enter the repository URL and an existing **Publishing branch**, then select
 
 Create a fine-grained token for **Only select repositories**, select **only the
 publishing repository**, and grant **Contents: Read and write**. Use **Register
-token**, then **Test connection** to check access to the branch and both files.
+token**, then **Test connection** to check access to the branch and its export inputs.
 The branch must allow direct commits for publishing to succeed.
 
 Token registration is separate from saving the publishing target. A registered
@@ -382,11 +384,92 @@ A lost browser response or a terminated server request may prevent confirmation.
 If **Publication needs verification** appears, inspect the publishing branch
 before preparing and publishing again.
 
+### Split publication and starter compatibility
+
+A split-capable starter declares support with the exact
+`zeropress-wxr-input-v1.json` marker. The plugin verifies its Git blob hash from
+tree metadata; it does not download remote file bodies. Follow the
+[starter upgrade and troubleshooting guide](https://github.com/zeropress-app/zeropress-starter-wxr#split-wxr-input)
+before enabling this capability on an existing site. Adding only the marker
+does not upgrade the importer or build scripts.
+
+Choose **WXR publishing format** under **GitHub publishing** and save the publishing
+target before preparing again:
+
+| Setting | Behavior |
+| --- | --- |
+| **Automatic** (default) | Keeps small exports in a single XML file and switches to split files when needed on a compatible starter. Existing split exports stay split. |
+| **Single XML** | Publishes one XML file if the file-size, memory and time checks pass. Can replace a verified split export. A failed check stops publication and offers next steps; it does not silently switch formats. |
+| **Split XML** | Uses split files even for a small site. Requires a compatible starter; it does not mean one file per post. |
+
+When a compatible starter currently uses single XML, Automatic keeps it only
+when both its raw size and encoded upload request fit 8 MiB and the memory check
+passes. Explicit **Single XML** uses
+the existing single-file transport checks instead of this automatic threshold.
+It still needs enough PHP memory for a complete encoded upload. Older starters
+can use Automatic or Single XML while the single-file checks pass; Split XML
+requires upgrading the complete starter, not just adding its marker.
+
+Split publication uses `wordpress-export.manifest.json`, content-addressed XML
+parts under `wordpress-export.parts/`, and the same `wxr-import-base.json`.
+The preparation summary shows the actual format and any format change. Switching
+to split removes `wordpress-export.xml` in the same commit; switching to single
+removes the verified manifest and managed parts directory in that commit.
+Content need not change to publish a format change. Changing a preference without
+changing the resulting format or content does not require another publication.
+The capability marker, theme, public files and user override remain untouched.
+
+Parts contain complete records and target 4 MiB. Each XML part and the base are
+bounded at 8 MiB, including their UTF-8 JSON upload request; the manifest is
+bounded at 1 MiB and the inventory at 256 parts. A single oversized record is an
+error, never a truncated or partial export. These are transport policies, not a
+universal post-count limit. WXR and base settings semantics are unchanged.
+
+Every part and the base are bound by exact byte size and SHA-256 in the manifest.
+The legacy logical data hash remains independent of generation time and part
+boundaries. The importer validates the whole inventory and performs global
+inference once, preserving forward media references and page/menu relationships.
+
+Publication uploads one checked part at a time, reuses unchanged part blobs, and
+updates the complete generation with one non-forced branch write. The root tree
+preserves unrelated files, including the override and theme. The managed parts
+subtree is replaced only when existing publication trailers bind its current
+tree, manifest and base; unexpected files or modified/incomplete generations
+stop publication. Do not store custom files in that directory.
+
+Split exports select repeatable part boundaries from WordPress record IDs and
+keep the existing content order and size checks. A length change, insertion or
+deletion can therefore reuse later unchanged parts after the next shared boundary.
+The fixed selection rate is approximately one boundary per 1,024 IDs; it is not
+a maximum part length. This may create more files on the first publication.
+When the extra boundaries would exceed 256 parts, the exporter uses the previous
+size-based layout if it fits. Changes to shared site fields, switching layouts
+or crossing that fallback can still replace many parts. An unchanged existing
+publication is not rewritten merely to adopt the new layout.
+
+Both single and split publication reuse file blobs whose exact Git SHA matches
+the current verified target, including unchanged build settings. This avoids
+resending identical bytes without reading remote file bodies. Dated XML or
+manifest files still change during explicit republication; reuse does not skip
+the new publication commit. Failed uploads are not a reusable session.
+
+The review receipt fixes the actual single or split format as well as logical
+content, settings revision, user, target and expiry. Later requests use that
+approved format even when memory headroom changes. Saving a different preference
+requires a new preparation. It cannot bypass an unresolved publication: checking
+an uncertain result remains read-only and uses the original commitments.
+Content or managed-target changes require a new preparation. Metadata-only
+ownership checks and uncertain-write reconciliation remain in force. Split blob writes are sequential, with at least
+one second between completed mutations. Pacing respects the shared request deadline. Uploads cannot resume across requests.
+
+
 ### Manual downloads
 
 For a custom build or hosting setup, prepare and download `wordpress-export.xml` and
 `wxr-import-base.json` from **ZeroPress → Publish**. Place both files in the WXR Starter
-project root, then follow your host's build and deployment instructions.
+project root, then follow your host's build and deployment instructions. If the
+repository already uses split WXR, follow the starter guide to replace the
+complete generation; do not keep XML and the manifest side by side.
 
 ## Export scope and limits
 
@@ -471,7 +554,8 @@ changes. Each request shares its resource budget across generation and GitHub
 communication.
 
 WXR records are written to registered, request-owned files in a private subdirectory
-of PHP's system temporary directory, then assembled into a single XML. Downloads replay that file in bounded buffers after receipt and content
+of PHP's system temporary directory, then assembled into a single XML or bounded
+parts. Downloads replay that file in bounded buffers after receipt and content
 validation. Each open file retains an exclusive lock until its last read and
 close. Files are never stored in WordPress uploads or exposed by URL.
 
@@ -509,7 +593,11 @@ For these operations, the plugin requests WordPress's administrator memory
 allowance (`WP_MAX_MEMORY_LIMIT`) and checks the effective PHP `memory_limit`.
 Generation and downloads check working records and replay buffers instead of
 charging disk-resident WXR as a live string. Large individual records and
-collected metadata still consume memory. Publication reads the XML into a UTF-8 JSON request and checks memory before materialization.
+collected metadata still consume memory. Single-file publication reads the whole
+XML into a UTF-8 JSON request; split publication holds only one bounded part and
+its request. Both check the encoded size before materialization/serialization.
+Preparation also checks the publication plan, but later requests can have less
+headroom, so publication rechecks it.
 The estimate retains its conservative headroom; it is a preflight check, not a
 measurement of peak usage. Increase the server's PHP memory allowance and, when
 needed, `WP_MAX_MEMORY_LIMIT` if this check stops an export. Hosting restrictions
@@ -534,9 +622,24 @@ add_filter( 'zeropress_static_github_request_timeout', static function () {
 } );
 ```
 
-Controlled errors distinguish memory/time limits, unavailable temporary storage and
-GitHub payload-size rejection. The existing uncertainty handling remains in force;
-a lost response does not prove whether the branch was updated.
+Controlled errors distinguish memory/time limits, a required starter upgrade,
+oversized records, fixed split-export bounds, unavailable temporary storage, and
+GitHub payload-size rejection. The admin page and editor show next steps and
+link to relevant publishing help. Finite memory/time diagnostics remain
+visible. Time guidance distinguishes insufficient remaining time before a paced
+operation from exhaustion during processing. If a failed HTTP request consumes
+the shared deadline, it reports that time limit instead of a generic GitHub
+connection error. Connection failures with time remaining retain their existing
+classification. Ask your host to review PHP and hosting request time limits,
+then prepare again. Increasing PHP memory does not extend the time budget.
+Confirmed branch updates remain successful even if their responses arrive near
+the deadline; uncertain updates still require verification and are never retried
+automatically. A larger PHP memory allowance does not remove file-size or inventory
+bounds. An inspection that exhausts the shared deadline cannot issue a new
+preparation receipt; the exporter does not reset the budget to continue.
+If the server terminates a publication request before returning its result,
+check GitHub before preparing again; the plugin cannot infer whether the branch
+was updated from a lost response.
 
 ## Stored data and external services
 

@@ -424,12 +424,21 @@ final class Admin {
 		<section id="zpsp-github-panel" class="zpsp-panel" aria-labelledby="zpsp-github-heading">
 			<h2 id="zpsp-github-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> <?php esc_html_e( 'GitHub publishing (optional)', 'zeropress-static' ); ?></h2>
 			<p><a href="https://github.com/zeropress-app/zeropress-starter-wxr" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Set up a WXR starter repository', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
-			<p><?php self::help_text( __( 'Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files.', 'zeropress-static' ) ); ?></p>
+			<p><?php self::help_text( __( 'Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json.', 'zeropress-static' ) ); ?></p>
 			<form id="zpsp-github" class="zpsp-subsection" data-section="github" aria-labelledby="zpsp-github-target-heading">
 				<fieldset disabled>
 					<h3 id="zpsp-github-target-heading"><?php esc_html_e( 'Publishing target', 'zeropress-static' ); ?></h3>
 					<?php self::field( 'repository', __( 'Publishing GitHub repository URL', 'zeropress-static' ), 'text', 'https://github.com/owner/repository' ); ?>
 					<?php self::field( 'branch', __( 'Publishing branch', 'zeropress-static' ), 'text', '', '', true ); ?>
+					<p>
+						<label for="zpsp-wxr_publish_format"><?php esc_html_e( 'WXR publishing format', 'zeropress-static' ); ?></label>
+						<select id="zpsp-wxr_publish_format" name="wxr_publish_format" aria-describedby="zpsp-wxr_publish_format-help">
+							<option value="auto"><?php esc_html_e( 'Automatic', 'zeropress-static' ); ?></option>
+							<option value="single"><?php esc_html_e( 'Single XML', 'zeropress-static' ); ?></option>
+							<option value="bundle"><?php esc_html_e( 'Split XML', 'zeropress-static' ); ?></option>
+						</select>
+					</p>
+					<p id="zpsp-wxr_publish_format-help" class="description"><?php esc_html_e( 'Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file.', 'zeropress-static' ); ?></p>
 					<div class="zpsp-actions">
 						<button id="zpsp-save-github" type="submit" class="button button-primary"><?php esc_html_e( 'Save publishing target', 'zeropress-static' ); ?></button>
 						<button id="zpsp-test" type="button" class="button zpsp-icon-button" disabled><span class="dashicons dashicons-admin-links" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Test connection', 'zeropress-static' ); ?></span></button>
@@ -872,7 +881,7 @@ final class Admin {
 			'confirm_repository'              => __( 'GitHub repository', 'zeropress-static' ),
 			'confirm_branch'                  => __( 'Publishing branch', 'zeropress-static' ),
 			'confirm_files'                   => __( 'Files to update', 'zeropress-static' ),
-			'confirm_description'             => __( 'Both files will be updated in one commit.', 'zeropress-static' ),
+			'confirm_description'             => __( 'The export files will be updated together in one commit.', 'zeropress-static' ),
 			'confirm_cancel'                  => __( 'Cancel', 'zeropress-static' ),
 			'confirm_close'                   => __( 'Close confirmation', 'zeropress-static' ),
 			'confirmation_unavailable'        => __( 'The confirmation dialog could not be loaded. Reload this page and try again.', 'zeropress-static' ),
@@ -904,8 +913,8 @@ final class Admin {
 			'GITHUB_PERMISSION_DENIED'        => __( 'The token cannot access this repository. Check its selected repositories and permissions.', 'zeropress-static' ),
 			'GITHUB_RATE_LIMITED'             => __( 'GitHub request limit reached. Wait before trying again.', 'zeropress-static' ),
 			'GITHUB_UNAVAILABLE'              => __( 'GitHub is temporarily unavailable or the request timed out.', 'zeropress-static' ),
-			'TARGET_NOT_FOUND'                => __( 'Repository, branch or required files not found. Check access and the two root files.', 'zeropress-static' ),
-			'TARGET_NOT_REGULAR_FILE'         => __( 'Both targets must be regular files, not directories, symlinks or submodules.', 'zeropress-static' ),
+			'TARGET_NOT_FOUND'                => __( 'Repository, branch or required export files not found. Check access and the starter input files.', 'zeropress-static' ),
+			'TARGET_NOT_REGULAR_FILE'         => __( 'Export inputs must be regular files, not directories, symlinks or submodules.', 'zeropress-static' ),
 			'INVALID_URL'                     => __( 'Enter an HTTP(S) URL without credentials, a query or a fragment.', 'zeropress-static' ),
 			'INVALID_SITE_URL'                => __( 'Enter the site origin without a path.', 'zeropress-static' ),
 			'INVALID_COMMENTS_URL'            => __( 'The REST API URL must end in /wp-json/wp/v2.', 'zeropress-static' ),
@@ -921,11 +930,24 @@ final class Admin {
 			'SOURCE_READ_UNBOUNDED'           => __( 'WordPress data could not be read safely. Review unusual metadata and plugins that customize content or media, then prepare again.', 'zeropress-static' ),
 			'body_details'                    => __( 'Post ID: {id}. Body size: {bytes} UTF-8 bytes.', 'zeropress-static' ),
 			'body_warning'                    => __( '{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}.', 'zeropress-static' ),
-			'publishing_help'                 => __( 'Publishing help', 'zeropress-static' ),
-			'EXPORT_STORAGE_UNAVAILABLE'      => __( 'Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again.', 'zeropress-static' ),
 			'MEMORY_LIMIT_EXCEEDED'           => __( 'There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again.', 'zeropress-static' ),
+			'WXR_SPLIT_REQUIRED'              => __( 'This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again.', 'zeropress-static' ),
+			'WXR_SINGLE_MEMORY_LIMIT'         => __( 'Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again.', 'zeropress-static' ),
+			'WXR_SPLIT_UNSUPPORTED'           => __( 'This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again.', 'zeropress-static' ),
+			'WXR_TARGET_INVALID'              => __( 'The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again.', 'zeropress-static' ),
+			'WXR_RECORD_TOO_LARGE'            => __( 'One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit.', 'zeropress-static' ),
+			'WXR_BUNDLE_LIMIT_EXCEEDED'       => __( 'This export exceeds the supported split export limits. Review your export settings or contact support before trying again.', 'zeropress-static' ),
+			'EXPORT_STORAGE_UNAVAILABLE'      => __( 'Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again.', 'zeropress-static' ),
+			'GITHUB_PAYLOAD_TOO_LARGE'        => __( 'GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again.', 'zeropress-static' ),
+			'split_summary'                   => __( 'This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file.', 'zeropress-static' ),
+			'single_summary'                  => __( 'This export will be published as a single XML file.', 'zeropress-static' ),
+			'switch_to_single'                => __( 'This publication replaces the split export files with one XML file.', 'zeropress-static' ),
+			'switch_to_bundle'                => __( 'This publication replaces the single XML file with split export files.', 'zeropress-static' ),
+			'publishing_help'                 => __( 'Publishing help', 'zeropress-static' ),
 			'memory_details'                  => __( 'PHP memory limit: {limit}. Estimated memory required: {estimated}.', 'zeropress-static' ),
-			'REQUEST_TIME_LIMIT_EXCEEDED'     => __( 'The request reached its server-based time budget. Increase the server time allowance and prepare again.', 'zeropress-static' ),
+			'REQUEST_TIME_LIMIT_EXCEEDED'     => __( 'The server time limit stopped this request. Ask your host to review the request time limit, then prepare again.', 'zeropress-static' ),
+			'time_insufficient'               => __( 'There is not enough time left on the server to complete this request. Ask your host to review the request time limit, then prepare again.', 'zeropress-static' ),
+			'time_needed_details'             => __( 'Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time.', 'zeropress-static' ),
 			'time_details'                    => __( 'PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s.', 'zeropress-static' ),
 		);
 	}

@@ -521,7 +521,7 @@
 		notice('github', '');
 		run(event.currentTarget, 'test', 'testing', async () => {
 			const target = await request('test', { settings: input });
-			const unsaved = target.repository !== settings.repository || target.branch !== settings.branch;
+			const unsaved = target.repository !== settings.repository || target.branch !== settings.branch || input.wxr_publish_format !== settings.wxr_publish_format;
 			notice('test', message('connected') + (unsaved ? ' ' + message('connected_unsaved') : ''));
 		}, form);
 	});
@@ -634,8 +634,10 @@
 				el('dt', null, message('confirm_branch')),
 				el('dd', null, snapshot.target.branch),
 				el('dt', null, message('confirm_files')),
+				el('dd', null, publication.formatSummary(snapshot)),
 				el('dd', null, el('ul', null,
-					el('li', null, el('code', null, 'wordpress-export.xml')),
+					el('li', null, el('code', null, snapshot.publication?.format === 'bundle' ? 'wordpress-export.manifest.json' : 'wordpress-export.xml')),
+					!republish && snapshot.publication?.format === 'bundle' ? el('li', null, el('code', null, 'wordpress-export.parts/')) : null,
 					republish ? null : el('li', null, el('code', null, 'wxr-import-base.json')),
 				)),
 			),

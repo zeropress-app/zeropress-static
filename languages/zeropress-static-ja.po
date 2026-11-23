@@ -55,11 +55,11 @@ msgstr "GitHub に変更を反映中…"
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr "認証付き暗号化を利用できません。認証情報を登録する前に、サーバーで OpenSSL AES-256-GCM を有効にしてください。"
 
-msgid "Both files will be updated in one commit."
-msgstr "2つのファイルを1つのコミットで更新します。"
+msgid "Automatic"
+msgstr "自動"
 
-msgid "Both targets must be regular files, not directories, symlinks or submodules."
-msgstr "2つの対象は通常のファイルである必要があります。ディレクトリ、シンボリックリンク、サブモジュールは使用できません。"
+msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
+msgstr "自動では、小さなエクスポートを1つの XML ファイルにまとめ、必要に応じて分割ファイルを使用します。既存の分割エクスポートは分割形式を維持します。XML のダウンロードは常に単一ファイルです。"
 
 msgid "Button label"
 msgstr "ボタンのラベル"
@@ -253,6 +253,9 @@ msgstr "この WordPress のアドレスを使った例: %s。"
 msgid "Examples: %1$s · %2$s · %3$s"
 msgstr "例: %1$s · %2$s · %3$s"
 
+msgid "Export inputs must be regular files, not directories, symlinks or submodules."
+msgstr "エクスポート入力は、ディレクトリ、シンボリックリンク、サブモジュールではなく通常のファイルである必要があります。"
+
 msgid "Files to update"
 msgstr "更新するファイル"
 
@@ -286,6 +289,9 @@ msgstr "GitHub への発行"
 msgid "GitHub publishing (optional)"
 msgstr "GitHub への発行 (任意)"
 
+msgid "GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again."
+msgstr "ファイルまたはリクエストが大きすぎるため、GitHubに拒否されました。WXRスターターの分割エクスポート対応と、大きすぎる項目を確認して、もう一度準備してください。"
+
 msgid "GitHub rejected the write. Check repository permissions and branch rules."
 msgstr "GitHub が書き込みを拒否しました。リポジトリの権限とブランチのルールを確認してください。"
 
@@ -306,9 +312,6 @@ msgstr "発行に使用するアイコン URL"
 
 msgid "Information from WordPress"
 msgstr "WordPress の情報"
-
-msgid "Keep <code>wordpress-export.xml</code> and <code>wxr-import-base.json</code> in the repository root. Publishing to GitHub replaces these two files."
-msgstr "リポジトリのルートに <code>wordpress-export.xml</code> と <code>wxr-import-base.json</code> を配置してください。GitHub への発行時に、この2つのファイルを置き換えます。"
 
 msgid "Learn more about API protection"
 msgstr "API 保護について詳しく見る"
@@ -354,6 +357,9 @@ msgstr "発行する変更はありません。"
 
 msgid "Not configured"
 msgstr "未設定"
+
+msgid "One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
+msgstr "エクスポートする項目が大きすぎて安全に送信できません。特に大きい投稿本文やメタデータを減らして、もう一度準備してください。PHPメモリの増量だけではこの上限はなくなりません。"
 
 msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
 msgstr "パスワードで保護されていない公開済みの投稿と固定ページのみをエクスポートします。ショートコードと動的ブロックは実行されません。"
@@ -475,8 +481,8 @@ msgstr "置換ルールを削除"
 msgid "Repository to select:"
 msgstr "選択するリポジトリ:"
 
-msgid "Repository, branch or required files not found. Check access and the two root files."
-msgstr "リポジトリ、ブランチ、または必要なファイルが見つかりません。アクセス権限とルートにある2つのファイルを確認してください。"
+msgid "Repository, branch or required export files not found. Check access and the starter input files."
+msgstr "リポジトリ、ブランチ、または必要なエクスポートファイルが見つかりません。アクセス権とスターターの入力ファイルを確認してください。"
 
 msgid "Republish options"
 msgstr "再発行オプション"
@@ -538,6 +544,9 @@ msgstr "検索とコンテンツナビゲーション"
 msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
 msgstr "発行する WordPress のクラシックメニューを選択してください。メニュー ID によって、選択したメニューを静的サイトのテーマに対応付けます。"
 
+msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again."
+msgstr "この単一 XML ファイルを送信するには、より多くの PHP メモリが必要です。対応するスターターで「自動」または「分割 XML」を選択するか、ホスティング事業者に PHP メモリの増量を依頼して、もう一度準備してください。"
+
 msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
 msgstr "<strong>Contents</strong> の権限を <strong>Read and write</strong> に設定してください。"
 
@@ -574,6 +583,9 @@ msgstr "Hostinger Reach、Omnisend、Mailchimp などのニュースレターサ
 msgid "Signup page URL"
 msgstr "登録ページ URL"
 
+msgid "Single XML"
+msgstr "単一 XML"
+
 msgid "Site"
 msgstr "サイト"
 
@@ -597,6 +609,12 @@ msgstr "置換元 URL の接頭辞"
 
 msgid "Source URL prefix example:"
 msgstr "置換元 URL の接頭辞の例:"
+
+msgid "Split XML"
+msgstr "分割 XML"
+
+msgid "Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json."
+msgstr "WXRスターターテンプレートから始めてください。公開時にエクスポート入力が更新され、対応スターターでは大きなエクスポートを自動的に分割ファイルで処理します。独自の設定はwxr-import-base.override.jsonに保存してください。"
 
 msgid "Static site URL"
 msgstr "静的サイト URL"
@@ -628,17 +646,20 @@ msgstr "確認画面を読み込めませんでした。このページを再読
 msgid "The download is ready. Check your browser downloads."
 msgstr "ダウンロードの準備ができました。ブラウザーのダウンロード一覧を確認してください。"
 
+msgid "The export files will be updated together in one commit."
+msgstr "エクスポートファイルは1つのコミットでまとめて更新されます。"
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "準備したデータの有効期限が切れたか、設定が変更されました。もう一度準備してください。"
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "準備したデータが無効です。もう一度準備してください。"
 
+msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
+msgstr "リポジトリの分割エクスポートが不完全か、変更されています。スターターの入力ファイルを確認し、完全な公開済みエクスポートを復元してから、もう一度準備してください。"
+
 msgid "The request could not be completed. Please retry."
 msgstr "リクエストを完了できませんでした。もう一度お試しください。"
-
-msgid "The request reached its server-based time budget. Increase the server time allowance and prepare again."
-msgstr "サーバーの設定に基づく処理時間の上限に達しました。サーバーの実行時間上限を延ばしてから、もう一度準備してください。"
 
 msgid "The saved GitHub token was deleted."
 msgstr "保存済みの GitHub トークンを削除しました。"
@@ -649,11 +670,17 @@ msgstr "保存済みのキーを削除し、Cloudflare Turnstile を無効にし
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr "保存済みのトークンを復号できません。削除して再登録してください。WordPress の認証用キーが変更された可能性があります。"
 
+msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
+msgstr "サーバーの処理時間制限により、このリクエストを完了できませんでした。ホスティング事業者にリクエストの処理時間制限を確認してから、再度準備してください。"
+
 msgid "The token cannot access this repository. Check its selected repositories and permissions."
 msgstr "このトークンではリポジトリにアクセスできません。トークンで選択したリポジトリと権限を確認してください。"
 
 msgid "There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again."
 msgstr "リクエストを完了するための PHP メモリーが不足しています。サーバーのメモリー上限を増やしてから、もう一度準備してください。"
+
+msgid "There is not enough time left on the server to complete this request. Ask your host to review the request time limit, then prepare again."
+msgstr "このリクエストを完了するには、サーバーの残り処理時間が不足しています。ホスティング事業者にリクエストの処理時間制限を確認してから、再度準備してください。"
 
 msgid "These values are read from WordPress when preparing publishing data."
 msgstr "発行データの準備時に、これらの値を WordPress から読み込みます。"
@@ -661,8 +688,26 @@ msgstr "発行データの準備時に、これらの値を WordPress から読�
 msgid "This WordPress installation: %s."
 msgstr "この WordPress のアドレス: %s。"
 
+msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
+msgstr "分割エクスポートの対応上限を超えています。エクスポート設定を確認するか、サポートに相談してから再試行してください。"
+
+msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
+msgstr "このエクスポートは、GitHub の単一ファイルとして公開するには大きすぎます。対応するスターターで「自動」または「分割 XML」を選択し、もう一度準備してください。"
+
+msgid "This export will be published as a single XML file."
+msgstr "このエクスポートは単一の XML ファイルとして公開されます。"
+
+msgid "This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file."
+msgstr "このエクスポートは{parts}個のファイルに分割して公開され、スターターで1つのサイトとしてビルドされます。XMLのダウンロードは単一ファイルのままです。"
+
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "この WordPress は、サポート対象の <code>/wp-json/wp/v2</code> URL 形式を使用していません。このパスで訪問者がアクセスできる API を設定してください。クエリー形式の REST URL はサポートされていません。"
+
+msgid "This publication replaces the single XML file with split export files."
+msgstr "今回の公開では、既存の単一 XML ファイルを分割エクスポートファイルに置き換えます。"
+
+msgid "This publication replaces the split export files with one XML file."
+msgstr "今回の公開では、既存の分割エクスポートファイルを1つの XML ファイルに置き換えます。"
 
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "このプラグインに保存されているトークンを削除します。GitHub に発行するには、トークンを再登録してください。"
@@ -685,8 +730,14 @@ msgstr "このセクションの設定を保存しました。コメント表示
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "このセクションの設定を保存しました。コメント表示の変更は次回の発行後に反映されます。投稿設定は新しいコメントリクエストに適用されます。"
 
+msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
+msgstr "このスターターは分割 XML に対応していません。WXR スターター全体を更新するか、「自動」または「単一 XML」を選択し、もう一度準備してください。"
+
 msgid "This version supports single-site WordPress only."
 msgstr "このバージョンは WordPress のシングルサイト構成のみをサポートしています。"
+
+msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
+msgstr "残り時間: {remaining} 秒。リクエスト間の最小待機時間: {minimum} 秒。このほかに転送時間が必要です。"
 
 msgid "Timezone"
 msgstr "タイムゾーン"
@@ -753,6 +804,9 @@ msgstr "静的サイトで表示"
 
 msgid "View saved publishing repository"
 msgstr "保存済みの発行先リポジトリを表示"
+
+msgid "WXR publishing format"
+msgstr "WXR の公開形式"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "WordPress が投稿の保存を完了するまでお待ちください。"
