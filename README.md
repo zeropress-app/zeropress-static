@@ -378,11 +378,13 @@ GitHub again**. This creates a new commit by updating the WXR generation time.
 Post dates and build settings stay unchanged. This can trigger the build service
 configured for your repository. The branch is never force-updated.
 
-If GitHub's response to the branch update is inconclusive, the plugin attempts
-one read-back within the remaining request time, without repeating the write.
-A lost browser response or a terminated server request may prevent confirmation.
-If **Publication needs verification** appears, inspect the publishing branch
-before preparing and publishing again.
+A lost browser response or a terminated server request can leave the branch
+update unconfirmed. The plugin does not repeat an uncertain branch write.
+If **Publication needs verification** appears, open **ZeroPress → Publish** or
+the editor's publishing dialog and select **Check publication result**. These
+checks are read-only; do not publish again until the result is confirmed. See
+[interrupted publication and recovery](#interrupted-publication-and-recovery)
+if verification remains unresolved.
 
 ### Split publication and starter compatibility
 
@@ -398,7 +400,7 @@ target before preparing again:
 
 | Setting | Behavior |
 | --- | --- |
-| **Automatic** (default) | Keeps small exports in a single XML file and switches to split files when needed on a compatible starter. Existing split exports stay split. |
+| **Automatic** (default) | Splits WXR files larger than 8 MiB on a compatible starter. Smaller files may also split depending on upload size or server memory. Existing split exports stay split. |
 | **Single XML** | Publishes one XML file if the file-size, memory and time checks pass. Can replace a verified split export. A failed check stops publication and offers next steps; it does not silently switch formats. |
 | **Split XML** | Uses split files even for a small site. Requires a compatible starter; it does not mean one file per post. |
 
@@ -451,7 +453,8 @@ Both single and split publication reuse file blobs whose exact Git SHA matches
 the current verified target, including unchanged build settings. This avoids
 resending identical bytes without reading remote file bodies. Dated XML or
 manifest files still change during explicit republication; reuse does not skip
-the new publication commit. Failed uploads are not a reusable session.
+the new publication commit. Confirmed uploads in an active publication can also
+be reused when that publication resumes.
 
 The review receipt fixes the actual single or split format as well as logical
 content, settings revision, user, target and expiry. Later requests use that
@@ -460,8 +463,86 @@ requires a new preparation. It cannot bypass an unresolved publication: checking
 an uncertain result remains read-only and uses the original commitments.
 Content or managed-target changes require a new preparation. Metadata-only
 ownership checks and uncertain-write reconciliation remain in force. Split blob writes are sequential, with at least
-one second between completed mutations. Pacing respects the shared request deadline. Uploads cannot resume across requests.
+one second between completed mutations. Shared pacing and rate-limit cooldowns
+survive retries, cancellation and new publication attempts.
 
+### Interrupted publication and recovery
+
+The admin page and both post editors publish through a sequence of authenticated
+requests. Each ordinary request inspects one metadata object or uploads one
+blob/tree/commit. The final request regenerates the source at the approved
+snapshot's timestamp, checks its full logical hash and transport plan, and checks
+the branch HEAD before one non-forced reference update. Unrelated branch changes
+can rebuild the candidate after full reinspection; managed-file or capability
+marker changes stop publication. No incomplete generation is exposed on the
+branch. GitHub's `force: false` enforces fast-forward behavior, not an exact
+expected-old-SHA compare-and-swap against external forced resets.
+
+If the page closes or a connection is interrupted, open **ZeroPress → Publish**
+or the editor's publication dialog. **Continue publication** resumes confirmed
+progress, **Check publication result** performs read-only verification, and
+**Cancel publication** cancels work that has not reached final dispatch.
+While capturing the publication snapshot, uploading files or continuing a
+publication, **Pause publication** stops after the current request finishes,
+without a confirmation dialog. It does not abort the request or cancel the
+server job. Once paused, choose **Continue publication** to resume saved
+progress or **Cancel publication** to discard the unfinished job.
+A pause stops the current page from sending another publication step; it does
+not stop another page that is already running the job. Lost responses still
+require a status check, and an uncertain final result must be verified.
+Pausing is unavailable once the final branch update is dispatched and during
+uncertain-result verification; the confirmed result takes precedence.
+Opening a page only reads status: it does not publish or resume automatically.
+There is no background publisher. The original ten-minute approval, owner,
+settings revision and target remain binding; pausing or resuming does not
+extend approval. After expiry, cancel the job and prepare again.
+
+Before sending the final branch update, the server durably records the candidate
+commit and expected files. If its outcome is uncertain, it never sends another
+final update for that job. Verification requires the candidate at HEAD or in
+relevant managed-file history together with exact file and data commitments.
+An old HEAD or the mere existence of a candidate commit is not proof of failure
+or success. An unresolved job continues blocking new publication, including the
+legacy one-request API, after expiry and cancellation attempts. Restore access
+to the original target and use **Check publication result**. If proof remains
+unavailable, investigate the branch history with the maintainer; deleting the
+local journal is not a safe retry procedure.
+
+The server maintains one active job per WordPress installation. A bounded,
+non-autoloaded option holds IDs, hashes, progress and results, but no credentials,
+receipts or WXR bodies. A private snapshot directory holds the approved bytes;
+files use mode `0600` and directories `0700`. Contents and file identity are
+checked again before upload. An exclusive per-site OS file lock prevents parallel
+workers; time passing never authorizes taking over a live worker's lock.
+Duplicate/stale request IDs return current status rather than repeating a step.
+
+Publication requires a Linux/Unix-style filesystem with POSIX file permissions
+and working cross-process locks. Windows drive-letter and UNC paths are not
+supported by the current private-storage implementation. PHP and WordPress
+version checks alone do not establish that this storage is supported.
+
+The default snapshot directory is under PHP's system temporary directory.
+It must remain available across requests, outside the web/document root and
+uploads, with private ownership, stable file identities and working exclusive
+locks. Multiple PHP workers must see the same supported filesystem; separate
+per-container temporary directories do not provide this guarantee. Hosts can
+select a suitable private directory with
+`zeropress_static_publication_directory`; public paths and permissive modes are
+rejected. Storage without these guarantees, including unsupported filesystem
+semantics, stops publication with a controlled error rather than an unsafe
+fallback. Plan disk space for the snapshot plus export spools; capture checks
+free space for the snapshot, twice the WXR size and a 16 MiB reserve. A disk-space
+check is not a reservation against other processes.
+
+Completion, cancellation and opportunistic expiry cleanup remove owned snapshot
+files while holding the lock. The stable lock file remains. Deactivation or
+uninstall cancels pre-dispatch work and attempts private-file cleanup; a busy
+worker is not interrupted or unlocked. The small control journal is retained,
+especially an unresolved final-write fence: removing local files or uninstalling
+the plugin cannot roll back a GitHub write. Abrupt host termination may still
+require later private-file cleanup. A missing snapshot before dispatch requires
+cancellation and fresh preparation; read-only final-result verification can
+continue without snapshot bodies.
 
 ### Manual downloads
 
@@ -549,34 +630,38 @@ Titles and other display text are decoded once to preserve characters such as
 apostrophes and ampersands.
 
 Publishing is a manual full export. Preparation, downloads and publication are
-separate requests; downloads and publication regenerate the data to check for
-changes. Each request shares its resource budget across generation and GitHub
-communication.
+separate operations. Downloads regenerate the data; publication captures a
+validated snapshot at start and regenerates it again before final dispatch.
+Each request shares its original resource budget across generation and GitHub
+communication. The legacy PHP publication API still performs a single request,
+with the same site lock, durable final-write fence and pacing protections.
 
 WXR records are written to registered, request-owned files in a private subdirectory
 of PHP's system temporary directory, then assembled into a single XML or bounded
 parts. Downloads replay that file in bounded buffers after receipt and content
 validation. Each open file retains an exclusive lock until its last read and
-close. Files are never stored in WordPress uploads or exposed by URL.
+close. Files are never stored in WordPress uploads or exposed by URL. Publication
+additionally copies approved artifacts into the separate, resumable snapshot
+[described above](#interrupted-publication-and-recovery).
 
 Normal close removes the registered file. If a worker is terminated or deletion
-fails, a later authorized preparation, download, publication
+fails, a later authorized preparation, download, publication step or cancellation
 can reclaim abandoned files after verifying their signed ownership, file identity
 and available lock. Recovery is bounded per request and may take several requests.
 It never deletes a live locked file, follows a link, repairs foreign ownership,
 or sweeps generic `php*` files. Deactivation and uninstall also attempt one
-bounded pass.
+bounded pass. Status polling and uncertain-result verification do not run a sweep;
+recovery never changes the publication journal or final-write fence.
 
-Export spools require a Linux/Unix-style filesystem with POSIX permissions and working
-cross-process locks, writable by the PHP worker. Windows drive-letter and UNC paths
-are not supported. PHP and WordPress version checks alone do not establish storage support. Export spools use
+Export spools have the same Linux/Unix-style filesystem requirement as publication
+snapshots. Both locations must be writable by the PHP worker. Export spools use
 PHP's `sys_get_temp_dir()`; WordPress's `WP_TEMP_DIR` does not redirect them.
 
 The host must provide private local temporary storage with stable file identities,
 working cross-process locks, and room for the item spool and assembled WXR
 (approximately twice the WXR size during assembly). Public paths, permissive
 permissions and unsupported storage fail with the existing controlled storage
-error.
+error; the publication-directory filter does not redirect these export files.
 Small ownership/lock/cursor controls remain after cleanup. A quiet site, invalid
 or incomplete registrations, a large backlog, or files from an earlier plugin
 storage format or WordPress salt generation can still require host-assisted
@@ -611,7 +696,12 @@ request budget unlimited. PHP-FPM, web servers and proxies can still terminate
 requests according to their own limits.
 
 GitHub HTTP requests use the remaining time. When PHP has no execution-time
-limit, each GitHub request defaults to a 30-second timeout. The
+limit, each GitHub request defaults to a 30-second timeout. Ordinary resumable
+steps additionally cap each HTTP call at 15 seconds and reserve two seconds for
+local checkpoints. The final request has the checkpoint reserve but uses the
+normal configured HTTP timeout. A single file transfer, initial capture or final
+regeneration must still fit one request; splitting requests does not remove
+those floors. The
 `zeropress_static_github_request_timeout` filter accepts a positive finite number
 of seconds. For example, the following allows up to 60 seconds per GitHub request;
 a finite overall request budget still takes precedence:
@@ -630,16 +720,17 @@ visible. Time guidance distinguishes insufficient remaining time before a paced
 operation from exhaustion during processing. If a failed HTTP request consumes
 the shared deadline, it reports that time limit instead of a generic GitHub
 connection error. Connection failures with time remaining retain their existing
-classification. Ask your host to review PHP and hosting request time limits,
-then prepare again. Increasing PHP memory does not extend the time budget.
+classification. A paused pre-dispatch step can be continued within its original
+approval. If preparation, capture or final regeneration cannot fit a request, ask
+your host to review PHP and hosting request time limits, then prepare again. Increasing PHP memory does not extend the time budget.
 Confirmed branch updates remain successful even if their responses arrive near
 the deadline; uncertain updates still require verification and are never retried
 automatically. A larger PHP memory allowance does not remove file-size or inventory
 bounds. An inspection that exhausts the shared deadline cannot issue a new
 preparation receipt; the exporter does not reset the budget to continue.
 If the server terminates a publication request before returning its result,
-check GitHub before preparing again; the plugin cannot infer whether the branch
-was updated from a lost response.
+read the retained status and use the recovery actions above. The plugin cannot
+infer whether the branch was updated from a lost response.
 
 ## Stored data and external services
 

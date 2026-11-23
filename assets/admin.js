@@ -17,6 +17,7 @@
 	const loadingIndicators = new Map();
 	let settings = config.settings;
 	let prepared = null;
+	let session = null;
 	let busy = false;
 	let confirmation = null;
 	let turnstileEditing = false;
@@ -338,7 +339,7 @@
 	function publishControls() {
 		if (!$('publish')) return;
 		const publishable = ['ready', 'unchanged'].includes(prepared?.state);
-		$('publish').disabled = busy || !publishable;
+		$('publish').disabled = busy || !publishable || !!session;
 		if (!busy && prepared?.state !== 'attempted') {
 			const republish = prepared?.state === 'unchanged';
 			const published = prepared?.state === 'published';
@@ -559,6 +560,57 @@
 		});
 	});
 
+	// This panel survives preparing again; server-side status is authoritative.
+	const recovery = config.session_publication && $('prepare') ? document.createElement('section') : null;
+	let publicationControl = null;
+	const livePause = recovery ? document.createElement('button') : null;
+	if (livePause) {
+		livePause.id = 'zpsp-pause-publication'; livePause.type = 'button';
+		livePause.className = 'button button-secondary'; livePause.textContent = message('session_pause');
+		livePause.hidden = true; livePause.disabled = true;
+		livePause.addEventListener('click', () => publicationControl?.pause?.());
+		$('result-notice').after(livePause);
+	}
+	function updatePublicationControl(control) {
+		publicationControl = control;
+		if (livePause) {
+			livePause.hidden = !control; livePause.disabled = !control?.pause;
+			livePause.textContent = message(control?.pausing ? 'session_pausing' : 'session_pause');
+		}
+		if (recovery) recovery.hidden = !!control || !session;
+	}
+	function showSession(value) {
+		if (!recovery) return;
+		session = ['active', 'paused', 'unknown', 'expired', 'cancel_pending', 'busy'].includes(value?.state) ? value : null;
+		recovery.replaceChildren(); recovery.hidden = !!publicationControl || !session;
+		if (!session) { publishControls(); return; }
+		const title = document.createElement('h3'); title.textContent = message('session_title'); recovery.append(title);
+		const description = publication.resultMessage(session);
+		if (!$('result-notice')?.textContent.includes(description)) {
+			const text = document.createElement('p'); text.textContent = description; recovery.append(text);
+		}
+		const actions = document.createElement('div'); actions.className = 'zpsp-actions'; recovery.append(actions);
+		const captured = session;
+		const add = (key, work) => {
+			const button = document.createElement('button'); button.type = 'button'; button.className = 'button button-secondary'; button.textContent = message(key);
+			button.addEventListener('click', () => run(button, 'result', 'publishing', async () => {
+				$('result').hidden = false;
+				const result = await work(captured);
+				notice('result', publication.resultMessage(result), ['unknown', 'failed'].includes(result.state), result.commit_url, result.code);
+				showSession(result);
+			})); actions.append(button);
+		};
+		if (session.state === 'unknown' || session.can_continue) add(session.state === 'unknown' ? 'session_verify' : 'session_continue', (s) => publication.resume(s, (text) => notice('result', text), updatePublicationControl));
+		if (session.job_id && session.state !== 'unknown') add('session_cancel', (s) => publication.cancel(s.job_id));
+		add('session_refresh', (s) => publication.sessionStatus(s.job_id));
+		publishControls();
+	}
+	if (recovery) {
+		recovery.hidden = true; recovery.className = 'zpsp-publication-recovery';
+		$('prepare').before(recovery);
+		publication.sessionStatus().then(showSession).catch(() => {});
+	}
+
 	function publish(button, snapshot) {
 		if (busy || confirmation || prepared !== snapshot || !['ready', 'unchanged'].includes(snapshot.state)) return;
 		const republish = snapshot.state === 'unchanged';
@@ -575,11 +627,12 @@
 			const result = await publication.publish(receipt, republish, (text) => {
 				// Keep the progress bar mounted while announcing actual server stages.
 				if (label.textContent !== text) label.textContent = text;
-			});
+			}, updatePublicationControl);
 			if (result.state === 'published') {
 				snapshot.state = 'published';
 			}
-			notice('result', message(result.state), result.state === 'unknown', result.commit_url);
+			notice('result', publication.resultMessage(result), ['unknown', 'failed'].includes(result.state), result.commit_url, result.code);
+			showSession(result);
 			if (result.state === 'published') $('result-notice').classList.replace('notice-info', 'notice-success');
 			$('result-notice').focus();
 		});

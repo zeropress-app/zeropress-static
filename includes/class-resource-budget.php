@@ -41,6 +41,28 @@ final class Resource_Budget {
 	 */
 	private \Closure $memory_usage;
 
+	/** Response/checkpoint time retained inside the existing request budget.
+	 *
+	 * @var float
+	 */
+	private float $http_reserve = 0;
+	/** Optional per-call quantum for a resumable request.
+	 *
+	 * @var float|null
+	 */
+	private ?float $http_cap = null;
+
+	/**
+	 * Bound HTTP without resetting or increasing the original resource budget.
+	 *
+	 * @param float $seconds Reserved local checkpoint time.
+	 * @param float $cap Optional maximum timeout per HTTP call.
+	 */
+	public function reserve_checkpoint( float $seconds = 2, ?float $cap = 15 ): void {
+		$this->http_reserve = $seconds;
+		$this->http_cap     = $cap;
+	}
+
 	/**
 	 * Create a budget from measured server settings.
 	 *
@@ -187,6 +209,7 @@ final class Resource_Budget {
 			$timeout = $default;
 		}
 		$remaining = $this->remaining();
-		return null === $remaining ? (float) $timeout : min( (float) $timeout, $remaining );
+		$this->require_time( $this->http_reserve );
+		return min( (float) $timeout, $this->http_cap ?? PHP_FLOAT_MAX, null === $remaining ? PHP_FLOAT_MAX : $remaining - $this->http_reserve );
 	}
 }

@@ -16,6 +16,9 @@ msgstr "Une clé secrète Turnstile est enregistrée."
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "Le contenu d’un article ou d’une page dépasse la limite de 4 MiB. Divisez ou raccourcissez le contenu, puis préparez à nouveau les données."
 
+msgid "A publication is in progress. Continue it here if the previous page was closed."
+msgstr "Une publication est en cours. Si vous avez fermé la page précédente, vous pouvez continuer ici."
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "Un menu WordPress sélectionné n’est plus disponible. Rechargez les réglages et sélectionnez à nouveau un menu."
 
@@ -46,11 +49,17 @@ msgstr "Autoriser l’envoi de commentaires sur le site statique"
 msgid "Allow search engine crawling"
 msgstr "Autoriser l’exploration par les moteurs de recherche"
 
+msgid "Another publication is in progress."
+msgstr "Une autre publication est en cours."
+
 msgid "Apple touch icon"
 msgstr "Icône tactile Apple"
 
 msgid "Applying changes on GitHub…"
 msgstr "Application des modifications sur GitHub…"
+
+msgid "Approval expired. Cancel this publication and prepare the data again."
+msgstr "L’autorisation a expiré. Annulez cette publication et préparez à nouveau les données."
 
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr "Le chiffrement authentifié n’est pas disponible. Activez OpenSSL AES-256-GCM sur le serveur avant d’enregistrer des identifiants."
@@ -58,8 +67,8 @@ msgstr "Le chiffrement authentifié n’est pas disponible. Activez OpenSSL AES-
 msgid "Automatic"
 msgstr "Automatique"
 
-msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
-msgstr "Automatique conserve les petites exportations dans un seul fichier XML et utilise des fichiers fractionnés si nécessaire. Les exportations déjà fractionnées conservent ce format. Les téléchargements XML restent toujours un fichier unique."
+msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
+msgstr "Avec les starters compatibles, Automatique fractionne les fichiers WXR de plus de 8 MiB. Les fichiers plus petits peuvent aussi être fractionnés selon la taille de l’envoi ou la mémoire du serveur. Les exports déjà fractionnés le restent. Les téléchargements XML sont toujours fournis dans un seul fichier."
 
 msgid "Button label"
 msgstr "Libellé du bouton"
@@ -67,8 +76,17 @@ msgstr "Libellé du bouton"
 msgid "Cancel"
 msgstr "Annuler"
 
+msgid "Cancel publication"
+msgstr "Annuler la publication"
+
+msgid "Cancellation requested. Waiting for the current request to finish."
+msgstr "Annulation demandée. En attente de la fin de la requête en cours."
+
 msgid "Change keys"
 msgstr "Modifier les clés"
+
+msgid "Check publication result"
+msgstr "Vérifier le résultat"
 
 msgid "Check the values in this section."
 msgstr "Vérifiez les valeurs de cette section."
@@ -111,6 +129,9 @@ msgstr "Commentaires"
 
 msgid "Connection details changed. Test again to check these values."
 msgstr "Les informations de connexion ont changé. Testez à nouveau la connexion pour vérifier ces valeurs."
+
+msgid "Continue publication"
+msgstr "Continuer la publication"
 
 msgid "Copyright or legal notice"
 msgstr "Droits d’auteur ou mentions légales"
@@ -382,6 +403,12 @@ msgstr "Limite de mémoire PHP : {limit}. Mémoire nécessaire estimée : {estim
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "Limite de temps PHP : {limit} s. Temps alloué à la requête : {budget} s. Temps écoulé : {elapsed} s."
 
+msgid "Pause publication"
+msgstr "Mettre la publication en pause"
+
+msgid "Pausing…"
+msgstr "Mise en pause…"
+
 msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
 msgstr "ID de l’article : {id}. Taille du contenu : {bytes} octets UTF-8."
 
@@ -403,11 +430,23 @@ msgstr "Préparation des données…"
 msgid "Preparing download…"
 msgstr "Préparation du téléchargement…"
 
+msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
+msgstr "Le stockage temporaire privé est indisponible. Demandez à votre hébergeur de vérifier ses autorisations et le stockage partagé, puis réessayez."
+
 msgid "Public access to this REST API is restricted."
 msgstr "L’accès public à cette API REST est restreint."
 
-msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
-msgstr "La publication doit être vérifiée. Vérifiez le commit GitHub avant de préparer à nouveau les données ; l’écriture n’a pas été retentée."
+msgid "Publication cancelled. The branch was not updated."
+msgstr "Publication annulée. La branche n’a pas été mise à jour."
+
+msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
+msgstr "La publication doit être vérifiée. Utilisez Vérifier le résultat et ne publiez pas à nouveau tant que le résultat n’est pas confirmé."
+
+msgid "Publication paused. Continue publishing or cancel this publication."
+msgstr "Publication en pause. Vous pouvez la reprendre ou l’annuler."
+
+msgid "Publication paused. Continue to retry the remaining steps."
+msgstr "La publication est en pause. Continuez pour réessayer les étapes restantes."
 
 msgid "Publication result"
 msgstr "Résultat de la publication"
@@ -456,6 +495,9 @@ msgstr "Réglages de lecture"
 
 msgid "Ready to publish to {repository} ({branch})."
 msgstr "Prêt à publier dans {repository} ({branch})."
+
+msgid "Refresh status"
+msgstr "Actualiser l’état"
 
 msgid "Register a GitHub token to publish."
 msgstr "Enregistrez un jeton GitHub pour publier."
@@ -661,6 +703,9 @@ msgstr "Les fichiers d’export fractionné du dépôt sont incomplets ou modifi
 msgid "The request could not be completed. Please retry."
 msgstr "La requête n’a pas pu aboutir. Veuillez réessayer."
 
+msgid "The request reached its time limit. Continue to retry this step. If it keeps stopping, ask your host to review the request time limit."
+msgstr "La requête a atteint sa limite de temps. Continuez pour réessayer cette étape. Si elle s’arrête à nouveau, demandez à votre hébergeur de vérifier la limite de temps."
+
 msgid "The saved GitHub token was deleted."
 msgstr "Le jeton GitHub enregistré a été supprimé."
 
@@ -763,6 +808,9 @@ msgstr "Menu indisponible (ID {id})"
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "Dans <strong>Repository access</strong>, choisissez <strong>Only select repositories</strong>."
 
+msgid "Unfinished publication"
+msgstr "Publication inachevée"
+
 msgid "Unknown author"
 msgstr "Auteur inconnu"
 
@@ -810,6 +858,9 @@ msgstr "Format de publication WXR"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "Attendez que WordPress ait terminé d’enregistrer votre article."
+
+msgid "Waiting for the current request to finish before pausing."
+msgstr "La publication sera mise en pause à la fin de la requête en cours."
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
 msgstr "Lorsque cette option est décochée, <code>Disallow: /</code> est ajouté au fichier <code>robots.txt</code> du site statique."

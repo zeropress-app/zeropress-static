@@ -100,22 +100,12 @@ final class Publisher {
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
 	 * @throws \Throwable If regeneration fails.
+	 *
+	 * @param int             $generated_at Frozen export timestamp.
 	 */
-	public static function validate( string $receipt, Resource_Budget $budget, bool $refresh_time = false, bool $publication = false ): array {
+	public static function validate( string $receipt, Resource_Budget $budget, bool $refresh_time = false, bool $publication = false, ?int $generated_at = null ): array {
 		$budget->check();
-		if ( strlen( $receipt ) > 20000 || 1 !== substr_count( $receipt, '.' ) ) {
-			throw new Failure( 'PREPARATION_INVALID', 409 );
-		}
-		list( $payload, $signature ) = explode( '.', $receipt, 2 );
-		if ( ! hash_equals( hash_hmac( 'sha256', $payload, Settings::key( 'preparation' ) ), $signature ) ) {
-			throw new Failure( 'PREPARATION_INVALID', 409 );
-		}
-		$value    = json_decode( (string) base64_decode( $payload, true ), true );
-		$settings = Settings::read();
-		if ( ! is_array( $value ) || ( $value['user'] ?? null ) !== get_current_user_id() ||
-			( $value['expires'] ?? 0 ) < time() || ( $value['revision'] ?? '' ) !== $settings['revision'] ) {
-			throw new Failure( 'PREPARATION_EXPIRED', 409 );
-		}
+		list( $settings, $value ) = self::receipt( $receipt );
 		if ( $publication && empty( $value['snapshot'] ) ) {
 			throw new Failure( 'CONNECTION_REQUIRED' );
 		}
@@ -125,7 +115,7 @@ final class Publisher {
 			throw new Failure( 'PREPARATION_INVALID', 409 );
 		}
 		Export_Storage::recover_once( $budget );
-		$export = ( new Exporter( $budget ) )->generate_files( $settings, $refresh_time ? time() : $value['generated_at'], $mode );
+		$export = ( new Exporter( $budget ) )->generate_files( $settings, $generated_at ?? ( $refresh_time ? time() : $value['generated_at'] ), $mode );
 		if ( $export['data_hash'] !== $value['hash'] ) {
 			self::close_export( $export );
 			throw new Failure( 'CONTENT_CHANGED', 409 );
@@ -142,6 +132,29 @@ final class Publisher {
 			}
 		}
 		return array( $settings, $value, $export );
+	}
+
+	/**
+	 * Validate a signed, user/settings-bound preparation without materializing content.
+	 *
+	 * @param string $receipt Signed, expiring preparation approval.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public static function receipt( string $receipt ): array {
+		if ( strlen( $receipt ) > 20000 || 1 !== substr_count( $receipt, '.' ) ) {
+			throw new Failure( 'PREPARATION_INVALID', 409 );
+		}
+		list( $payload, $signature ) = explode( '.', $receipt, 2 );
+		if ( ! hash_equals( hash_hmac( 'sha256', $payload, Settings::key( 'preparation' ) ), $signature ) ) {
+			throw new Failure( 'PREPARATION_INVALID', 409 );
+		}
+		$value    = json_decode( (string) base64_decode( $payload, true ), true );
+		$settings = Settings::read();
+		if ( ! is_array( $value ) || ( $value['user'] ?? null ) !== get_current_user_id() ||
+			( $value['expires'] ?? 0 ) < time() || ( $value['revision'] ?? '' ) !== $settings['revision'] ) {
+			throw new Failure( 'PREPARATION_EXPIRED', 409 );
+		}
+		return array( $settings, $value );
 	}
 
 	/**
@@ -193,6 +206,18 @@ final class Publisher {
 	}
 
 	/**
+	 * Retain the legacy request contract behind the same durable publication gate.
+	 *
+	 * @param string               $receipt Signed, expiring preparation approval.
+	 * @param bool                 $republish Whether unchanged data was explicitly approved for republication.
+	 * @param Resource_Budget      $budget Original request memory and time guard.
+	 * @param Publication_Progress $progress Optional legacy progress reporter.
+	 */
+	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null ): array {
+		return Publication_Session::legacy( $receipt, $republish, $budget ?? Resource_Budget::from_request(), $progress );
+	}
+
+	/**
 	 * Revalidate preparation before updating the GitHub branch.
 	 *
 	 * @param string                    $receipt Signed preparation receipt.
@@ -201,8 +226,10 @@ final class Publisher {
 	 * @param Publication_Progress|null $progress Optional stage feedback for this attempt.
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
+	 *
+	 * @param \Closure                  $observer Optional before/after transport checkpoint hook.
 	 */
-	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null ): array {
+	public static function publish_once( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null, ?\Closure $observer = null ): array {
 		$budget ??= Resource_Budget::from_request();
 		try {
 			$progress?->update( 'validating' );
@@ -214,7 +241,7 @@ final class Publisher {
 				throw new Failure( 'PREPARATION_INVALID', 409 );
 			}
 			$progress?->update( 'inspecting' );
-			$github  = new GitHub( $settings, $budget );
+			$github  = new GitHub( $settings, $budget, $observer );
 			$current = $github->inspect( $prepared['snapshot']['branch'] );
 			if ( $current['repository'] !== $prepared['snapshot']['repository'] || $current['files'] !== $prepared['snapshot']['files'] || $current['marker'] !== $prepared['snapshot']['marker'] ) {
 				throw new Failure( 'TARGET_CHANGED', 409 );
@@ -269,7 +296,7 @@ final class Publisher {
 	 * @return array
 	 * @throws Failure If validation, storage or the request budget fails.
 	 */
-	private static function plan( array $export, Resource_Budget $budget ): array {
+	public static function plan( array $export, Resource_Budget $budget ): array {
 		if ( ! empty( $export['bundle'] ) ) {
 			$bundle = $export['bundle'];
 			foreach ( $bundle->parts as $part ) {

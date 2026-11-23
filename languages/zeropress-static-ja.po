@@ -16,6 +16,9 @@ msgstr "Turnstile Secret Key が登録されています。"
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "投稿または固定ページの本文が 4 MiB の上限を超えています。本文を分割または短縮してから、再度準備してください。"
 
+msgid "A publication is in progress. Continue it here if the previous page was closed."
+msgstr "公開処理が進行中です。前のページを閉じた場合は、ここから続行できます。"
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "選択した WordPress メニューを利用できません。設定を再読み込みし、メニューを選び直してください。"
 
@@ -46,11 +49,17 @@ msgstr "静的サイトでコメントの投稿を許可"
 msgid "Allow search engine crawling"
 msgstr "検索エンジンのクロールを許可"
 
+msgid "Another publication is in progress."
+msgstr "別の公開処理が進行中です。"
+
 msgid "Apple touch icon"
 msgstr "Apple Touch アイコン"
 
 msgid "Applying changes on GitHub…"
 msgstr "GitHub に変更を反映中…"
+
+msgid "Approval expired. Cancel this publication and prepare the data again."
+msgstr "公開の承認期限が切れました。この公開をキャンセルし、データを再準備してください。"
 
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr "認証付き暗号化を利用できません。認証情報を登録する前に、サーバーで OpenSSL AES-256-GCM を有効にしてください。"
@@ -58,8 +67,8 @@ msgstr "認証付き暗号化を利用できません。認証情報を登録す
 msgid "Automatic"
 msgstr "自動"
 
-msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
-msgstr "自動では、小さなエクスポートを1つの XML ファイルにまとめ、必要に応じて分割ファイルを使用します。既存の分割エクスポートは分割形式を維持します。XML のダウンロードは常に単一ファイルです。"
+msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
+msgstr "対応するスターターでは、「自動」は 8 MiB を超える WXR ファイルを分割します。それより小さいファイルも、送信サイズやサーバーのメモリによって分割される場合があります。すでに分割されたエクスポートは分割のまま維持されます。XML のダウンロードは常に単一ファイルです。"
 
 msgid "Button label"
 msgstr "ボタンのラベル"
@@ -67,8 +76,17 @@ msgstr "ボタンのラベル"
 msgid "Cancel"
 msgstr "キャンセル"
 
+msgid "Cancel publication"
+msgstr "公開をキャンセル"
+
+msgid "Cancellation requested. Waiting for the current request to finish."
+msgstr "キャンセルを要求しました。現在のリクエストの完了を待っています。"
+
 msgid "Change keys"
 msgstr "キーを変更"
+
+msgid "Check publication result"
+msgstr "公開結果を確認"
 
 msgid "Check the values in this section."
 msgstr "このセクションの入力値を確認してください。"
@@ -111,6 +129,9 @@ msgstr "コメント"
 
 msgid "Connection details changed. Test again to check these values."
 msgstr "接続情報が変更されました。変更後の値で接続を再確認してください。"
+
+msgid "Continue publication"
+msgstr "公開を続行"
 
 msgid "Copyright or legal notice"
 msgstr "著作権・法的表示"
@@ -382,6 +403,12 @@ msgstr "PHP メモリー上限: {limit}。推定必要メモリー: {estimated}�
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 実行時間上限: {limit}秒。リクエストの処理時間上限: {budget}秒。経過時間: {elapsed}秒。"
 
+msgid "Pause publication"
+msgstr "公開を一時停止"
+
+msgid "Pausing…"
+msgstr "一時停止中…"
+
 msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
 msgstr "投稿 ID: {id}。本文のサイズ: UTF-8 で {bytes} バイト。"
 
@@ -403,11 +430,23 @@ msgstr "データを準備中…"
 msgid "Preparing download…"
 msgstr "ダウンロードを準備中…"
 
+msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
+msgstr "非公開の一時ストレージを利用できません。ホスティング事業者に権限と共有ストレージの確認を依頼し、再試行してください。"
+
 msgid "Public access to this REST API is restricted."
 msgstr "この REST API への公開アクセスは制限されています。"
 
-msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
-msgstr "反映状況の確認が必要です。再度準備する前に GitHub のコミットを確認してください。書き込みの再試行は行っていません。"
+msgid "Publication cancelled. The branch was not updated."
+msgstr "公開をキャンセルしました。ブランチは更新されていません。"
+
+msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
+msgstr "公開結果の確認が必要です。「公開結果を確認」を選択してください。結果が確認できるまで再公開しないでください。"
+
+msgid "Publication paused. Continue publishing or cancel this publication."
+msgstr "公開を一時停止しました。続行するか、この公開をキャンセルできます。"
+
+msgid "Publication paused. Continue to retry the remaining steps."
+msgstr "公開処理が一時停止しました。続行すると残りの手順を再試行します。"
 
 msgid "Publication result"
 msgstr "発行結果"
@@ -456,6 +495,9 @@ msgstr "表示設定"
 
 msgid "Ready to publish to {repository} ({branch})."
 msgstr "{repository} ({branch}) に発行する準備ができました。"
+
+msgid "Refresh status"
+msgstr "状態を更新"
 
 msgid "Register a GitHub token to publish."
 msgstr "発行するには GitHub トークンを登録してください。"
@@ -661,6 +703,9 @@ msgstr "リポジトリの分割エクスポートが不完全か、変更され
 msgid "The request could not be completed. Please retry."
 msgstr "リクエストを完了できませんでした。もう一度お試しください。"
 
+msgid "The request reached its time limit. Continue to retry this step. If it keeps stopping, ask your host to review the request time limit."
+msgstr "リクエストが制限時間に達しました。続行するとこの手順を再試行します。繰り返し停止する場合は、ホスティング事業者に制限時間の確認を依頼してください。"
+
 msgid "The saved GitHub token was deleted."
 msgstr "保存済みの GitHub トークンを削除しました。"
 
@@ -763,6 +808,9 @@ msgstr "利用できないメニュー (ID {id})"
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "<strong>Repository access</strong> で <strong>Only select repositories</strong> を選択してください。"
 
+msgid "Unfinished publication"
+msgstr "未完了の公開"
+
 msgid "Unknown author"
 msgstr "不明な投稿者"
 
@@ -810,6 +858,9 @@ msgstr "WXR の公開形式"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "WordPress が投稿の保存を完了するまでお待ちください。"
+
+msgid "Waiting for the current request to finish before pausing."
+msgstr "現在のリクエストが完了したら一時停止します。"
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
 msgstr "チェックを外すと、静的サイトの <code>robots.txt</code> に <code>Disallow: /</code> を記録します。"

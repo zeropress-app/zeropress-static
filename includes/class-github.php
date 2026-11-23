@@ -37,6 +37,11 @@ final class GitHub {
 	 * @var bool
 	 */
 	private bool $ref_update_sent = false;
+	/** The final response was positively validated.
+	 *
+	 * @var bool
+	 */
+	private bool $ref_confirmed = false;
 	/**
 	 * Whether bundle writes are paced.
 	 *
@@ -50,14 +55,28 @@ final class GitHub {
 	 */
 	private float $last_write = 0;
 
+	/** Durable request observer; never receives credentials or bodies.
+	 *
+	 * @var \Closure|null
+	 */
+	private ?\Closure $observer;
+	/** Complete final-write commitments for the dispatch journal.
+	 *
+	 * @var array|null
+	 */
+	private ?array $ref_context = null;
+
 	/**
 	 * Initialize this service with validated input.
 	 *
 	 * @param array                $settings Settings snapshot; credentials remain server-side.
 	 * @param Resource_Budget|null $budget Shared request resource budget.
 	 * @throws Failure If validation or the operation cannot be completed.
+	 *
+	 * @param \Closure             $observer Optional before/after transport checkpoint hook.
 	 */
-	public function __construct( array $settings, ?Resource_Budget $budget = null ) {
+	public function __construct( array $settings, ?Resource_Budget $budget = null, ?\Closure $observer = null ) {
+		$this->observer   = $observer;
 		$this->budget     = $budget ?? Resource_Budget::from_request();
 		$this->repository = Settings::repository( $settings['repository'] );
 		if ( '' === $this->repository ) {
@@ -74,15 +93,113 @@ final class GitHub {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public function inspect( string $branch ): array {
+		$state = array();
+		do {
+			$state = $this->inspect_step( $branch, $state );
+		} while ( 'done' !== $state['phase'] );
+		return $state['snapshot'];
+	}
+
+	/**
+	 * Advance one metadata request, persisting only validated, bounded commitments.
+	 *
+	 * @param string $branch Validated publishing branch.
+	 * @param array  $state Validated metadata inspection checkpoint.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public function inspect_step( string $branch, array $state = array() ): array {
+		Settings::branch( $branch );
+		$phase    = $state['phase'] ?? 'head';
+		$snapshot = $state['snapshot'] ?? array();
+		switch ( $phase ) {
+			case 'head':
+				$snapshot = array(
+					'repository' => $this->repository,
+					'branch'     => $branch,
+					'head'       => $this->head( $branch ),
+					'latest'     => array(),
+					'data_hash'  => null,
+				);
+				$phase    = 'commit';
+				break;
+			case 'commit':
+				$commit           = $this->request( 'GET', '/git/commits/' . self::sha( $snapshot['head'] ) );
+				$snapshot['tree'] = self::sha( $commit['tree']['sha'] ?? '' );
+				$phase            = 'root';
+				break;
+			case 'root':
+				$snapshot = array_merge( $snapshot, self::inspect_root( $this->request( 'GET', '/git/trees/' . self::sha( $snapshot['tree'] ) ) ) );
+				$phase    = 'bundle' === $snapshot['format'] ? 'parts' : 'history_export';
+				break;
+			case 'parts':
+				$snapshot['parts'] = self::inspect_parts( $this->request( 'GET', '/git/trees/' . self::sha( $snapshot['files']['parts'] ) ) );
+				$phase             = 'history_export';
+				break;
+			case 'history_export':
+			case 'history_base':
+				$key     = 'history_base' === $phase ? 'base' : ( 'bundle' === $snapshot['format'] ? 'manifest' : 'wxr' );
+				$path    = 'manifest' === $key ? Wxr_Bundle::MANIFEST : self::FILES[ $key ];
+				$history = $this->request(
+					'GET',
+					'/commits?' . http_build_query(
+						array(
+							'sha'      => $snapshot['head'],
+							'path'     => $path,
+							'per_page' => 1,
+						),
+						'',
+						'&',
+						PHP_QUERY_RFC3986
+					)
+				);
+				if ( ! is_array( $history[0] ?? null ) ) {
+					throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
+				}
+				$sha                        = self::sha( $history[0]['sha'] ?? '' );
+				$snapshot['latest'][ $key ] = array(
+					'sha' => $sha,
+					'url' => 'https://github.com/' . $this->repository . '/commit/' . $sha,
+				);
+				$metadata                   = self::metadata( $history[0]['commit']['message'] ?? '' );
+				if ( $metadata && self::metadata_matches( $metadata, $snapshot['files'] ) ) {
+					$snapshot['data_hash'] = $metadata['hash'];
+				}
+				$phase = 'history_export' === $phase ? 'history_base' : 'done';
+				if ( 'done' === $phase && 'bundle' === $snapshot['format'] && null === $snapshot['data_hash'] ) {
+					throw new Failure( 'WXR_TARGET_INVALID', 409 );
+				}
+				break;
+			default:
+				throw new Failure( 'PUBLICATION_INVALID', 409 );
+		}
+		return array(
+			'phase'    => $phase,
+			'snapshot' => $snapshot,
+		);
+	}
+
+	/**
+	 * Read and validate the exact configured branch.
+	 *
+	 * @param string $branch Validated publishing branch.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public function head( string $branch ): string {
 		Settings::branch( $branch );
 		$reference = $this->request( 'GET', '/git/ref/heads/' . rawurlencode( $branch ) );
 		if ( ( $reference['ref'] ?? '' ) !== 'refs/heads/' . $branch || ( $reference['object']['type'] ?? '' ) !== 'commit' ) {
 			throw new Failure( 'INVALID_BRANCH' );
 		}
-		$head     = self::sha( $reference['object']['sha'] ?? '' );
-		$commit   = $this->request( 'GET', '/git/commits/' . $head );
-		$tree_sha = self::sha( $commit['tree']['sha'] ?? '' );
-		$tree     = $this->request( 'GET', '/git/trees/' . $tree_sha );
+		return self::sha( $reference['object']['sha'] ?? '' );
+	}
+
+	/**
+	 * Validate root ownership without persisting unrelated repository metadata.
+	 *
+	 * @param array $tree Validated tree SHA or entries.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	private static function inspect_root( array $tree ): array {
 		if ( ! empty( $tree['truncated'] ) || ! is_array( $tree['tree'] ?? null ) ) {
 			throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
 		}
@@ -118,66 +235,37 @@ final class GitHub {
 				throw new Failure( 'WXR_TARGET_INVALID', 409 );
 			}
 			$files['parts'] = self::sha( $entry['sha'] ?? '' );
-			$subtree        = $this->request( 'GET', '/git/trees/' . $files['parts'] );
-			if ( ! empty( $subtree['truncated'] ) || ! is_array( $subtree['tree'] ?? null ) || ! count( $subtree['tree'] ) || count( $subtree['tree'] ) > Wxr_Bundle::MAX_PARTS ) {
-				throw new Failure( 'WXR_TARGET_INVALID', 409 );
-			}
-			foreach ( $subtree['tree'] as $part ) {
-				$path = $part['path'] ?? '';
-				if ( ! preg_match( '/\Ap-[a-f0-9]{64}\.xml\z/', $path ) || isset( $parts[ Wxr_Bundle::DIRECTORY . '/' . $path ] ) ) {
-					throw new Failure( 'WXR_TARGET_INVALID', 409 );
-				}
-				$parts[ Wxr_Bundle::DIRECTORY . '/' . $path ] = self::regular_sha( $part );
-			}
 		} elseif ( $is_bundle ) {
 			throw new Failure( 'WXR_TARGET_INVALID', 409 );
 		}
-		$latest    = array();
-		$data_hash = null;
-		foreach ( $paths as $key => $path ) {
-			$history = $this->request(
-				'GET',
-				'/commits?' . http_build_query(
-					array(
-						'sha'      => $head,
-						'path'     => $path,
-						'per_page' => 1,
-					),
-					'',
-					'&',
-					PHP_QUERY_RFC3986
-				)
-			);
-			if ( ! is_array( $history[0] ?? null ) ) {
-				throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
-			}
-			$last           = $history[0];
-			$last_sha       = self::sha( $last['sha'] ?? '' );
-			$latest[ $key ] = array(
-				'sha' => $last_sha,
-				'url' => 'https://github.com/' . $this->repository . '/commit/' . $last_sha,
-			);
-			$metadata       = self::metadata( $last['commit']['message'] ?? '' );
-			if ( $metadata && self::metadata_matches( $metadata, $files ) ) {
-				$data_hash = $metadata['hash'];
-			}
-		}
-		if ( $is_bundle && null === $data_hash ) {
+		return array(
+			'files'   => $files,
+			'parts'   => $parts,
+			'marker'  => $marker,
+			'capable' => $capable,
+			'format'  => $is_bundle ? 'bundle' : 'single',
+		);
+	}
+
+	/**
+	 * Validate the complete owned parts tree from a bounded metadata response.
+	 *
+	 * @param array $subtree Validated subtree value.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	private static function inspect_parts( array $subtree ): array {
+		$parts = array();
+		if ( ! empty( $subtree['truncated'] ) || ! is_array( $subtree['tree'] ?? null ) || ! count( $subtree['tree'] ) || count( $subtree['tree'] ) > Wxr_Bundle::MAX_PARTS ) {
 			throw new Failure( 'WXR_TARGET_INVALID', 409 );
 		}
-		return array(
-			'repository' => $this->repository,
-			'branch'     => $branch,
-			'head'       => $head,
-			'tree'       => $tree_sha,
-			'files'      => $files,
-			'data_hash'  => $data_hash,
-			'latest'     => $latest,
-			'format'     => $is_bundle ? 'bundle' : 'single',
-			'marker'     => $marker,
-			'capable'    => $capable,
-			'parts'      => $parts,
-		);
+		foreach ( $subtree['tree'] as $part ) {
+			$path = $part['path'] ?? '';
+			if ( ! preg_match( '/\Ap-[a-f0-9]{64}\.xml\z/', $path ) || isset( $parts[ Wxr_Bundle::DIRECTORY . '/' . $path ] ) ) {
+				throw new Failure( 'WXR_TARGET_INVALID', 409 );
+			}
+			$parts[ Wxr_Bundle::DIRECTORY . '/' . $path ] = self::regular_sha( $part );
+		}
+		return $parts;
 	}
 
 	/**
@@ -272,7 +360,6 @@ final class GitHub {
 	 * @param Publication_Progress|null $progress Optional publication stage feedback.
 	 * @return array
 	 * @throws \Throwable If validation, storage or the request budget fails.
-	 * @throws Failure If a protection check fails.
 	 */
 	private function commit_publication( array $snapshot, array $entries, array $blobs, string $message, string $data_hash, ?Publication_Progress $progress ): array {
 		$progress?->update( 'committing' );
@@ -296,22 +383,11 @@ final class GitHub {
 		);
 		$sha    = self::sha( $commit['sha'] ?? '' );
 
-		$this->ref_update_sent = false;
 		try {
-			$ref = $this->request(
-				'PATCH',
-				'/git/refs/heads/' . rawurlencode( $snapshot['branch'] ),
-				array(
-					'sha'   => $sha,
-					'force' => false,
-				)
-			);
-			if ( ( $ref['object']['sha'] ?? '' ) !== $sha ) {
-				throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
-			}
+			$this->update_reference( $snapshot['branch'], $sha, $snapshot['head'], $blobs, $data_hash );
 		} catch ( \Throwable $error ) {
 			// Only an uncertain write response requires reconciliation. Never repeat the write.
-			if ( ! $this->ref_update_sent || ( $error instanceof Failure && ! in_array( $error->reason, array( 'GITHUB_UNAVAILABLE', 'GITHUB_RESPONSE_INVALID', 'MEMORY_LIMIT_EXCEEDED', 'REQUEST_TIME_LIMIT_EXCEEDED' ), true ) ) ) {
+			if ( ! $this->ref_update_sent || ! self::uncertain( $error ) ) {
 				throw $error;
 			}
 			$progress?->update( 'verifying' );
@@ -335,6 +411,149 @@ final class GitHub {
 			);
 		}
 		return $this->success( $sha );
+	}
+
+	/**
+	 * Upload one sealed artifact with the original size/encoding/memory guards.
+	 *
+	 * @param string $content Bounded file content.
+	 * @param string $expected Expected Git blob SHA.
+	 * @param bool   $bundle Whether split-WXR transport limits apply.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public function upload_artifact( string $content, string $expected, bool $bundle ): void {
+		if ( $bundle ) {
+			$this->upload_blob( $content, $expected );
+			return;
+		}
+		if ( strlen( $content ) > 100 * MB_IN_BYTES ) {
+			throw new Failure( 'WXR_SPLIT_REQUIRED', 413 );
+		}
+		$this->budget->check( Wxr_Bundle::request_size( $content ) );
+		$result = $this->request(
+			'POST',
+			'/git/blobs',
+			array(
+				'content'  => $content,
+				'encoding' => 'utf-8',
+			)
+		);
+		if ( ( $result['sha'] ?? '' ) !== $expected ) {
+			throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
+		}
+	}
+
+	/**
+	 * Create an immutable tree, optionally preserving an existing root.
+	 *
+	 * @param array  $entries Complete owned tree entries.
+	 * @param string $base Validated base value.
+	 */
+	public function create_tree( array $entries, ?string $base = null ): string {
+		$body = array( 'tree' => $entries );
+		if ( null !== $base ) {
+			$body['base_tree'] = self::sha( $base );
+		}
+		return self::sha( $this->request( 'POST', '/git/trees', $body )['sha'] ?? '' );
+	}
+
+	/**
+	 * Create an unpublished commit on the inspected parent.
+	 *
+	 * @param string $parent_sha Validated parent value.
+	 * @param string $tree Validated tree SHA or entries.
+	 * @param string $message Strict publication commit message.
+	 */
+	public function create_commit( string $parent_sha, string $tree, string $message ): string {
+		return self::sha(
+			$this->request(
+				'POST',
+				'/git/commits',
+				array(
+					'parents' => array( self::sha( $parent_sha ) ),
+					'tree'    => self::sha( $tree ),
+					'message' => $message,
+				)
+			)['sha'] ?? ''
+		);
+	}
+
+	/**
+	 * Verify a confirmed candidate before the final reference request.
+	 *
+	 * @param string $sha Validated Git object SHA.
+	 * @param string $parent_sha Validated parent value.
+	 * @param string $tree Validated tree SHA or entries.
+	 * @param string $message Strict publication commit message.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public function verify_candidate( string $sha, string $parent_sha, string $tree, string $message ): void {
+		$value = $this->request( 'GET', '/git/commits/' . self::sha( $sha ) );
+		if ( ( $value['sha'] ?? '' ) !== $sha || ( $value['tree']['sha'] ?? '' ) !== $tree || array_column( $value['parents'] ?? array(), 'sha' ) !== array( $parent_sha ) || ( $value['message'] ?? '' ) !== $message ) {
+			throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
+		}
+	}
+
+	/**
+	 * Attempt one non-forced update; journal complete intent immediately before dispatch.
+	 *
+	 * @param string $branch Validated publishing branch.
+	 * @param string $sha Validated Git object SHA.
+	 * @param string $parent_sha Validated parent value.
+	 * @param array  $files Expected managed file commitments.
+	 * @param string $hash Logical export SHA-256.
+	 * @throws Failure If validation, transport or a durable checkpoint fails.
+	 */
+	public function update_reference( string $branch, string $sha, string $parent_sha, array $files, string $hash ): void {
+		$this->ref_update_sent = false;
+		$this->ref_confirmed   = false;
+		$this->ref_context     = array(
+			'candidate' => self::sha( $sha ),
+			'parent'    => self::sha( $parent_sha ),
+			'files'     => $files,
+			'hash'      => $hash,
+		);
+		$ref                   = $this->request(
+			'PATCH',
+			'/git/refs/heads/' . rawurlencode( Settings::branch( $branch ) ),
+			array(
+				'sha'   => $sha,
+				'force' => false,
+			)
+		);
+		if ( ( $ref['object']['sha'] ?? '' ) !== $sha ) {
+			throw new Failure( 'GITHUB_RESPONSE_INVALID', 502 );
+		}
+		$this->ref_confirmed = true;
+	}
+
+	/** Whether the final response was validated, independently of checkpoint persistence. */
+	public function reference_confirmed(): bool {
+		return $this->ref_confirmed;
+	}
+
+	/** Whether this instance entered the final HTTP transport. */
+	public function reference_sent(): bool {
+		return $this->ref_update_sent;
+	}
+
+	/**
+	 * Preserve the existing uncertain-result classification.
+	 *
+	 * @param \Throwable $error Observed transport or local checkpoint failure.
+	 */
+	public static function uncertain( \Throwable $error ): bool {
+		return ! $error instanceof Failure || ! in_array( $error->reason, array( 'GITHUB_RATE_LIMITED', 'GITHUB_PAYLOAD_TOO_LARGE', 'GITHUB_AUTH_FAILED', 'GITHUB_PERMISSION_DENIED', 'GITHUB_BRANCH_RULE', 'GITHUB_WRITE_REJECTED', 'GITHUB_CONFLICT', 'TARGET_NOT_FOUND' ), true );
+	}
+
+	/**
+	 * Preserve the existing metadata-only publication proof.
+	 *
+	 * @param array $snapshot Validated immutable GitHub target metadata.
+	 * @param array $intent Persisted final-write commitments.
+	 */
+	public static function confirms( array $snapshot, array $intent ): bool {
+		return ( $snapshot['head'] === $intent['candidate'] || in_array( $intent['candidate'], array_column( $snapshot['latest'], 'sha' ), true ) ) && $snapshot['files'] === $intent['files'] && $snapshot['data_hash'] === $intent['hash'];
 	}
 
 	/**
@@ -597,10 +816,19 @@ final class GitHub {
 			unset( $body );
 		}
 		$args['timeout'] = $this->budget->github_timeout();
+		if ( $this->observer ) {
+			( $this->observer )( 'before', $method, $this->ref_context, $args['timeout'] );
+		}
 		if ( 'PATCH' === $method ) {
 			$this->ref_update_sent = true;
 		}
-		$response = wp_remote_request( 'https://api.github.com/repos/' . $this->repository . $path, $args );
+		try {
+			$response = wp_remote_request( 'https://api.github.com/repos/' . $this->repository . $path, $args );
+		} finally {
+			if ( $this->observer && 'GET' !== $method ) {
+				( $this->observer )( 'after', $method, $this->ref_context, 0 );
+			}
+		}
 		if ( 'GET' !== $method ) {
 			$this->last_write = microtime( true );
 		}
@@ -614,7 +842,16 @@ final class GitHub {
 		$value       = json_decode( wp_remote_retrieve_body( $response ), true );
 		$description = is_string( $value['message'] ?? null ) ? $value['message'] : '';
 		if ( 429 === $status || ( 403 === $status && ( '0' === (string) wp_remote_retrieve_header( $response, 'x-ratelimit-remaining' ) || wp_remote_retrieve_header( $response, 'retry-after' ) ) ) ) {
-			throw new Failure( 'GITHUB_RATE_LIMITED', 429 );
+			$retry   = wp_remote_retrieve_header( $response, 'retry-after' );
+			$reset   = wp_remote_retrieve_header( $response, 'x-ratelimit-reset' );
+			$date    = is_string( $retry ) ? strtotime( $retry ) : false;
+			$seconds = is_numeric( $retry ) ? (float) $retry : ( false !== $date ? max( 0, $date - time() ) : 60 );
+			if ( '0' === (string) wp_remote_retrieve_header( $response, 'x-ratelimit-remaining' ) && is_numeric( $reset ) ) {
+				$seconds = max( $seconds, (float) $reset - time() );
+			}
+			// Numeric JSON detail; the public response never renders remote text.
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new Failure( 'GITHUB_RATE_LIMITED', 429, array( 'retry_after_seconds' => max( 1, $seconds ) ) );
 		}
 		if ( 413 === $status ) {
 			throw new Failure( 'GITHUB_PAYLOAD_TOO_LARGE', 413 );

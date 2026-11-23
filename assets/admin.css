@@ -32,6 +32,7 @@
 .zpsp-loading-progress { display: block; max-width: 360px; margin-top: 12px; }
 .zpsp .zpsp-progress-bar { width: 100%; }
 .zpsp .zpsp-actions { margin-top: 20px; align-items: center; }
+.zpsp .zpsp-publication-recovery { margin-bottom: 20px; }
 .zpsp .zpsp-dirty { color: #646970; font-style: italic; }
 .zpsp-token-help, .zpsp-turnstile-help { box-sizing: border-box; max-width: 680px; margin: 20px 0; padding: 16px; border: 1px solid #dcdcde; background: #f6f7f7; }
 .zpsp-token-help p, .zpsp-turnstile-help p { margin: 0; }

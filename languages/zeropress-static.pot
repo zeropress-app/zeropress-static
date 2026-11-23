@@ -13,6 +13,9 @@ msgstr ""
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr ""
 
+msgid "A publication is in progress. Continue it here if the previous page was closed."
+msgstr ""
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr ""
 
@@ -43,10 +46,16 @@ msgstr ""
 msgid "Allow search engine crawling"
 msgstr ""
 
+msgid "Another publication is in progress."
+msgstr ""
+
 msgid "Apple touch icon"
 msgstr ""
 
 msgid "Applying changes on GitHub…"
+msgstr ""
+
+msgid "Approval expired. Cancel this publication and prepare the data again."
 msgstr ""
 
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
@@ -55,7 +64,7 @@ msgstr ""
 msgid "Automatic"
 msgstr ""
 
-msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
+msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
 msgstr ""
 
 msgid "Button label"
@@ -64,7 +73,16 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+msgid "Cancel publication"
+msgstr ""
+
+msgid "Cancellation requested. Waiting for the current request to finish."
+msgstr ""
+
 msgid "Change keys"
+msgstr ""
+
+msgid "Check publication result"
 msgstr ""
 
 msgid "Check the values in this section."
@@ -107,6 +125,9 @@ msgid "Comments"
 msgstr ""
 
 msgid "Connection details changed. Test again to check these values."
+msgstr ""
+
+msgid "Continue publication"
 msgstr ""
 
 msgid "Copyright or legal notice"
@@ -379,6 +400,12 @@ msgstr ""
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr ""
 
+msgid "Pause publication"
+msgstr ""
+
+msgid "Pausing…"
+msgstr ""
+
 msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
 msgstr ""
 
@@ -400,10 +427,22 @@ msgstr ""
 msgid "Preparing download…"
 msgstr ""
 
+msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
+msgstr ""
+
 msgid "Public access to this REST API is restricted."
 msgstr ""
 
-msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
+msgid "Publication cancelled. The branch was not updated."
+msgstr ""
+
+msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
+msgstr ""
+
+msgid "Publication paused. Continue publishing or cancel this publication."
+msgstr ""
+
+msgid "Publication paused. Continue to retry the remaining steps."
 msgstr ""
 
 msgid "Publication result"
@@ -452,6 +491,9 @@ msgid "Reading settings"
 msgstr ""
 
 msgid "Ready to publish to {repository} ({branch})."
+msgstr ""
+
+msgid "Refresh status"
 msgstr ""
 
 msgid "Register a GitHub token to publish."
@@ -658,6 +700,9 @@ msgstr ""
 msgid "The request could not be completed. Please retry."
 msgstr ""
 
+msgid "The request reached its time limit. Continue to retry this step. If it keeps stopping, ask your host to review the request time limit."
+msgstr ""
+
 msgid "The saved GitHub token was deleted."
 msgstr ""
 
@@ -760,6 +805,9 @@ msgstr ""
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr ""
 
+msgid "Unfinished publication"
+msgstr ""
+
 msgid "Unknown author"
 msgstr ""
 
@@ -806,6 +854,9 @@ msgid "WXR publishing format"
 msgstr ""
 
 msgid "Wait for WordPress to finish saving your post."
+msgstr ""
+
+msgid "Waiting for the current request to finish before pausing."
 msgstr ""
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."

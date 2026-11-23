@@ -98,10 +98,11 @@ final class Admin {
 		wp_enqueue_script( $handle, plugins_url( $editor ? 'assets/editor.js' : 'assets/admin.js', PLUGIN_FILE ), $dependencies, VERSION, true );
 		$settings = Settings::public_view();
 		$config   = array(
-			'url'      => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'zeropress_static' ),
-			'settings' => $editor ? array_intersect_key( $settings, array_flip( array( 'repository', 'branch' ) ) ) : $settings,
-			'messages' => self::messages(),
+			'url'                 => admin_url( 'admin-ajax.php' ),
+			'nonce'               => wp_create_nonce( 'zeropress_static' ),
+			'settings'            => $editor ? array_intersect_key( $settings, array_flip( array( 'repository', 'branch' ) ) ) : $settings,
+			'messages'            => self::messages(),
+			'session_publication' => true,
 		);
 		if ( $editor ) {
 			$post             = get_post();
@@ -176,6 +177,27 @@ final class Admin {
 					}
 					$progress = new Publication_Progress( Settings::string( $input, 'publication_id' ) );
 					$result   = Publisher::publish( Settings::string( $input, 'receipt' ), $republish, Resource_Budget::from_request( true ), $progress );
+					break;
+				case 'publication_start':
+					$republish = $input['republish'] ?? false;
+					if ( ! is_bool( $republish ) ) {
+						throw new Failure( 'INVALID_REQUEST' );
+					}
+					$result = ( new Publication_Session( Resource_Budget::from_request( true ) ) )->start( Settings::string( $input, 'receipt' ), $republish, Settings::string( $input, 'request_id' ) );
+					break;
+				case 'publication_status':
+					$result = ( new Publication_Session() )->status( Settings::string( $input, 'job_id' ) );
+					break;
+				case 'publication_cancel':
+					$result = ( new Publication_Session() )->cancel( Settings::string( $input, 'job_id' ) );
+					break;
+				case 'publication_advance':
+				case 'publication_finalize':
+				case 'publication_verify':
+					if ( ! is_int( $input['revision'] ?? null ) || $input['revision'] < 0 ) {
+						throw new Failure( 'INVALID_REQUEST' );
+					}
+					$result = ( new Publication_Session( Resource_Budget::from_request( true ) ) )->advance( $input['operation'], Settings::string( $input, 'job_id' ), Settings::string( $input, 'request_id' ), $input['revision'] );
 					break;
 				case 'publish_progress':
 					$progress = new Publication_Progress( Settings::string( $input, 'publication_id' ) );
@@ -438,7 +460,7 @@ final class Admin {
 							<option value="bundle"><?php esc_html_e( 'Split XML', 'zeropress-static' ); ?></option>
 						</select>
 					</p>
-					<p id="zpsp-wxr_publish_format-help" class="description"><?php esc_html_e( 'Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file.', 'zeropress-static' ); ?></p>
+					<p id="zpsp-wxr_publish_format-help" class="description"><?php esc_html_e( 'Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file.', 'zeropress-static' ); ?></p>
 					<div class="zpsp-actions">
 						<button id="zpsp-save-github" type="submit" class="button button-primary"><?php esc_html_e( 'Save publishing target', 'zeropress-static' ); ?></button>
 						<button id="zpsp-test" type="button" class="button zpsp-icon-button" disabled><span class="dashicons dashicons-admin-links" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Test connection', 'zeropress-static' ); ?></span></button>
@@ -808,6 +830,23 @@ final class Admin {
 	/** Translate browser messages on the server. */
 	private static function messages(): array {
 		return array(
+			'session_title'                   => __( 'Unfinished publication', 'zeropress-static' ),
+			'session_active'                  => __( 'A publication is in progress. Continue it here if the previous page was closed.', 'zeropress-static' ),
+			'session_paused'                  => __( 'Publication paused. Continue to retry the remaining steps.', 'zeropress-static' ),
+			'session_pause'                   => __( 'Pause publication', 'zeropress-static' ),
+			'session_pausing'                 => __( 'Pausing…', 'zeropress-static' ),
+			'session_pause_pending'           => __( 'Waiting for the current request to finish before pausing.', 'zeropress-static' ),
+			'session_paused_by_user'          => __( 'Publication paused. Continue publishing or cancel this publication.', 'zeropress-static' ),
+			'session_time_paused'             => __( 'The request reached its time limit. Continue to retry this step. If it keeps stopping, ask your host to review the request time limit.', 'zeropress-static' ),
+			'session_expired'                 => __( 'Approval expired. Cancel this publication and prepare the data again.', 'zeropress-static' ),
+			'session_cancel_pending'          => __( 'Cancellation requested. Waiting for the current request to finish.', 'zeropress-static' ),
+			'session_cancelled'               => __( 'Publication cancelled. The branch was not updated.', 'zeropress-static' ),
+			'session_busy'                    => __( 'Another publication is in progress.', 'zeropress-static' ),
+			'session_continue'                => __( 'Continue publication', 'zeropress-static' ),
+			'session_verify'                  => __( 'Check publication result', 'zeropress-static' ),
+			'session_cancel'                  => __( 'Cancel publication', 'zeropress-static' ),
+			'session_refresh'                 => __( 'Refresh status', 'zeropress-static' ),
+			'PUBLICATION_STORAGE_UNAVAILABLE' => __( 'Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again.', 'zeropress-static' ),
 			'NEWSLETTER_URL_REQUIRED'         => __( 'Enter a signup page URL or an embedded signup page URL.', 'zeropress-static' ),
 			'INVALID_NEWSLETTER_TITLE'        => __( 'Enter a title of up to 200 characters.', 'zeropress-static' ),
 			'INVALID_NEWSLETTER_DESCRIPTION'  => __( 'Enter a description of up to 2,000 characters.', 'zeropress-static' ),
@@ -873,7 +912,7 @@ final class Admin {
 			'publication_result'              => __( 'Publication result', 'zeropress-static' ),
 			'published_button'                => __( 'Published to GitHub', 'zeropress-static' ),
 			'published'                       => __( 'Published to GitHub.', 'zeropress-static' ),
-			'unknown'                         => __( 'Publication needs verification. Check the GitHub commit before preparing again; the write was not retried.', 'zeropress-static' ),
+			'unknown'                         => __( 'Publication needs verification. Use Check publication result; do not publish again until the result is confirmed.', 'zeropress-static' ),
 			'commit'                          => __( 'View commit', 'zeropress-static' ),
 			'republish_title'                 => __( 'Publish to GitHub again', 'zeropress-static' ),
 			'republish_description'           => __( 'Update the WXR generation time and create a new commit without changing the content.', 'zeropress-static' ),

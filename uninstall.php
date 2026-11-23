@@ -7,7 +7,10 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+// Keep the non-secret journal: uninstalling cannot prove a final GitHub write failed.
 require_once __DIR__ . '/includes/class-failure.php';
+require_once __DIR__ . '/includes/class-publication-store.php';
+\ZeroPress\StaticPublisher\Publication_Store::cancel_and_cleanup();
 require_once __DIR__ . '/includes/class-resource-budget.php';
 require_once __DIR__ . '/includes/class-settings.php';
 require_once __DIR__ . '/includes/class-export-storage.php';

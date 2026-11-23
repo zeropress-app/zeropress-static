@@ -16,6 +16,9 @@ msgstr "Turnstile Secret Key가 등록되어 있습니다."
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "글 또는 페이지 본문이 4 MiB 한도를 초과했습니다. 본문을 나누거나 줄인 후 다시 준비하세요."
 
+msgid "A publication is in progress. Continue it here if the previous page was closed."
+msgstr "진행 중인 발행이 있습니다. 이전 페이지를 닫았다면 여기에서 계속할 수 있습니다."
+
 msgid "A selected WordPress menu is unavailable. Reload settings and select a menu again."
 msgstr "선택한 WordPress 메뉴를 사용할 수 없습니다. 설정을 새로고침하고 메뉴를 다시 선택하세요."
 
@@ -46,11 +49,17 @@ msgstr "정적 사이트에서 댓글 작성 허용"
 msgid "Allow search engine crawling"
 msgstr "검색엔진 크롤링 허용"
 
+msgid "Another publication is in progress."
+msgstr "다른 발행이 진행 중입니다."
+
 msgid "Apple touch icon"
 msgstr "Apple 터치 아이콘"
 
 msgid "Applying changes on GitHub…"
 msgstr "GitHub에 변경사항을 반영하고 있습니다…"
+
+msgid "Approval expired. Cancel this publication and prepare the data again."
+msgstr "발행 승인 시간이 만료되었습니다. 이 발행을 취소하고 데이터를 다시 준비해 주세요."
 
 msgid "Authenticated encryption is unavailable. Enable OpenSSL AES-256-GCM on the server before registering credentials."
 msgstr "인증 암호화를 사용할 수 없습니다. 인증 정보를 등록하려면 서버에서 OpenSSL AES-256-GCM을 활성화하세요."
@@ -58,8 +67,8 @@ msgstr "인증 암호화를 사용할 수 없습니다. 인증 정보를 등록�
 msgid "Automatic"
 msgstr "자동"
 
-msgid "Automatic keeps small exports in one XML file and uses split files when needed. Existing split exports stay split. XML downloads always remain a single file."
-msgstr "자동은 작은 내보내기를 하나의 XML 파일로 유지하고 필요한 경우 분할 파일을 사용합니다. 기존 분할 내보내기는 분할 상태를 유지합니다. XML 다운로드는 항상 단일 파일로 제공됩니다."
+msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
+msgstr "호환되는 스타터에서 자동은 WXR 파일이 8 MiB를 초과하면 분할합니다. 더 작은 파일도 전송 크기나 서버 메모리에 따라 분할될 수 있습니다. 기존 분할 내보내기는 유지하며, XML 다운로드는 항상 단일 파일입니다."
 
 msgid "Button label"
 msgstr "버튼 문구"
@@ -67,8 +76,17 @@ msgstr "버튼 문구"
 msgid "Cancel"
 msgstr "취소"
 
+msgid "Cancel publication"
+msgstr "발행 취소"
+
+msgid "Cancellation requested. Waiting for the current request to finish."
+msgstr "취소를 요청했습니다. 현재 요청이 끝나기를 기다리고 있습니다."
+
 msgid "Change keys"
 msgstr "키 변경"
+
+msgid "Check publication result"
+msgstr "발행 결과 확인"
 
 msgid "Check the values in this section."
 msgstr "이 섹션의 입력값을 확인하세요."
@@ -111,6 +129,9 @@ msgstr "댓글"
 
 msgid "Connection details changed. Test again to check these values."
 msgstr "연결 정보가 변경되었습니다. 변경한 값으로 연결을 다시 확인하세요."
+
+msgid "Continue publication"
+msgstr "계속 발행"
 
 msgid "Copyright or legal notice"
 msgstr "저작권 또는 법적 고지 문구"
@@ -382,6 +403,12 @@ msgstr "PHP 메모리 제한: {limit}. 추정 필요 메모리: {estimated}."
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 시간 제한: {limit}초. 요청 처리 예산: {budget}초. 경과 시간: {elapsed}초."
 
+msgid "Pause publication"
+msgstr "발행 일시정지"
+
+msgid "Pausing…"
+msgstr "일시정지 대기 중…"
+
 msgid "Post ID: {id}. Body size: {bytes} UTF-8 bytes."
 msgstr "글 ID: {id}. 본문 크기: UTF-8 기준 {bytes}바이트."
 
@@ -403,11 +430,23 @@ msgstr "데이터 준비 중…"
 msgid "Preparing download…"
 msgstr "다운로드 준비 중…"
 
+msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
+msgstr "비공개 임시 저장소를 사용할 수 없습니다. 호스팅 업체에 권한과 공유 저장소 확인을 요청한 뒤 다시 시도해 주세요."
+
 msgid "Public access to this REST API is restricted."
 msgstr "이 REST API에 대한 공개 접근이 제한되어 있습니다."
 
-msgid "Publication needs verification. Check the GitHub commit before preparing again; the write was not retried."
-msgstr "반영 여부 확인이 필요합니다. 다시 준비하기 전에 GitHub 커밋을 확인하세요. 쓰기를 재시도하지 않았습니다."
+msgid "Publication cancelled. The branch was not updated."
+msgstr "발행을 취소했습니다. 브랜치는 갱신되지 않았습니다."
+
+msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
+msgstr "발행 결과 확인이 필요합니다. 발행 결과 확인을 선택해 주세요. 결과가 확인되기 전에는 다시 발행하지 마세요."
+
+msgid "Publication paused. Continue publishing or cancel this publication."
+msgstr "발행이 일시정지되었습니다. 계속 발행하거나 취소할 수 있습니다."
+
+msgid "Publication paused. Continue to retry the remaining steps."
+msgstr "발행이 일시 중단되었습니다. 계속하면 남은 단계를 다시 시도합니다."
 
 msgid "Publication result"
 msgstr "발행 결과"
@@ -456,6 +495,9 @@ msgstr "글 표시 설정"
 
 msgid "Ready to publish to {repository} ({branch})."
 msgstr "{repository} ({branch})에 발행할 준비가 되었습니다."
+
+msgid "Refresh status"
+msgstr "상태 새로고침"
 
 msgid "Register a GitHub token to publish."
 msgstr "GitHub 토큰을 등록해야 GitHub 발행 기능을 사용할 수 있습니다."
@@ -661,6 +703,9 @@ msgstr "저장소의 분할 내보내기 파일이 불완전하거나 변경되�
 msgid "The request could not be completed. Please retry."
 msgstr "요청을 완료하지 못했습니다. 다시 시도해 주세요."
 
+msgid "The request reached its time limit. Continue to retry this step. If it keeps stopping, ask your host to review the request time limit."
+msgstr "요청이 시간 제한에 도달했습니다. 계속하면 이 단계를 다시 시도합니다. 계속 중단된다면 호스팅 업체에 요청 시간 제한 검토를 요청해 주세요."
+
 msgid "The saved GitHub token was deleted."
 msgstr "저장된 GitHub 토큰을 삭제했습니다."
 
@@ -763,6 +808,9 @@ msgstr "사용할 수 없는 메뉴 (ID {id})"
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "<strong>Repository access</strong>에서 <strong>Only select repositories</strong>를 선택하세요."
 
+msgid "Unfinished publication"
+msgstr "완료되지 않은 발행"
+
 msgid "Unknown author"
 msgstr "알 수 없는 작성자"
 
@@ -810,6 +858,9 @@ msgstr "WXR 발행 형식"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "WordPress에서 글 저장을 완료할 때까지 기다려 주세요."
+
+msgid "Waiting for the current request to finish before pausing."
+msgstr "현재 요청이 끝나면 일시정지합니다."
 
 msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
 msgstr "선택하지 않으면 정적 사이트의 <code>robots.txt</code>에 <code>Disallow: /</code>를 기록합니다."

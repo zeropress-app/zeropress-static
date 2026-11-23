@@ -198,7 +198,7 @@ Yes. To run your connected build and deployment again without editing content, o
 
 = What should I do if publication needs verification? =
 
-**Publication needs verification** means the plugin could not confirm whether GitHub received the update. Check the latest update on your GitHub publishing branch before preparing or publishing again. If you use Cloudflare, also check your project's deployment status. If you are unsure, contact support before retrying.
+**Publication needs verification** means the plugin could not confirm whether GitHub received the update. Open **ZeroPress → Publish** or the editor's publishing dialog and select **Check publication result**. Do not publish again until the result is confirmed. If verification remains unresolved, contact support. After GitHub publication is confirmed, check your hosting provider's build and deployment status to see whether the live site has updated.
 
 = How are credentials and settings stored? =
 

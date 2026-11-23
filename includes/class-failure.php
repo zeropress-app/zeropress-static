@@ -39,7 +39,7 @@ final class Failure extends \RuntimeException {
 		$this->reason      = $reason;
 		$this->http_status = $http_status;
 		$this->details     = array_filter(
-			array_intersect_key( $details, array_flip( array( 'memory_limit_bytes', 'estimated_memory_bytes', 'time_limit_seconds', 'time_budget_seconds', 'elapsed_seconds', 'remaining_time_seconds', 'minimum_time_seconds', 'file_bytes', 'file_limit_bytes', 'part_count', 'post_id', 'body_bytes', 'body_limit_bytes' ) ) ),
+			array_intersect_key( $details, array_flip( array( 'memory_limit_bytes', 'estimated_memory_bytes', 'time_limit_seconds', 'time_budget_seconds', 'elapsed_seconds', 'remaining_time_seconds', 'minimum_time_seconds', 'file_bytes', 'file_limit_bytes', 'part_count', 'retry_after_seconds', 'post_id', 'body_bytes', 'body_limit_bytes' ) ) ),
 			static fn( $value ) => ( is_int( $value ) || is_float( $value ) ) && is_finite( (float) $value ) && $value >= 0
 		);
 	}

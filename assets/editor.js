@@ -85,6 +85,8 @@
 		const [postUrl, setPostUrl] = useState(readPostUrl);
 		const [busy, setBusy] = useState('');
 		const [prepared, setPrepared] = useState(null);
+		const [session, setSession] = useState(null);
+		const [publicationControl, setPublicationControl] = useState(null);
 		const [feedback, setFeedback] = useState(null);
 		const running = useRef(false);
 		const revision = useRef(0);
@@ -119,6 +121,25 @@
 		useEffect(() => {
 			if (!busy && feedback) status.current?.focus();
 		}, [busy, feedback]);
+		function showSession(value) {
+			setSession(['active', 'paused', 'unknown', 'expired', 'cancel_pending', 'busy'].includes(value?.state) ? value : null);
+		}
+		useEffect(() => {
+			if (!config.session_publication) return;
+			let closed = false;
+			publication.sessionStatus().then((value) => { if (!closed) showSession(value); }).catch(() => {});
+			return () => { closed = true; };
+		}, []);
+		async function recover(operation) {
+			if (running.current || (operation === 'continue' && session.state !== 'unknown' && checkEditor())) return;
+			running.current = true; setBusy('publish');
+			try {
+				const result = operation === 'cancel' ? await publication.cancel(session.job_id) : operation === 'refresh' ? await publication.sessionStatus(session.job_id) : await publication.resume(session, (text) => setFeedback({ kind: 'info', text }), setPublicationControl);
+				showSession(result);
+				setFeedback({ kind: ['published', 'unchanged'].includes(result.state) ? 'success' : result.pause_reason === 'requested' ? 'info' : 'warning', text: publication.resultMessage(result), code: result.code, commitUrl: result.commit_url });
+			} catch (error) { setFeedback({ kind: 'error', text: error.message, code: error.code }); }
+			finally { running.current = false; setBusy(''); }
+		}
 		const close = () => { if (!running.current) onClose(); };
 		async function execute(operation) {
 			if (running.current || checkEditor()) return;
@@ -142,8 +163,9 @@
 						kind: 'error', code: data.connection_error, text: data.connection_error ? publication.failureMessage(data.connection_error, data.connection_error_details) : message('editor_unavailable'),
 					} : { kind: data.state === 'unchanged' ? 'success' : 'info', text: message(data.state === 'unchanged' ? 'unchanged' : 'prepared') });
 				} else {
-					const result = await publication.publish(receipt, false, (text) => setFeedback({ kind: 'info', text }));
-					setFeedback({ kind: result.state === 'unknown' ? 'warning' : 'success', text: message(result.state), commitUrl: result.commit_url });
+					const result = await publication.publish(receipt, false, (text) => setFeedback({ kind: 'info', text }), setPublicationControl);
+					showSession(result);
+					setFeedback({ kind: ['published', 'unchanged'].includes(result.state) ? 'success' : result.pause_reason === 'requested' ? 'info' : 'warning', text: publication.resultMessage(result), code: result.code, commitUrl: result.commit_url });
 				}
 			} catch (error) {
 				setFeedback({ kind: 'error', code: error.code, text: error.message });
@@ -154,7 +176,7 @@
 		}
 		const target = prepared?.target || config.settings;
 		const repositoryUrl = 'https://github.com/' + target.repository.split('/').map(encodeURIComponent).join('/');
-		const canPublish = prepared?.state === 'ready' && !!prepared.receipt;
+		const canPublish = !session && prepared?.state === 'ready' && !!prepared.receipt;
 		return el(Modal, {
 			title: message('editor_title'), className: 'zpsp-editor-modal', onRequestClose: close,
 			shouldCloseOnClickOutside: false, shouldCloseOnEsc: !busy, isDismissible: !busy,
@@ -168,6 +190,12 @@
 					el('dt', null, message('editor_site')),
 					el('dd', null, el(ExternalLink, { href: postUrl }, postUrl)))),
 			el('div', { role: 'status', 'aria-live': 'polite' }, gate && el('p', { className: 'notice notice-warning zpsp-feedback' }, message(gate))),
+			session && !publicationControl && el('section', { className: 'zpsp-publication-recovery' },
+				el('h2', null, message('session_title')), feedback?.text !== publication.resultMessage(session) && el('p', null, publication.resultMessage(session)),
+				el('div', { className: 'zpsp-actions' },
+					(session.state === 'unknown' || session.can_continue) && el('button', { type: 'button', className: 'button', disabled: !!busy || (!!gate && session.state !== 'unknown'), onClick: () => recover('continue') }, message(session.state === 'unknown' ? 'session_verify' : 'session_continue')),
+					session.job_id && session.state !== 'unknown' && el('button', { type: 'button', className: 'button', disabled: !!busy, onClick: () => recover('cancel') }, message('session_cancel')),
+					el('button', { type: 'button', className: 'button', disabled: !!busy, onClick: () => recover('refresh') }, message('session_refresh')))),
 			prepared && el('section', { className: 'zpsp-editor-result', 'aria-label': message('review_prepared') },
 				el('h2', null, message('review_prepared')), el('p', null, publication.summary(prepared))),
 			el('div', {
@@ -183,7 +211,9 @@
 			el('div', { className: 'zpsp-actions' },
 				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'secondary' : 'primary'), disabled: !!busy || !!gate, onClick: () => execute('prepare') }, message('editor_prepare')),
 				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'primary' : 'secondary'), disabled: !!busy || !!gate || !canPublish, onClick: () => execute('publish') }, message('confirm_title')),
-				el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: close }, message('editor_close')))));
+				publicationControl
+					? el('button', { type: 'button', className: 'button button-secondary', disabled: !publicationControl.pause, onClick: () => publicationControl.pause?.() }, message(publicationControl.pausing ? 'session_pausing' : 'session_pause'))
+					: el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: close }, message('editor_close')))));
 	}
 	function EditorIcon() {
 		// Inherit the WordPress button color, including hover and custom editor accents.
