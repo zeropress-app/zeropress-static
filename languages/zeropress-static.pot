@@ -49,7 +49,7 @@ msgstr ""
 msgid "Allow comment writing on the static site"
 msgstr ""
 
-msgid "Allow search engine crawling"
+msgid "Allow search engines to visit this site"
 msgstr ""
 
 msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
@@ -154,9 +154,6 @@ msgstr ""
 msgid "Continue publication"
 msgstr ""
 
-msgid "Copyright or legal notice"
-msgstr ""
-
 msgid "Create a GitHub token"
 msgstr ""
 
@@ -241,7 +238,7 @@ msgstr ""
 msgid "Enable JavaScript to save settings and prepare publishing data."
 msgstr ""
 
-msgid "Enable search"
+msgid "Enable search on the static site"
 msgstr ""
 
 msgid "Enter Turnstile keys without spaces or line breaks."
@@ -283,6 +280,9 @@ msgstr ""
 msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
 msgstr ""
 
+msgid "Enter a whole number of at least 1 for posts per page."
+msgstr ""
+
 msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Example based on this WordPress installation: %s."
 msgstr ""
 
-msgid "Examples: %1$s · %2$s · %3$s"
+msgid "Examples: %1$s · %2$s"
 msgstr ""
 
 msgid "External services handle data under their own privacy policies."
@@ -320,6 +320,9 @@ msgid "Files: uses private temporary files to process large amounts of publishin
 msgstr ""
 
 msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
+msgstr ""
+
+msgid "Footer text and ZeroPress attribution depend on theme support."
 msgstr ""
 
 msgid "Generate RSS feed"
@@ -415,16 +418,13 @@ msgstr ""
 msgid "Learn more about publishing data processing"
 msgstr ""
 
-msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
+msgid "Leave blank to hide this text."
 msgstr ""
 
-msgid "Leave blank to omit a separate copyright or legal notice."
+msgid "Leave blank to skip generating the sitemap and RSS feed."
 msgstr ""
 
 msgid "Leave the title, description and button label blank to use the theme defaults."
-msgstr ""
-
-msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
 msgstr ""
 
 msgid "Loading details…"
@@ -508,10 +508,16 @@ msgstr ""
 msgid "Not selected"
 msgstr ""
 
+msgid "Number of posts shown on each listing page of the static site."
+msgstr ""
+
 msgid "Off by default. If you use Turnstile for comment writing, visitors' browsers and WordPress contact Cloudflare to verify visitors."
 msgstr ""
 
 msgid "One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
+msgstr ""
+
+msgid "Only expose APIs needed for comments"
 msgstr ""
 
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
@@ -697,9 +703,6 @@ msgstr ""
 msgid "Questions, bug reports, or feature ideas?"
 msgstr ""
 
-msgid "Reading settings"
-msgstr ""
-
 msgid "Refresh status"
 msgstr ""
 
@@ -734,9 +737,6 @@ msgid "Repository, branch or required publishing data files not found. Check acc
 msgstr ""
 
 msgid "Republish options"
-msgstr ""
-
-msgid "Restrict public REST API access"
 msgstr ""
 
 msgid "Review prepared data"
@@ -856,6 +856,9 @@ msgstr ""
 msgid "Site description"
 msgstr ""
 
+msgid "Site footer text"
+msgstr ""
+
 msgid "Site icon"
 msgstr ""
 
@@ -884,6 +887,9 @@ msgid "Splits WXR files larger than 8 MiB, or when required by upload size or se
 msgstr ""
 
 msgid "Static site URL"
+msgstr ""
+
+msgid "Static site settings"
 msgstr ""
 
 msgid "Subscribe"
@@ -1111,7 +1117,10 @@ msgstr ""
 msgid "Waiting for the current request to finish before pausing."
 msgstr ""
 
-msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
+msgid "When comments are disabled, this setting restricts all public REST API access."
+msgstr ""
+
+msgid "When unchecked, asks search engines not to collect this site's content."
 msgstr ""
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."

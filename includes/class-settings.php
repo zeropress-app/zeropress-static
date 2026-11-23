@@ -33,6 +33,7 @@ final class Settings {
 			'wxr_publish_format'       => 'auto',
 			'publication_backend'      => 'files',
 			'public_url'               => '',
+			'posts_per_page'           => null,
 			'allow_indexing'           => false,
 			'media_rules'              => array(),
 			'menu_mapping'             => array(),
@@ -71,8 +72,19 @@ final class Settings {
 		$settings['has_token']            = '' !== $settings['credential'];
 		$settings['has_turnstile_secret'] = '' !== $settings['turnstile_credential'];
 		$settings['menu_mapping']         = (object) ( $settings['menu_mapping'] ?? array() );
+		$settings['posts_per_page']       = self::posts_per_page( $settings );
 		unset( $settings['credential'], $settings['turnstile_credential'] );
 		return $settings;
+	}
+
+	/**
+	 * Resolve the static site's page size without persisting the WordPress fallback.
+	 *
+	 * @param array $settings Settings snapshot.
+	 * @return int
+	 */
+	public static function posts_per_page( array $settings ): int {
+		return $settings['posts_per_page'] ?? max( 1, (int) get_option( 'posts_per_page', 10 ) );
 	}
 
 	/**
@@ -91,7 +103,7 @@ final class Settings {
 		}
 		if ( null !== $section ) {
 			$sections = array(
-				'site'        => array( 'public_url', 'allow_indexing' ),
+				'site'        => array( 'public_url', 'posts_per_page', 'allow_indexing' ),
 				'media'       => array( 'media_rules' ),
 				'menus'       => array( 'menu_mapping' ),
 				'discovery'   => array( 'search_enabled', 'feed_enabled', 'archive_enabled' ),
@@ -109,7 +121,13 @@ final class Settings {
 			// Merge only this panel into the same revision used by the atomic save.
 			$input = array_merge( $current, $input );
 		}
-		$input      = array_merge( array( 'publication_backend' => $current['publication_backend'] ), $input );
+		$input      = array_merge(
+			array(
+				'publication_backend' => $current['publication_backend'],
+				'posts_per_page'      => $current['posts_per_page'],
+			),
+			$input
+		);
 		$input      = array_merge( self::defaults(), $input );
 		$newsletter = array( 'newsletter_enabled' => self::boolean( $input, 'newsletter_enabled' ) );
 		foreach ( array(
@@ -205,6 +223,7 @@ final class Settings {
 				'wxr_publish_format'       => $publish_format,
 				'publication_backend'      => $backend,
 				'public_url'               => $public_url,
+				'posts_per_page'           => self::normalize_posts_per_page( $input['posts_per_page'] ),
 				'allow_indexing'           => self::boolean( $input, 'allow_indexing' ),
 				'media_rules'              => $rules,
 				'menu_mapping'             => $mapping,
@@ -522,6 +541,36 @@ final class Settings {
 			throw new Failure( 'INVALID_SETTINGS' );
 		}
 		return trim( $value );
+	}
+
+	/**
+	 * Accept positive whole numbers; null preserves inheritance for existing sites.
+	 *
+	 * @param mixed $value Submitted page size.
+	 * @return int|null
+	 * @throws Failure If the value is not a positive, safely representable integer.
+	 */
+	private static function normalize_posts_per_page( $value ): ?int {
+		if ( null === $value ) {
+			return null;
+		}
+		if ( ! is_int( $value ) && ! is_string( $value ) ) {
+			throw new Failure( 'INVALID_POSTS_PER_PAGE' );
+		}
+		$number = filter_var(
+			$value,
+			FILTER_VALIDATE_INT,
+			array(
+				'options' => array(
+					'min_range' => 1,
+					'max_range' => min( PHP_INT_MAX, 9007199254740991 ),
+				),
+			)
+		);
+		if ( false === $number ) {
+			throw new Failure( 'INVALID_POSTS_PER_PAGE' );
+		}
+		return $number;
 	}
 
 	/**

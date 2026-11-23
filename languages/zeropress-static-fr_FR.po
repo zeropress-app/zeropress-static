@@ -52,8 +52,8 @@ msgstr "Ajoute <code>&lt;meta name=\"generator\"&gt;</code> au HTML."
 msgid "Allow comment writing on the static site"
 msgstr "Autoriser l’envoi de commentaires sur le site statique"
 
-msgid "Allow search engine crawling"
-msgstr "Autoriser l’exploration par les moteurs de recherche"
+msgid "Allow search engines to visit this site"
+msgstr "Autoriser les moteurs de recherche à visiter ce site"
 
 msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
 msgstr "Une publication inachevée utilise le mode de traitement précédent. Résolvez-la avant de changer de mode. Un résultat incertain peut toujours être vérifié."
@@ -157,9 +157,6 @@ msgstr "Contenu"
 msgid "Continue publication"
 msgstr "Continuer la publication"
 
-msgid "Copyright or legal notice"
-msgstr "Droits d’auteur ou mentions légales"
-
 msgid "Create a GitHub token"
 msgstr "Créer un jeton GitHub"
 
@@ -244,8 +241,8 @@ msgstr "URL de la page d’inscription intégrée"
 msgid "Enable JavaScript to save settings and prepare publishing data."
 msgstr "Activez JavaScript pour enregistrer les réglages et préparer les données à publier."
 
-msgid "Enable search"
-msgstr "Activer la recherche"
+msgid "Enable search on the static site"
+msgstr "Activer la recherche sur le site statique"
 
 msgid "Enter Turnstile keys without spaces or line breaks."
 msgstr "Saisissez les clés Turnstile sans espaces ni sauts de ligne."
@@ -286,6 +283,9 @@ msgstr "Saisissez une URL HTTP(S) valide de page d’inscription intégrée ou u
 msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
 msgstr "Saisissez une URL HTTP(S) valide de page d’inscription ou un chemin relatif au site (2 048 caractères maximum)."
 
+msgid "Enter a whole number of at least 1 for posts per page."
+msgstr "Saisissez un nombre entier supérieur ou égal à 1 pour les articles par page."
+
 msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
 msgstr "Saisissez une URL HTTP(S) sans identifiants, paramètres de requête ni fragment."
 
@@ -304,8 +304,8 @@ msgstr "Saisissez l’origine du site sans chemin."
 msgid "Example based on this WordPress installation: %s."
 msgstr "Exemple basé sur cette installation WordPress : %s."
 
-msgid "Examples: %1$s · %2$s · %3$s"
-msgstr "Exemples : %1$s · %2$s · %3$s"
+msgid "Examples: %1$s · %2$s"
+msgstr "Exemples : %1$s · %2$s"
 
 msgid "External services handle data under their own privacy policies."
 msgstr "Les services externes traitent les données conformément à leurs propres politiques de confidentialité."
@@ -324,6 +324,9 @@ msgstr "Fichiers : utilise des fichiers temporaires privés pour traiter de gran
 
 msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
 msgstr "Terminez ou annulez la publication en cours avant de changer de mode. Si le résultat est incertain, vérifiez-le d’abord."
+
+msgid "Footer text and ZeroPress attribution depend on theme support."
+msgstr "L’affichage du texte du pied de page et de la mention ZeroPress dépend de leur prise en charge par le thème."
 
 msgid "Generate RSS feed"
 msgstr "Générer un flux RSS"
@@ -418,17 +421,14 @@ msgstr "En savoir plus sur la protection de l’API"
 msgid "Learn more about publishing data processing"
 msgstr "En savoir plus sur le traitement des données de publication"
 
-msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
-msgstr "Laissez ce champ vide pour omettre <code>sitemap.xml</code>, <code>feed.xml</code> et la balise <code>&lt;link rel=\"canonical\"&gt;</code> indiquant l’URL préférée de la page."
+msgid "Leave blank to hide this text."
+msgstr "Laissez ce champ vide pour masquer ce texte."
 
-msgid "Leave blank to omit a separate copyright or legal notice."
-msgstr "Laissez ce champ vide pour ne pas afficher de mention distincte de droits d’auteur ou de mentions légales."
+msgid "Leave blank to skip generating the sitemap and RSS feed."
+msgstr "Laissez ce champ vide pour ne pas générer de plan du site ni de flux RSS."
 
 msgid "Leave the title, description and button label blank to use the theme defaults."
 msgstr "Laissez le titre, la description et le libellé du bouton vides pour utiliser les valeurs par défaut du thème."
-
-msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
-msgstr "Limite l’accès public à l’API REST aux API nécessaires aux commentaires de ZeroPress Static."
 
 msgid "Loading details…"
 msgstr "Chargement des détails…"
@@ -511,11 +511,17 @@ msgstr "Non configuré"
 msgid "Not selected"
 msgstr "Non sélectionné"
 
+msgid "Number of posts shown on each listing page of the static site."
+msgstr "Nombre d’articles affichés par page dans les listes du site statique."
+
 msgid "Off by default. If you use Turnstile for comment writing, visitors' browsers and WordPress contact Cloudflare to verify visitors."
 msgstr "Désactivé par défaut. Si vous utilisez Turnstile pour la rédaction de commentaires, les navigateurs des visiteurs et WordPress contactent Cloudflare pour vérifier les visiteurs."
 
 msgid "One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
 msgstr "Un élément des données de publication est trop volumineux pour être envoyé en toute sécurité. Réduisez les contenus ou métadonnées inhabituellement volumineux, puis préparez à nouveau. Augmenter uniquement la mémoire PHP ne supprime pas cette limite."
+
+msgid "Only expose APIs needed for comments"
+msgstr "Rendre publiques uniquement les API nécessaires aux commentaires"
 
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "Ouvrez <strong>Select repositories</strong> et choisissez uniquement le dépôt indiqué ci-dessus dans <strong>URL du dépôt GitHub de publication</strong>."
@@ -700,9 +706,6 @@ msgstr "Publication sur GitHub…"
 msgid "Questions, bug reports, or feature ideas?"
 msgstr "Des questions, des bugs à signaler ou des idées de fonctionnalités ?"
 
-msgid "Reading settings"
-msgstr "Réglages de lecture"
-
 msgid "Refresh status"
 msgstr "Actualiser l’état"
 
@@ -738,9 +741,6 @@ msgstr "Le dépôt, la branche ou les fichiers de données de publication requis
 
 msgid "Republish options"
 msgstr "Options de republication"
-
-msgid "Restrict public REST API access"
-msgstr "Restreindre l’accès public à l’API REST"
 
 msgid "Review prepared data"
 msgstr "Vérifier les données préparées"
@@ -859,6 +859,9 @@ msgstr "Site"
 msgid "Site description"
 msgstr "Description du site"
 
+msgid "Site footer text"
+msgstr "Texte du pied de page du site"
+
 msgid "Site icon"
 msgstr "Icône du site"
 
@@ -888,6 +891,9 @@ msgstr "Divise le WXR au-delà de 8 MiB, ou si la taille de l’envoi ou la mém
 
 msgid "Static site URL"
 msgstr "URL du site statique"
+
+msgid "Static site settings"
+msgstr "Réglages du site statique"
 
 msgid "Subscribe"
 msgstr "S’inscrire"
@@ -1114,8 +1120,11 @@ msgstr "Attendez que WordPress ait terminé d’enregistrer votre article."
 msgid "Waiting for the current request to finish before pausing."
 msgstr "La publication sera mise en pause à la fin de la requête en cours."
 
-msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
-msgstr "Lorsque cette option est décochée, <code>Disallow: /</code> est ajouté au fichier <code>robots.txt</code> du site statique."
+msgid "When comments are disabled, this setting restricts all public REST API access."
+msgstr "Si les commentaires sont désactivés, ce réglage restreint tout accès public à l’API REST."
+
+msgid "When unchecked, asks search engines not to collect this site's content."
+msgstr "Si cette option est décochée, il est demandé aux moteurs de recherche de ne pas collecter le contenu de ce site."
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
 msgstr "Lorsque l’envoi est désactivé, les commentaires sont uniquement affichés. Vos réglages de commentaires WordPress restent applicables."

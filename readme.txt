@@ -33,7 +33,7 @@ For your first site, we recommend GitHub publishing with Cloudflare hosting. Set
 * Optional protection that limits public access to WordPress APIs.
 * English, Korean, Japanese, Spanish (Spain), German, French and Portuguese (Brazil) admin screens.
 
-All options are in **ZeroPress → Settings**. The Site section shows the title, description, language, timezone, posts per page and icon read from WordPress. Save settings, then open **ZeroPress → Publish** to prepare the files.
+All options are in **ZeroPress → Settings**. The Site section shows information read from WordPress and lets you set the static site's address, posts per page and search-engine preference. Posts per page initially follows WordPress; saving Site settings keeps a separate value for the static site. Save settings, then open **ZeroPress → Publish** to prepare the files.
 
 = External services =
 
@@ -106,7 +106,7 @@ We recommend GitHub publishing with Cloudflare hosting for your first site. This
 5. **Publish your content.** Make sure WordPress has at least one public, published post or page. Open **ZeroPress → Publish**, select **Prepare publishing data**, and review the content counts and destination. You can also view the menus and media information included in the export. Select **Publish to GitHub** and confirm.
 6. **Check your live site.** GitHub publication updates the repository; Cloudflare then builds and deploys the site. In Cloudflare, open your project under **Workers & Pages** and wait for the new build and deployment to succeed. Open or refresh the site address from step 1 and check that your own posts and images appear in place of the sample content.
 
-After checking the site, enable **Allow search engine crawling** under **Site** if you want search engines to crawl it. This option starts off. Save the site settings, then prepare and publish again. You can configure menus, comments, newsletters and media URL replacements later as needed.
+After checking the site, enable **Allow search engines to visit this site** under **Site** if you want search engines to crawl it. This option starts off. Save the site settings, then prepare and publish again. You can configure menus, comments, newsletters and media URL replacements later as needed.
 
 = Publish from the editor =
 
@@ -150,7 +150,7 @@ Yes. Enter the address visitors will use under **Settings → Site → Static si
 
 Links you added inside posts and pages keep their saved addresses, so review them if they should point to the static site. Media addresses can be changed separately under **Media URL replacements**. Comments still come from WordPress.
 
-= What does Allow search engine crawling do? =
+= What does Allow search engines to visit this site do? =
 
 This tells search engines whether they may crawl your static site. It is off by default. Enable it when your site is ready, save the site settings, then prepare and publish again.
 
@@ -168,7 +168,7 @@ ZeroPress warns when a post or page body reaches 256 KiB and stops publication i
 
 = Can I restrict public REST API access? =
 
-Yes. Enable **Restrict public REST API access** under **Settings → API protection** to keep only the APIs needed for ZeroPress Static comments publicly accessible.
+Yes. Enable **Only expose APIs needed for comments** under **Settings → API protection** to keep only the APIs needed for ZeroPress Static comments publicly accessible. If comment display is off, all public REST API access is restricted.
 
 This option is off by default and takes effect when you save. Other plugins that use the public REST API may be affected.
 

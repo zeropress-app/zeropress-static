@@ -114,6 +114,7 @@
 		for (const input of form.elements) {
 			if (!input.name) continue;
 			if (input.name === 'comment_verification') result[input.name] = input.checked ? 'turnstile' : 'pow';
+			else if (input.type === 'number' && Number.isSafeInteger(input.valueAsNumber)) result[input.name] = input.valueAsNumber;
 			else result[input.name] = input.type === 'checkbox' ? input.checked : input.value.trim();
 		}
 		if (form.dataset.section === 'media') {
@@ -139,6 +140,7 @@
 		clearFieldErrors(form);
 		if (section === 'menus') validateMenus();
 		if (section === 'comments') commentControls();
+		if (section === 'api') apiControls();
 		if (section === 'newsletter' || section === 'discovery') featureControls();
 		if (section === 'turnstile') turnstileControls();
 		if (section === 'github') {
@@ -266,6 +268,7 @@
 		if (section === 'github') { tokenLink(); repositoryLink(); }
 		processingControls();
 		if (section === 'comments') commentControls();
+		if (section === 'api' || section === 'comments') apiControls();
 		if (section === 'newsletter' || section === 'discovery') featureControls();
 		if (section === 'turnstile') { turnstileEditing = false; turnstileControls(); }
 		baselines.set(section, JSON.stringify(values(form)));
@@ -303,6 +306,15 @@
 		const enabled = $('comments_enabled').checked;
 		$('comments_api_url').disabled = !enabled;
 		$('anonymous_comments').disabled = !enabled;
+	}
+	function apiControls() {
+		const input = $('restrict_public_rest_api');
+		const help = $('restrict_public_rest_api-help');
+		if (!input || !help) return;
+		// The API policy follows saved comments settings, not another panel's unsaved input.
+		help.hidden = !input.checked || settings.comments_enabled;
+		if (help.hidden) input.removeAttribute('aria-describedby');
+		else input.setAttribute('aria-describedby', help.id);
 	}
 	function featureControls() {
 		if ($('newsletter')) {
@@ -383,6 +395,7 @@
 			INVALID_NEWSLETTER_EMBED_URL: 'newsletter_embed_url',
 
 			INVALID_SITE_URL: 'public_url', COMMENT_SITE_URL_REQUIRED: 'public_url',
+			INVALID_POSTS_PER_PAGE: 'posts_per_page',
 			INVALID_TURNSTILE_SETTINGS: 'turnstile_site_key', TURNSTILE_SETTINGS_REQUIRED: 'turnstile_site_key', TURNSTILE_SITE_KEY_REQUIRED: 'turnstile_site_key',
 			INVALID_COMMENTS_URL: 'comments_api_url', COMMENTS_URL_REQUIRED: 'comments_api_url',
 			INVALID_REPOSITORY: 'repository', REPOSITORY_REQUIRED: 'repository', INVALID_BRANCH: 'branch', INVALID_TOKEN: 'token',
@@ -457,6 +470,7 @@
 			busy = false;
 			processingControls();
 			commentControls();
+			apiControls();
 			featureControls();
 			turnstileControls();
 			tokenControls();

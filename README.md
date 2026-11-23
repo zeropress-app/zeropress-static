@@ -99,7 +99,7 @@ a site address, so you can start without a custom domain.
    site address from step 1 and check that your own posts and images appear in place of
    the sample content.
 
-After checking the site, enable **Allow search engine crawling** under **Site** if you
+After checking the site, enable **Allow search engines to visit this site** under **Site** if you
 want search engines to crawl it. This option starts off. Save the site settings, then
 prepare and publish again. You can configure menus, comments, newsletters and media URL
 replacements later as needed.
@@ -134,10 +134,23 @@ the page. The navigation stays visible while scrolling on desktop and wraps on
 mobile. Save changes before preparing publishing data.
 
 The **Site** section shows the WordPress title, description, site language,
-timezone, posts per page and site icon as read-only information. Links open the
-corresponding WordPress settings. These values are read again whenever publishing
+timezone and site icon as read-only information. A link opens the WordPress
+general settings. These values are read again whenever publishing
 data is prepared. **Icon URLs for publishing** shows the URLs after saved media
 replacement rules have been applied.
+
+Under **Static site settings**, set the static site's address, **Posts per page**
+and search-engine preference. Posts per page is a positive whole number and
+controls the static site's post listings. Saving it does not change WordPress's
+Reading settings.
+
+Existing sites continue to use the WordPress page size until a separate value is
+saved in the Site section. The input initially shows that effective value.
+Saving **Site settings** stores the displayed number for the static site.
+Saving other sections or older clients omitting `posts_per_page` preserves this
+behavior and any previously saved override. Changing the page size expires
+prepared data, so prepare and publish again. The exported value still uses
+`site.posts_per_page` in `wxr-import-base.json`; the importer format is unchanged.
 
 ### Static site URL and search engines
 
@@ -157,7 +170,7 @@ This applies to WXR link fields. Links within article bodies keep their saved
 addresses. Media URLs follow the media replacement rules, and comments use the
 configured WordPress REST API URL.
 
-**Allow search engine crawling** starts off. When unchecked, the default build
+**Allow search engines to visit this site** starts off. When unchecked, the default build
 writes `Disallow: /` in the static site's `robots.txt`; checking it writes
 `Allow: /`. A custom `public/robots.txt` in your build project takes precedence.
 The setting controls crawler instructions; access to a private site is managed
@@ -247,7 +260,7 @@ the base JSON.
 
 Search, RSS and chronological archives start enabled. RSS also requires a static
 site URL; the selection is retained if that URL is blank. Search and archive
-display depends on the theme. **Enable search** controls site search separately
+display depends on the theme. **Enable search on the static site** controls site search separately
 from the search-engine crawling setting.
 
 ### Comments
@@ -327,7 +340,7 @@ If the client address or counter storage is unavailable, submissions return HTTP
 
 ### API protection
 
-**Settings → API protection → Restrict public REST API access** is off by
+**Settings → API protection → Only expose APIs needed for comments** is off by
 default. When enabled, it restricts unauthenticated HTTP REST requests according
 to the saved **Show WordPress comments on the static site** setting:
 
@@ -335,6 +348,9 @@ to the saved **Show WordPress comments on the static site** setting:
 | --- | --- |
 | Off | All REST routes are blocked. |
 | On | Only the three comment routes listed above are allowed, with their listed methods. `HEAD` is allowed for reads and `OPTIONS` for CORS preflight. |
+
+When this option is selected and saved comment display is off, the settings
+screen explains that all public REST API access is restricted.
 
 The restriction checks WordPress's resolved route and effective HTTP method,
 including embedded REST requests. Unauthenticated REST requests with a
@@ -381,10 +397,13 @@ URL 2,048. Turning the prompt off retains the saved values.
 
 ### Display and credits
 
-The optional copyright or legal notice is plain text. Leaving it blank omits a
-separate notice in the blog theme. **Show ZeroPress attribution** adds
-`Published with ZeroPress` to the theme footer. **Show ZeroPress generator
-information** adds `<meta name="generator">` to the HTML. Both options start on.
+**Site footer text** is optional plain text, such as your site name or a copyright
+line. Leave it blank to hide the text. **Show ZeroPress attribution** adds
+`Published with ZeroPress` to the theme footer. Footer text and attribution
+depend on theme support.
+
+**Show ZeroPress generator information** adds `<meta name="generator">` to the
+HTML. Attribution and generator information both start on.
 
 ## Publishing behavior
 

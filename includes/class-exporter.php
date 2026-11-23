@@ -678,7 +678,7 @@ final class Exporter {
 				'url'              => $settings['public_url'],
 				'locale'           => $site['locale'],
 				'timezone'         => $site['timezone'],
-				'posts_per_page'   => $site['posts_per_page'],
+				'posts_per_page'   => Settings::posts_per_page( $settings ),
 				'robots'           => array( 'allow_indexing' => $settings['allow_indexing'] ),
 				'search'           => array( 'enabled' => $settings['search_enabled'] ?? true ),
 				'feed'             => array( 'enabled' => $settings['feed_enabled'] ?? true ),

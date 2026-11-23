@@ -332,11 +332,10 @@ final class Admin {
 		$site   = Exporter::site_metadata();
 		$icons  = self::publishing_icons( Settings::read()['media_rules'] );
 		$labels = array(
-			'title'          => __( 'Site title', 'zeropress-static' ),
-			'description'    => __( 'Site description', 'zeropress-static' ),
-			'locale'         => __( 'Site language', 'zeropress-static' ),
-			'timezone'       => __( 'Timezone', 'zeropress-static' ),
-			'posts_per_page' => __( 'Posts per page', 'zeropress-static' ),
+			'title'       => __( 'Site title', 'zeropress-static' ),
+			'description' => __( 'Site description', 'zeropress-static' ),
+			'locale'      => __( 'Site language', 'zeropress-static' ),
+			'timezone'    => __( 'Timezone', 'zeropress-static' ),
 		);
 		?>
 		<div class="zpsp-wordpress-info">
@@ -368,7 +367,6 @@ final class Admin {
 			<?php endif; ?>
 			<p class="zpsp-wordpress-links">
 				<a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Edit in WordPress settings', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a>
-				<a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reading settings', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a>
 			</p>
 		</div>
 		<?php
@@ -411,7 +409,7 @@ final class Admin {
 
 	/** Render the site settings section. */
 	private static function site_panel(): void {
-		$site_help = array( __( 'Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel="canonical"&gt;</code> tag specifying the preferred page URL.', 'zeropress-static' ) );
+		$site_help = array( __( 'Leave blank to skip generating the sitemap and RSS feed.', 'zeropress-static' ) );
 		$home      = wp_parse_url( home_url( '/' ) );
 		if ( is_array( $home ) && in_array( $home['scheme'] ?? '', array( 'http', 'https' ), true ) && ! empty( $home['host'] ) ) {
 			$origin      = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
@@ -426,8 +424,14 @@ final class Admin {
 			<fieldset disabled>
 				<h2 id="zpsp-site-heading"><span class="dashicons dashicons-admin-site-alt3" aria-hidden="true"></span> <?php esc_html_e( 'Site', 'zeropress-static' ); ?></h2>
 				<?php self::wordpress_information(); ?>
+				<h3><?php esc_html_e( 'Static site settings', 'zeropress-static' ); ?></h3>
 				<?php self::field( 'public_url', __( 'Static site URL', 'zeropress-static' ), 'url', 'https://www.example.com', $site_help ); ?>
-				<?php self::check( 'allow_indexing', __( 'Allow search engine crawling', 'zeropress-static' ), __( 'When unchecked, <code>Disallow: /</code> is written to the static site\'s <code>robots.txt</code>.', 'zeropress-static' ) ); ?>
+				<p>
+					<label for="zpsp-posts_per_page"><?php esc_html_e( 'Posts per page', 'zeropress-static' ); ?></label>
+					<input class="small-text" id="zpsp-posts_per_page" name="posts_per_page" type="number" min="1" step="1" required aria-describedby="zpsp-posts_per_page-help">
+				</p>
+				<p class="description" id="zpsp-posts_per_page-help"><?php esc_html_e( 'Number of posts shown on each listing page of the static site.', 'zeropress-static' ); ?></p>
+				<?php self::check( 'allow_indexing', __( 'Allow search engines to visit this site', 'zeropress-static' ), __( 'When unchecked, asks search engines not to collect this site\'s content.', 'zeropress-static' ) ); ?>
 				<div class="zpsp-actions">
 					<button type="submit" class="button button-primary"><?php esc_html_e( 'Save site settings', 'zeropress-static' ); ?></button>
 					<span id="zpsp-site-dirty" class="zpsp-dirty" hidden><?php esc_html_e( 'Unsaved changes', 'zeropress-static' ); ?></span>
@@ -600,7 +604,7 @@ final class Admin {
 		<form id="zpsp-discovery" class="zpsp-panel" data-section="discovery" aria-labelledby="zpsp-discovery-heading">
 			<fieldset disabled>
 				<h2 id="zpsp-discovery-heading"><span class="dashicons dashicons-search" aria-hidden="true"></span> <?php esc_html_e( 'Search and content navigation', 'zeropress-static' ); ?></h2>
-				<?php self::check( 'search_enabled', __( 'Enable search', 'zeropress-static' ) ); ?>
+				<?php self::check( 'search_enabled', __( 'Enable search on the static site', 'zeropress-static' ) ); ?>
 				<?php self::check( 'feed_enabled', __( 'Generate RSS feed', 'zeropress-static' ) ); ?>
 				<p id="zpsp-feed-url-help" class="description" hidden><?php esc_html_e( 'A static site URL is required to generate the feed.', 'zeropress-static' ); ?> <a href="#zpsp-site" data-settings-anchor><?php esc_html_e( 'Static site URL', 'zeropress-static' ); ?></a></p>
 				<?php self::check( 'archive_enabled', __( 'Generate chronological archives', 'zeropress-static' ) ); ?>
@@ -682,7 +686,8 @@ final class Admin {
 		<form id="zpsp-api" class="zpsp-panel" data-section="api" aria-labelledby="zpsp-api-heading">
 			<fieldset disabled>
 				<h2 id="zpsp-api-heading"><span class="dashicons dashicons-shield" aria-hidden="true"></span> <?php esc_html_e( 'API protection', 'zeropress-static' ); ?></h2>
-				<?php self::check( 'restrict_public_rest_api', __( 'Restrict public REST API access', 'zeropress-static' ), __( 'Limit public REST API access to the APIs needed for ZeroPress Static comments.', 'zeropress-static' ) ); ?>
+				<?php self::check( 'restrict_public_rest_api', __( 'Only expose APIs needed for comments', 'zeropress-static' ) ); ?>
+				<p id="zpsp-restrict_public_rest_api-help" class="description" hidden><?php esc_html_e( 'When comments are disabled, this setting restricts all public REST API access.', 'zeropress-static' ); ?></p>
 				<p class="description"><?php esc_html_e( 'Other plugins that use public REST APIs may be affected.', 'zeropress-static' ); ?></p>
 				<p class="description"><?php esc_html_e( 'Settings take effect immediately after saving.', 'zeropress-static' ); ?></p>
 				<p><a href="https://github.com/zeropress-app/zeropress-static#api-access" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more about API protection', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
@@ -719,19 +724,19 @@ final class Admin {
 	private static function information_panel(): void {
 		$site_title     = Exporter::site_metadata()['title'];
 		$copyright_help = sprintf(
-			/* translators: 1: Site title example, 2: Copyright symbol, current year and site title example, 3: Copyright and site title example. Each example is wrapped in a code element. */
-			__( 'Examples: %1$s · %2$s · %3$s', 'zeropress-static' ),
+			/* translators: 1: Site title example, 2: Copyright symbol, current year and site title example. Each example is wrapped in a code element. */
+			__( 'Examples: %1$s · %2$s', 'zeropress-static' ),
 			'<code>' . esc_html( $site_title ) . '</code>',
-			'<code>' . esc_html( '© ' . wp_date( 'Y' ) . ' ' . $site_title ) . '</code>',
-			'<code>' . esc_html( 'Copyright ' . $site_title ) . '</code>'
+			'<code>' . esc_html( '© ' . wp_date( 'Y' ) . ' ' . $site_title ) . '</code>'
 		);
-		$copyright_help .= '<br />' . __( 'Leave blank to omit a separate copyright or legal notice.', 'zeropress-static' );
+		$copyright_help .= '<br />' . __( 'Leave blank to hide this text.', 'zeropress-static' );
 		?>
 		<form id="zpsp-information" class="zpsp-panel" data-section="information" aria-labelledby="zpsp-information-heading">
 			<fieldset disabled>
 				<h2 id="zpsp-information-heading"><span class="dashicons dashicons-info-outline" aria-hidden="true"></span> <?php esc_html_e( 'Display and credits', 'zeropress-static' ); ?></h2>
-				<?php self::field( 'copyright_text', __( 'Copyright or legal notice', 'zeropress-static' ), 'text', '', $copyright_help ); ?>
+				<?php self::field( 'copyright_text', __( 'Site footer text', 'zeropress-static' ), 'text', '', $copyright_help ); ?>
 				<?php self::check( 'attribution', __( 'Show ZeroPress attribution', 'zeropress-static' ), __( 'Displays <code>Published with ZeroPress</code> in the theme footer.', 'zeropress-static' ) ); ?>
+				<p id="zpsp-footer-theme-help" class="description"><?php esc_html_e( 'Footer text and ZeroPress attribution depend on theme support.', 'zeropress-static' ); ?></p>
 				<?php self::check( 'expose_generator', __( 'Show ZeroPress generator information', 'zeropress-static' ), __( 'Adds <code>&lt;meta name="generator"&gt;</code> to the HTML.', 'zeropress-static' ) ); ?>
 				<?php self::section_actions( 'information', __( 'Save display and credit settings', 'zeropress-static' ) ); ?>
 			</fieldset>
@@ -1099,6 +1104,7 @@ final class Admin {
 			'TARGET_NOT_REGULAR_FILE'         => __( 'Publishing data inputs must be regular files, not directories, symlinks or submodules.', 'zeropress-static' ),
 			'INVALID_URL'                     => __( 'Enter an HTTP(S) URL without credentials, a query or a fragment.', 'zeropress-static' ),
 			'INVALID_SITE_URL'                => __( 'Enter the site origin without a path.', 'zeropress-static' ),
+			'INVALID_POSTS_PER_PAGE'          => __( 'Enter a whole number of at least 1 for posts per page.', 'zeropress-static' ),
 			'INVALID_COMMENTS_URL'            => __( 'The REST API URL must end in /wp-json/wp/v2.', 'zeropress-static' ),
 			'COMMENTS_URL_REQUIRED'           => __( 'Enter a REST API URL that site visitors can access to enable comments.', 'zeropress-static' ),
 			'INVALID_REPOSITORY'              => __( 'Enter a github.com repository URL or owner/repository.', 'zeropress-static' ),

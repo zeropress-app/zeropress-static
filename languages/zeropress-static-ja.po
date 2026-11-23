@@ -52,8 +52,8 @@ msgstr "HTML に <code>&lt;meta name=\"generator\"&gt;</code> を追加します
 msgid "Allow comment writing on the static site"
 msgstr "静的サイトでコメントの投稿を許可"
 
-msgid "Allow search engine crawling"
-msgstr "検索エンジンのクロールを許可"
+msgid "Allow search engines to visit this site"
+msgstr "検索エンジンによるサイトの巡回を許可"
 
 msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
 msgstr "未完了の公開が以前の処理方式を使用しています。方式を変更する前にその公開を解決してください。不確かな結果は引き続き確認できます。"
@@ -157,9 +157,6 @@ msgstr "コンテンツ"
 msgid "Continue publication"
 msgstr "公開を続行"
 
-msgid "Copyright or legal notice"
-msgstr "著作権・法的表示"
-
 msgid "Create a GitHub token"
 msgstr "GitHub トークンを作成"
 
@@ -244,8 +241,8 @@ msgstr "埋め込み用登録ページ URL"
 msgid "Enable JavaScript to save settings and prepare publishing data."
 msgstr "設定の保存と発行データの準備には、JavaScript を有効にしてください。"
 
-msgid "Enable search"
-msgstr "検索を有効化"
+msgid "Enable search on the static site"
+msgstr "静的サイト内の検索を有効にする"
 
 msgid "Enter Turnstile keys without spaces or line breaks."
 msgstr "空白や改行を含めずに Turnstile のキーを入力してください。"
@@ -286,6 +283,9 @@ msgstr "有効な HTTP(S) の埋め込み用登録ページ URL またはサイ�
 msgid "Enter a valid HTTP(S) signup page URL or site-relative path (up to 2,048 characters)."
 msgstr "有効な HTTP(S) の登録ページ URL またはサイト内の相対パスを入力してください (最大2,048文字)。"
 
+msgid "Enter a whole number of at least 1 for posts per page."
+msgstr "1ページあたりの記事数に1以上の整数を入力してください。"
+
 msgid "Enter an HTTP(S) URL without credentials, a query or a fragment."
 msgstr "認証情報、クエリー、フラグメントを含まない HTTP(S) URL を入力してください。"
 
@@ -304,8 +304,8 @@ msgstr "パスを含めずにサイトのオリジンを入力してください
 msgid "Example based on this WordPress installation: %s."
 msgstr "この WordPress のアドレスを使った例: %s。"
 
-msgid "Examples: %1$s · %2$s · %3$s"
-msgstr "例: %1$s · %2$s · %3$s"
+msgid "Examples: %1$s · %2$s"
+msgstr "例：%1$s · %2$s"
 
 msgid "External services handle data under their own privacy policies."
 msgstr "外部サービスは、それぞれのプライバシーポリシーに従ってデータを処理します。"
@@ -324,6 +324,9 @@ msgstr "ファイル：非公開の一時ファイルを使って大量の公開
 
 msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
 msgstr "処理方式を変更する前に、現在の公開を完了またはキャンセルしてください。結果が不確かな場合は、先に結果を確認してください。"
+
+msgid "Footer text and ZeroPress attribution depend on theme support."
+msgstr "サイト下部のテキストと ZeroPress クレジットの表示には、テーマの対応が必要です。"
 
 msgid "Generate RSS feed"
 msgstr "RSS フィードを生成"
@@ -418,17 +421,14 @@ msgstr "API 保護について詳しく見る"
 msgid "Learn more about publishing data processing"
 msgstr "公開データの処理について"
 
-msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
-msgstr "空欄にすると、<code>sitemap.xml</code>、<code>feed.xml</code>、ページの正規 URL を指定する <code>&lt;link rel=\"canonical\"&gt;</code> タグは生成されません。"
+msgid "Leave blank to hide this text."
+msgstr "空欄にすると、このテキストを表示しません。"
 
-msgid "Leave blank to omit a separate copyright or legal notice."
-msgstr "空欄にすると、独自の著作権・法的表示は追加されません。"
+msgid "Leave blank to skip generating the sitemap and RSS feed."
+msgstr "空欄の場合、サイトマップとRSSフィードは生成されません。"
 
 msgid "Leave the title, description and button label blank to use the theme defaults."
 msgstr "タイトル、説明、ボタンのラベルを空欄にすると、テーマの既定値を使用します。"
-
-msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
-msgstr "ZeroPress Static のコメント機能に必要な API のみを公開します。"
 
 msgid "Loading details…"
 msgstr "詳細を読み込み中…"
@@ -511,11 +511,17 @@ msgstr "未設定"
 msgid "Not selected"
 msgstr "未選択"
 
+msgid "Number of posts shown on each listing page of the static site."
+msgstr "静的サイトの記事一覧で1ページに表示する記事数です。"
+
 msgid "Off by default. If you use Turnstile for comment writing, visitors' browsers and WordPress contact Cloudflare to verify visitors."
 msgstr "初期設定では無効です。コメント投稿に Turnstile を使用すると、訪問者を確認するために訪問者のブラウザーと WordPress が Cloudflare と通信します。"
 
 msgid "One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
 msgstr "公開データの項目が大きすぎて、安全に送信できません。特に大きな投稿本文やメタデータを減らしてから再度準備してください。PHP メモリを増やすだけでは、この制限は解除されません。"
+
+msgid "Only expose APIs needed for comments"
+msgstr "コメントに必要な API のみ公開"
 
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "<strong>Select repositories</strong> を開き、上の <strong>発行先 GitHub リポジトリ URL</strong> に入力したリポジトリのみを選択してください。"
@@ -700,9 +706,6 @@ msgstr "GitHub に発行中…"
 msgid "Questions, bug reports, or feature ideas?"
 msgstr "ご質問、不具合の報告、機能のご提案はありますか？"
 
-msgid "Reading settings"
-msgstr "表示設定"
-
 msgid "Refresh status"
 msgstr "状態を更新"
 
@@ -738,9 +741,6 @@ msgstr "リポジトリ、ブランチ、または必要な公開データファ
 
 msgid "Republish options"
 msgstr "再発行オプション"
-
-msgid "Restrict public REST API access"
-msgstr "公開 REST API へのアクセスを制限"
 
 msgid "Review prepared data"
 msgstr "準備したデータを確認"
@@ -859,6 +859,9 @@ msgstr "サイト"
 msgid "Site description"
 msgstr "サイトの説明"
 
+msgid "Site footer text"
+msgstr "サイト下部のテキスト"
+
 msgid "Site icon"
 msgstr "サイトアイコン"
 
@@ -888,6 +891,9 @@ msgstr "WXR が 8 MiB を超える場合、または送信サイズやサーバ�
 
 msgid "Static site URL"
 msgstr "静的サイト URL"
+
+msgid "Static site settings"
+msgstr "静的サイトの設定"
 
 msgid "Subscribe"
 msgstr "登録する"
@@ -1114,8 +1120,11 @@ msgstr "WordPress が投稿の保存を完了するまでお待ちください�
 msgid "Waiting for the current request to finish before pausing."
 msgstr "現在のリクエストが完了したら一時停止します。"
 
-msgid "When unchecked, <code>Disallow: /</code> is written to the static site's <code>robots.txt</code>."
-msgstr "チェックを外すと、静的サイトの <code>robots.txt</code> に <code>Disallow: /</code> を記録します。"
+msgid "When comments are disabled, this setting restricts all public REST API access."
+msgstr "コメントが無効の場合、この設定は公開 REST API へのすべてのアクセスを制限します。"
+
+msgid "When unchecked, asks search engines not to collect this site's content."
+msgstr "オフにすると、検索エンジンにこのサイトの情報を収集しないよう求めます。"
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
 msgstr "投稿を無効にすると、コメントの表示のみになります。WordPress の既存のコメント設定も適用されます。"
