@@ -74,8 +74,17 @@ final class Exporter {
 	 * @var array
 	 */
 	private array $public_ids = array();
-	/**
-	 * Public object counts.
+	/** Optional preparation-time URL projection.
+	 *
+	 * @var Menu_Destinations|null
+	 */
+	private ?Menu_Destinations $destinations = null;
+	/** Menu records captured for preparation, before source cache cleanup.
+	 *
+	 * @var array
+	 */
+	private array $review_entries = array();
+	/** Public object counts.
 	 *
 	 * @var array
 	 */
@@ -90,8 +99,9 @@ final class Exporter {
 	 * Share the caller's resource budget across generation and publication.
 	 *
 	 * @param Resource_Budget|null $budget Request resource budget.
+	 * @param Export_Review|null   $review Optional preparation-only display collector.
 	 */
-	public function __construct( ?Resource_Budget $budget = null ) {
+	public function __construct( ?Resource_Budget $budget = null, private ?Export_Review $review = null ) {
 		$this->budget = $budget ?? Resource_Budget::from_request();
 	}
 
@@ -167,18 +177,29 @@ final class Exporter {
 	 * @return array
 	 */
 	private function write_export( array $settings, ?int $now, Wxr_Writer $writer ): array {
-		$source            = untrailingslashit( home_url( '/' ) );
-		$source_site       = wp_parse_url( $source );
-		$this->source_site = is_array( $source_site ) ? $source_site : array();
-		$this->public_url  = $settings['public_url'];
-		$this->rewriter    = new Media_Rewriter( $settings['media_rules'], $this->budget );
-		$this->authors     = array();
-		$this->categories  = array();
-		$this->tags        = array();
-		$this->attachments = array();
-		$this->public_ids  = array();
-		$this->counts      = array_fill_keys( array( 'posts', 'pages', 'media', 'menus' ), 0 );
-		$this->body_policy = new Content_Body();
+		$source               = untrailingslashit( home_url( '/' ) );
+		$source_site          = wp_parse_url( $source );
+		$this->source_site    = is_array( $source_site ) ? $source_site : array();
+		$this->public_url     = $settings['public_url'];
+		$this->rewriter       = new Media_Rewriter( $settings['media_rules'], $this->budget );
+		$this->authors        = array();
+		$this->categories     = array();
+		$this->tags           = array();
+		$this->attachments    = array();
+		$this->public_ids     = array();
+		$this->counts         = array_fill_keys( array( 'posts', 'pages', 'media', 'menus' ), 0 );
+		$this->body_policy    = new Content_Body();
+		$this->destinations   = null;
+		$this->review_entries = array();
+		if ( $this->review ) {
+			$entries = array();
+			foreach ( Menus::selected( Menus::normalize( $settings['menu_mapping'] ?? array() ) ) as $menu ) {
+				$items                                  = $this->reads->menu_items( $menu );
+				$this->review_entries[ $menu->term_id ] = is_array( $items ) ? $items : array();
+				$entries                                = array_merge( $entries, $this->review_entries[ $menu->term_id ] );
+			}
+			$this->destinations = new Menu_Destinations( $settings['public_url'], $this->budget, $entries );
+		}
 		foreach ( ( new Content_Reader( $this->budget ) )->pages() as $page ) {
 			foreach ( $this->reads->documents( $page ) as $posts ) {
 				foreach ( $posts as $post ) {
@@ -288,8 +309,10 @@ final class Exporter {
 		$this->body_policy->record( max( strlen( $post->post_content ), strlen( $content ) ), (int) $post->ID );
 		$user                                = get_userdata( $post->post_author );
 		$this->authors[ $post->post_author ] = $user ? self::display_text( $user->display_name ) : __( 'Unknown author', 'zeropress-static' );
-		$xml                                 = "<item>\n" . $this->element( 'title', self::display_text( $post->post_title ) )
-			. $this->element( 'link', $this->site_link( get_permalink( $post ) ) )
+		$link                                = $this->site_link( get_permalink( $post ) );
+		$this->destinations?->observe( $post, $link );
+		$xml = "<item>\n" . $this->element( 'title', self::display_text( $post->post_title ) )
+			. $this->element( 'link', $link )
 			. $this->element( 'dc:creator', 'author-' . $post->post_author )
 			. $this->element( 'content:encoded', $content )
 			. $this->element( 'excerpt:encoded', self::html_text( $this->rewriter->content( $post->post_excerpt ) ) );
@@ -350,40 +373,7 @@ final class Exporter {
 	 * @return string
 	 */
 	private function site_link( string $url ): string {
-		if ( '' === $this->public_url || preg_match( '/[\x00-\x20\x7f\\\\]/', $url ) ) {
-			return $url;
-		}
-		$parts = wp_parse_url( $url );
-		if ( ! is_array( $parts ) || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
-			return $url;
-		}
-		$relative = str_starts_with( $url, '/' ) && ! str_starts_with( $url, '//' );
-		if ( ! $relative ) {
-			$scheme = strtolower( $parts['scheme'] ?? '' );
-			if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || empty( $parts['host'] ) ) {
-				return $url;
-			}
-			foreach ( array( 'scheme', 'host' ) as $key ) {
-				if ( strtolower( $parts[ $key ] ) !== strtolower( $this->source_site[ $key ] ?? '' ) ) {
-					return $url;
-				}
-			}
-			$default_port = 'https' === $scheme ? 443 : 80;
-			if ( ( $parts['port'] ?? $default_port ) !== ( $this->source_site['port'] ?? $default_port ) ) {
-				return $url;
-			}
-		}
-		$base_path = untrailingslashit( $this->source_site['path'] ?? '' );
-		$path      = $parts['path'] ?? '/';
-		if ( '' !== $base_path ) {
-			if ( $path !== $base_path && ! str_starts_with( $path, $base_path . '/' ) ) {
-				return $url;
-			}
-			$path = substr( $path, strlen( $base_path ) );
-		}
-		return $this->public_url . ( '' === $path ? '/' : $path )
-			. ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' )
-			. ( isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '' );
+		return Menu_Destinations::site_link( $url, $this->public_url, $this->source_site );
 	}
 
 	/**
@@ -476,6 +466,16 @@ final class Exporter {
 				++$this->counts['media'];
 			}
 			$writer->item( $xml, $id, 'attachments' );
+			if ( '' !== $xml ) {
+				$this->review?->record(
+					'media',
+					array(
+						'id'       => $id,
+						'url'      => $url,
+						'featured' => $this->attachments[ $id ],
+					)
+				);
+			}
 			if ( $this->attachments[ $id ] ) {
 				$details->next();
 			}
@@ -563,7 +563,7 @@ final class Exporter {
 		$terms = array();
 		$menus = Menus::selected( $mapping );
 		foreach ( $menus as $menu ) {
-			$entries = $this->reads->menu_items( $menu );
+			$entries = $this->review_entries[ $menu->term_id ] ?? $this->reads->menu_items( $menu );
 			$entries = array_filter(
 				is_array( $entries ) ? $entries : array(),
 				function ( $entry ) {
@@ -589,6 +589,13 @@ final class Exporter {
 					. $this->element( 'wp:term_slug', $menu->slug ) . $this->element( 'wp:term_name', self::display_text( $menu->name ) ) . "</wp:term>\n",
 			);
 			$ids     = array_fill_keys( array_map( static fn( $entry ) => $entry->ID, $entries ), true );
+			$parents = array();
+			if ( $this->review ) {
+				$this->review->menu( Menus::review_menu( $menu, array_keys( $mapping, (string) $menu->term_id, true ), count( $entries ) ) );
+				foreach ( $entries as $entry ) {
+					$parents[ $entry->ID ] = isset( $ids[ $entry->menu_item_parent ] ) ? (int) $entry->menu_item_parent : 0;
+				}
+			}
 			usort( $entries, static fn( $a, $b ) => $a->menu_order === $b->menu_order ? ( $a->ID <=> $b->ID ) : ( $a->menu_order <=> $b->menu_order ) );
 			foreach ( $entries as $entry ) {
 				$item = "<item>\n" . $this->element( 'title', self::display_text( $entry->title ) )
@@ -606,6 +613,18 @@ final class Exporter {
 					$item .= $this->meta( $key, (string) $value );
 				}
 				$writer->item( $item . "</item>\n", (int) $entry->ID, 'menus' );
+				$this->review?->record(
+					'menus',
+					array(
+						'menu'       => (int) $menu->term_id,
+						'id'         => (int) $entry->ID,
+						'parent'     => $parents[ $entry->ID ],
+						'label'      => self::display_text( $entry->title ),
+						'url'        => $this->destinations?->url( $entry, 'category' === $entry->object ? ( $this->categories[ $entry->object_id ] ?? null ) : ( 'post_tag' === $entry->object ? ( $this->tags[ $entry->object_id ] ?? null ) : null ) ),
+						'new_window' => '_blank' === $entry->target,
+						'depth'      => Export_Review::depth( (int) $entry->ID, $parents ),
+					)
+				);
 				unset( $item );
 			}
 		}

@@ -89,12 +89,13 @@ final class Admin {
 		}
 		$block        = $editor && get_current_screen()->is_block_editor();
 		$handle       = $editor ? 'zeropress-static-editor' : 'zeropress-static';
-		$dependencies = array( 'wp-element', 'wp-components', 'zeropress-static-publication' );
+		$dependencies = array( 'wp-element', 'wp-components', 'zeropress-static-publication', 'zeropress-static-review' );
 		if ( $editor ) {
 			$dependencies = array_merge( $dependencies, $block ? array( 'wp-editor', 'wp-plugins', 'wp-data' ) : array( 'autosave' ) );
 		}
 		wp_enqueue_style( 'zeropress-static', plugins_url( 'assets/admin.css', PLUGIN_FILE ), array( 'wp-components' ), VERSION );
 		wp_register_script( 'zeropress-static-publication', plugins_url( 'assets/publisher.js', PLUGIN_FILE ), array(), VERSION, true );
+		wp_register_script( 'zeropress-static-review', plugins_url( 'assets/review.js', PLUGIN_FILE ), array( 'wp-element', 'wp-components', 'zeropress-static-publication' ), VERSION, true );
 		wp_enqueue_script( $handle, plugins_url( $editor ? 'assets/editor.js' : 'assets/admin.js', PLUGIN_FILE ), $dependencies, VERSION, true );
 		$settings = Settings::public_view();
 		$config   = array(
@@ -172,6 +173,12 @@ final class Admin {
 					break;
 				case 'prepare':
 					$result = Publisher::prepare( Resource_Budget::from_request( true ) );
+					break;
+				case 'menu_preview':
+					$result = Menus::preview( Settings::string( $input, 'menu_id' ), Export_Review::page_number( $input['page'] ?? null ), Resource_Budget::from_request() );
+					break;
+				case 'review_details':
+					$result = Export_Review::read( Settings::string( $input, 'receipt' ), Settings::string( $input, 'kind' ), Export_Review::page_number( $input['page'] ?? null ), Resource_Budget::from_request() );
 					break;
 				case 'publish':
 					$republish = array_key_exists( 'republish', $input ) ? $input['republish'] : false;
@@ -268,6 +275,10 @@ final class Admin {
 				<?php self::publish_panel(); ?>
 			<?php endif; ?>
 			<noscript><p><?php esc_html_e( 'Enable JavaScript to save settings and prepare publishing data.', 'zeropress-static' ); ?></p></noscript>
+			<div class="zpsp-footer">
+				<p><?php esc_html_e( 'Questions, bug reports, or feature ideas?', 'zeropress-static' ); ?> <a href="https://github.com/zeropress-app/zeropress-static/issues" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Share them on GitHub Issues', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
+				<p><a id="zpsp-privacy" href="https://github.com/zeropress-app/zeropress-static#stored-data-and-external-services" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Privacy Policy', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
+			</div>
 		</div>
 		<?php
 	}
@@ -330,7 +341,6 @@ final class Admin {
 		?>
 		<div class="zpsp-wordpress-info">
 			<h3><?php esc_html_e( 'Information from WordPress', 'zeropress-static' ); ?></h3>
-			<p class="description"><?php esc_html_e( 'These values are read from WordPress when preparing publishing data.', 'zeropress-static' ); ?></p>
 			<dl class="zpsp-site-details">
 				<?php foreach ( $labels as $key => $label ) : ?>
 					<dt><?php echo esc_html( $label ); ?></dt>
@@ -368,7 +378,7 @@ final class Admin {
 	private static function settings_panels(): void {
 		$sections = array(
 			'site'           => __( 'Site', 'zeropress-static' ),
-			'processing'     => __( 'Export processing', 'zeropress-static' ),
+			'processing'     => __( 'Publishing data processing', 'zeropress-static' ),
 			'github-panel'   => __( 'GitHub publishing', 'zeropress-static' ),
 			'media'          => __( 'Media URL replacements', 'zeropress-static' ),
 			'menus'          => __( 'Menus', 'zeropress-static' ),
@@ -401,17 +411,16 @@ final class Admin {
 
 	/** Render the site settings section. */
 	private static function site_panel(): void {
-		$site_help = __( 'Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel="canonical"&gt;</code> tag specifying the preferred page URL.', 'zeropress-static' );
+		$site_help = array( __( 'Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel="canonical"&gt;</code> tag specifying the preferred page URL.', 'zeropress-static' ) );
 		$home      = wp_parse_url( home_url( '/' ) );
 		if ( is_array( $home ) && in_array( $home['scheme'] ?? '', array( 'http', 'https' ), true ) && ! empty( $home['host'] ) ) {
-			$origin     = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
-			$site_help .= '<br />' . sprintf(
+			$origin      = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+			$site_help[] = sprintf(
 				/* translators: %s: WordPress origin in a code element, including the scheme and any custom port. */
 				__( 'Example based on this WordPress installation: %s.', 'zeropress-static' ),
 				'<code>' . esc_html( $origin ) . '</code>'
 			);
 		}
-		$site_help .= '<br />' . __( 'Enter a static site URL to allow comment writing.', 'zeropress-static' );
 		?>
 		<form id="zpsp-site" class="zpsp-panel" data-section="site" aria-labelledby="zpsp-site-heading">
 			<fieldset disabled>
@@ -434,23 +443,22 @@ final class Admin {
 		?>
 		<form id="zpsp-processing" class="zpsp-panel" data-section="processing" aria-labelledby="zpsp-processing-heading">
 			<fieldset disabled>
-				<h2 id="zpsp-processing-heading"><span class="dashicons dashicons-admin-tools" aria-hidden="true"></span> <?php esc_html_e( 'Export processing', 'zeropress-static' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately.', 'zeropress-static' ); ?></p>
+				<h2 id="zpsp-processing-heading"><span class="dashicons dashicons-admin-tools" aria-hidden="true"></span> <?php esc_html_e( 'Publishing data processing', 'zeropress-static' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Choose how to process publishing data.', 'zeropress-static' ); ?></p>
 				<p>
 					<label for="zpsp-publication_backend"><?php esc_html_e( 'Processing method', 'zeropress-static' ); ?></label>
 					<select id="zpsp-publication_backend" name="publication_backend" aria-describedby="zpsp-processing-help zpsp-processing-fixed">
-						<option value="files"><?php esc_html_e( 'Temporary files (default)', 'zeropress-static' ); ?></option>
-						<option value="memory"><?php esc_html_e( 'Memory (small sites)', 'zeropress-static' ); ?></option>
+						<option value="files"><?php esc_html_e( 'Files (recommended)', 'zeropress-static' ); ?></option>
+						<option value="memory"><?php esc_html_e( 'Memory', 'zeropress-static' ); ?></option>
 					</select>
 				</p>
 				<p id="zpsp-processing-fixed" class="description" hidden></p>
 				<p id="zpsp-processing-job" class="description" hidden><span></span> <a href="<?php echo esc_url( self::page_url() ); ?>"><?php esc_html_e( 'Publish', 'zeropress-static' ); ?></a></p>
 				<div id="zpsp-processing-help" class="description">
-					<p><?php esc_html_e( 'Temporary files: uses private storage and supports larger exports, pausing and continuing publication.', 'zeropress-static' ); ?></p>
-					<p><?php esc_html_e( 'Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable.', 'zeropress-static' ); ?></p>
-					<p><?php esc_html_e( 'The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs.', 'zeropress-static' ); ?></p>
+					<p><?php esc_html_e( 'Files: uses private temporary files to process large amounts of publishing data and supports pausing and continuing publication.', 'zeropress-static' ); ?></p>
+					<p><?php esc_html_e( 'Memory: publishes a single XML without temporary files. Publishing data is limited to 8 MiB; upload size and server resources may impose a lower limit.', 'zeropress-static' ); ?></p>
 				</div>
-				<p><a href="https://github.com/zeropress-app/zeropress-static#export-processing" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more about export processing', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
+				<p><a href="https://github.com/zeropress-app/zeropress-static#export-processing" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more about publishing data processing', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
 				<div class="zpsp-actions">
 					<button id="zpsp-save-processing" type="submit" class="button button-primary"><?php esc_html_e( 'Save processing method', 'zeropress-static' ); ?></button>
 					<span id="zpsp-processing-dirty" class="zpsp-dirty" hidden><?php esc_html_e( 'Unsaved changes', 'zeropress-static' ); ?></span>
@@ -475,7 +483,7 @@ final class Admin {
 		<section id="zpsp-github-panel" class="zpsp-panel" aria-labelledby="zpsp-github-heading">
 			<h2 id="zpsp-github-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> <?php esc_html_e( 'GitHub publishing (optional)', 'zeropress-static' ); ?></h2>
 			<p><a href="https://github.com/zeropress-app/zeropress-starter-wxr" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Set up a WXR starter repository', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
-			<p><?php self::help_text( __( 'Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json.', 'zeropress-static' ) ); ?></p>
+			<p><?php esc_html_e( 'Set up a GitHub repository using the WXR starter template.', 'zeropress-static' ); ?></p>
 			<form id="zpsp-github" class="zpsp-subsection" data-section="github" aria-labelledby="zpsp-github-target-heading">
 				<fieldset disabled>
 					<h3 id="zpsp-github-target-heading"><?php esc_html_e( 'Publishing target', 'zeropress-static' ); ?></h3>
@@ -492,9 +500,10 @@ final class Admin {
 					<p id="zpsp-wxr_publish_format-help" class="description">
 					<?php
 					if ( Publication_Runtime::memory() ) {
-						esc_html_e( 'Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files.', 'zeropress-static' );
+						esc_html_e( 'Memory processing publishes single XML even when Automatic is selected.', 'zeropress-static' );
 					} else {
-						esc_html_e( 'Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file.', 'zeropress-static' ); }
+						esc_html_e( 'Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split.', 'zeropress-static' );
+					}
 					?>
 					</p>
 					<div class="zpsp-actions">
@@ -762,17 +771,19 @@ final class Admin {
 		</section>
 		<section class="zpsp-panel" aria-labelledby="zpsp-publish-heading">
 			<h2 id="zpsp-publish-heading"><span class="dashicons dashicons-media-code" aria-hidden="true"></span> <?php esc_html_e( 'Prepare and publish', 'zeropress-static' ); ?></h2>
-			<p><?php esc_html_e( 'Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed.', 'zeropress-static' ); ?></p>
+			<p><?php esc_html_e( 'Publishing data includes only published posts and pages without a password.', 'zeropress-static' ); ?></p>
 			<button id="zpsp-prepare" type="button" class="button zpsp-icon-button button-primary" disabled><span class="dashicons dashicons-media-code" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Prepare publishing data', 'zeropress-static' ); ?></span></button>
 			<?php self::feedback( 'prepare' ); ?>
+			<section id="zpsp-publication-status" class="zpsp-publication-status" aria-labelledby="zpsp-status-heading" hidden>
+				<h3 id="zpsp-status-heading"><?php esc_html_e( 'Publication status', 'zeropress-static' ); ?></h3>
+				<div id="zpsp-state" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></div>
+				<?php self::feedback( 'result' ); ?>
+			</section>
 			<div id="zpsp-result" hidden>
 				<h3 tabindex="-1" id="zpsp-result-heading"><?php esc_html_e( 'Review prepared data', 'zeropress-static' ); ?></h3>
-				<div id="zpsp-state" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
-				<p id="zpsp-summary"></p>
+				<div id="zpsp-summary"></div>
 				<div id="zpsp-visibility" hidden></div>
 				<div id="zpsp-publish-actions" class="zpsp-actions">
-					<button type="button" class="button zpsp-icon-button" data-download="wxr"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download WXR', 'zeropress-static' ); ?></span></button>
-					<button type="button" class="button zpsp-icon-button" data-download="base"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download build settings', 'zeropress-static' ); ?></span></button>
 					<button type="button" class="button zpsp-icon-button button-primary" id="zpsp-publish" disabled><span class="dashicons dashicons-upload" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Publish to GitHub', 'zeropress-static' ); ?></span></button>
 				</div>
 				<details id="zpsp-republish-options" hidden>
@@ -780,7 +791,10 @@ final class Admin {
 					<p><?php esc_html_e( 'Update the WXR generation time and create a new commit without changing the content.', 'zeropress-static' ); ?></p>
 					<div id="zpsp-republish-actions" class="zpsp-actions"></div>
 				</details>
-				<?php self::feedback( 'result' ); ?>
+				<div class="zpsp-actions zpsp-download-actions" role="group" aria-label="<?php esc_attr_e( 'Downloads', 'zeropress-static' ); ?>">
+					<button type="button" class="button zpsp-icon-button" data-download="wxr"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download WXR', 'zeropress-static' ); ?></span></button>
+					<button type="button" class="button zpsp-icon-button" data-download="base"><span class="dashicons dashicons-download" aria-hidden="true"></span><span class="zpsp-button-label"><?php esc_html_e( 'Download build settings', 'zeropress-static' ); ?></span></button>
+				</div>
 				<?php self::feedback( 'download' ); ?>
 			</div>
 		</section>
@@ -801,27 +815,33 @@ final class Admin {
 	/**
 	 * Render an escaped labelled text input.
 	 *
-	 * @param string $name Input field name.
-	 * @param string $label Translated label.
-	 * @param string $type HTML input type.
-	 * @param string $placeholder Example input value.
-	 * @param string $description Optional help text with limited emphasis and line breaks.
-	 * @param bool   $required Whether an empty value prevents submission.
-	 * @param bool   $hide_label Whether a visible heading already identifies the input.
+	 * @param string       $name Input field name.
+	 * @param string       $label Translated label.
+	 * @param string       $type HTML input type.
+	 * @param string       $placeholder Example input value.
+	 * @param string|array $description Optional help text, or separate help paragraphs, with limited emphasis and line breaks.
+	 * @param bool         $required Whether an empty value prevents submission.
+	 * @param bool         $hide_label Whether a visible heading already identifies the input.
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
-	private static function field( string $name, string $label, string $type = 'text', string $placeholder = '', string $description = '', bool $required = false, bool $hide_label = false ): void {
+	private static function field( string $name, string $label, string $type = 'text', string $placeholder = '', string|array $description = '', bool $required = false, bool $hide_label = false ): void {
 		?>
 		<p><label <?php echo $hide_label ? 'class="screen-reader-text"' : ''; ?> for="zpsp-<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $label ); ?></label>
 		<input class="regular-text" id="zpsp-<?php echo esc_attr( $name ); ?>" name="<?php echo esc_attr( $name ); ?>" type="<?php echo esc_attr( $type ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" autocomplete="<?php echo 'password' === $type ? 'new-password' : 'off'; ?>" spellcheck="false"
 			<?php if ( $required ) : ?>
 				required
 			<?php endif; ?>
-			<?php if ( '' !== $description ) : ?>
+			<?php if ( '' !== $description && array() !== $description ) : ?>
 				aria-describedby="zpsp-<?php echo esc_attr( $name ); ?>-help"
 			<?php endif; ?>
 		></p>
-		<?php if ( '' !== $description ) : ?>
+		<?php if ( is_array( $description ) && $description ) : ?>
+			<div class="description zpsp-help-paragraphs" id="zpsp-<?php echo esc_attr( $name ); ?>-help">
+				<?php foreach ( $description as $paragraph ) : ?>
+					<p><?php self::help_text( $paragraph ); ?></p>
+				<?php endforeach; ?>
+			</div>
+		<?php elseif ( is_string( $description ) && '' !== $description ) : ?>
 			<p class="description" id="zpsp-<?php echo esc_attr( $name ); ?>-help"><?php self::help_text( $description ); ?></p>
 		<?php endif; ?>
 		<?php
@@ -868,21 +888,23 @@ final class Admin {
 	private static function messages(): array {
 		return array(
 			'memory_active'                   => __( 'Publication is running in one request. Refresh the status if its response was lost.', 'zeropress-static' ),
-			'MEMORY_EXPORT_TOO_LARGE'         => __( 'This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again.', 'zeropress-static' ),
+			'MEMORY_EXPORT_TOO_LARGE'         => __( 'Publishing data exceeds the 8 MiB limit for XML and settings combined or an encoded upload. There is no automatic switch to Files. On Linux, select Files and prepare again.', 'zeropress-static' ),
 			'PUBLICATION_BACKEND_FIXED'       => __( 'The server fixes the processing method to Memory. This setting cannot be changed here.', 'zeropress-static' ),
 			'processing_pending'              => __( 'A processing-method change is in progress or was interrupted. Reload settings and save the processing method again before preparing.', 'zeropress-static' ),
 			'processing_busy'                 => __( 'Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first.', 'zeropress-static' ),
 			'processing_windows'              => __( 'Windows supports Memory processing only.', 'zeropress-static' ),
 			'processing_host'                 => __( 'The server configuration fixes the processing method to Memory.', 'zeropress-static' ),
 			'saved_processing'                => __( 'Processing method saved. Prepare again before downloading or publishing.', 'zeropress-static' ),
-			'memory_format_help'              => __( 'Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files.', 'zeropress-static' ),
-			'files_format_help'               => __( 'Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file.', 'zeropress-static' ),
-			'MEMORY_SINGLE_REQUIRED'          => __( 'Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing.', 'zeropress-static' ),
+			'memory_format_help'              => __( 'Memory processing publishes single XML even when Automatic is selected.', 'zeropress-static' ),
+			'auto_format_help'                => __( 'Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split.', 'zeropress-static' ),
+			'single_format_help'              => __( 'Publishes WXR as one XML file. Publication may be limited by file size or server resources.', 'zeropress-static' ),
+			'bundle_format_help'              => __( 'Publishes WXR in split format.', 'zeropress-static' ),
+			'MEMORY_SINGLE_REQUIRED'          => __( 'Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Files on Linux for split publishing.', 'zeropress-static' ),
 			'MEMORY_LOCK_UNAVAILABLE'         => __( 'Safe publication locking is unavailable. Ask your host to check the WordPress database connection requirements in the publishing guide.', 'zeropress-static' ),
 			'MEMORY_LOCK_LOST'                => __( 'The database connection changed during publication. Check the publication status before trying again.', 'zeropress-static' ),
 			'MEMORY_PUBLICATION_INTERRUPTED'  => __( 'This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed.', 'zeropress-static' ),
 			'PUBLICATION_BACKEND_CHANGED'     => __( 'An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked.', 'zeropress-static' ),
-			'session_title'                   => __( 'Unfinished publication', 'zeropress-static' ),
+			'publication_status'              => __( 'Publication status', 'zeropress-static' ),
 			'session_active'                  => __( 'A publication is in progress. Continue it here if the previous page was closed.', 'zeropress-static' ),
 			'session_paused'                  => __( 'Publication paused. Continue to retry the remaining steps.', 'zeropress-static' ),
 			'session_pause'                   => __( 'Pause publication', 'zeropress-static' ),
@@ -898,6 +920,8 @@ final class Admin {
 			'session_verify'                  => __( 'Check publication result', 'zeropress-static' ),
 			'session_cancel'                  => __( 'Cancel publication', 'zeropress-static' ),
 			'session_refresh'                 => __( 'Refresh status', 'zeropress-static' ),
+			'session_refreshing'              => __( 'Checking publication status…', 'zeropress-static' ),
+			'session_cancelling'              => __( 'Cancelling publication…', 'zeropress-static' ),
 			'PUBLICATION_STORAGE_UNAVAILABLE' => __( 'Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again.', 'zeropress-static' ),
 			'NEWSLETTER_URL_REQUIRED'         => __( 'Enter a signup page URL or an embedded signup page URL.', 'zeropress-static' ),
 			'INVALID_NEWSLETTER_TITLE'        => __( 'Enter a title of up to 200 characters.', 'zeropress-static' ),
@@ -907,7 +931,7 @@ final class Admin {
 			'INVALID_NEWSLETTER_EMBED_URL'    => __( 'Enter a valid HTTP(S) embedded signup page URL or site-relative path (up to 2,048 characters).', 'zeropress-static' ),
 			'menu_id'                         => __( 'Menu ID', 'zeropress-static' ),
 			'menu_source'                     => __( 'WordPress menu', 'zeropress-static' ),
-			'menu_none'                       => __( 'Do not publish', 'zeropress-static' ),
+			'menu_none'                       => __( 'Not selected', 'zeropress-static' ),
 			'menu_remove'                     => __( 'Remove menu assignment', 'zeropress-static' ),
 			'menu_missing'                    => __( 'Unavailable menu (ID {id})', 'zeropress-static' ),
 			'INVALID_MENU_MAPPING'            => __( 'Use unique menu IDs starting with a lowercase letter, followed by lowercase letters, numbers, hyphens or underscores (up to 64 characters).', 'zeropress-static' ),
@@ -932,7 +956,6 @@ final class Admin {
 			'editor_saving'                   => __( 'Wait for WordPress to finish saving your post.', 'zeropress-static' ),
 			'editor_close'                    => __( 'Close', 'zeropress-static' ),
 			'editor_prepare'                  => __( 'Prepare publishing data', 'zeropress-static' ),
-			'editor_unavailable'              => __( 'Check your GitHub settings before publishing.', 'zeropress-static' ),
 			'working'                         => __( 'Working…', 'zeropress-static' ),
 			'saved'                           => __( 'This section is saved.', 'zeropress-static' ),
 			'saved_publish'                   => __( 'This section is saved. Changes take effect after the next publication.', 'zeropress-static' ),
@@ -941,8 +964,8 @@ final class Admin {
 			'saved_runtime'                   => __( 'This section is saved. Changes apply to new comment requests.', 'zeropress-static' ),
 			'saved_api'                       => __( 'This section is saved. API protection applies immediately.', 'zeropress-static' ),
 			'confirm_visibility'              => __( 'Repository visibility', 'zeropress-static' ),
-			'visibility_private'              => __( 'Private', 'zeropress-static' ),
-			'visibility_public'               => __( 'Public', 'zeropress-static' ),
+			'visibility_private'              => __( 'Private repository', 'zeropress-static' ),
+			'visibility_public'               => __( 'Public repository', 'zeropress-static' ),
 			'visibility_internal'             => __( 'Internal', 'zeropress-static' ),
 			'visibility_unknown'              => __( 'Unconfirmed', 'zeropress-static' ),
 			'visibility_public_notice'        => __( 'This repository is public. Anyone can view uploaded WXR and site settings files and their history. Use a private repository if you do not want to share these source files.', 'zeropress-static' ),
@@ -962,14 +985,59 @@ final class Admin {
 			'from'                            => __( 'Source URL prefix', 'zeropress-static' ),
 			'to'                              => __( 'Destination URL prefix', 'zeropress-static' ),
 			'remove'                          => __( 'Remove replacement', 'zeropress-static' ),
-			'summary'                         => __( 'Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}', 'zeropress-static' ),
-			'prepared'                        => __( 'Data prepared. Review the result below.', 'zeropress-static' ),
-			'ready'                           => __( 'Ready to publish to {repository} ({branch}).', 'zeropress-static' ),
+			'export_post_count'               => __( 'Posts: {posts}', 'zeropress-static' ),
+			'export_page_count'               => __( 'Pages: {pages}', 'zeropress-static' ),
+			'export_menu_count'               => __( 'Menus: {menus}', 'zeropress-static' ),
+			'export_contents'                 => __( 'Publishing data', 'zeropress-static' ),
+			'export_content'                  => __( 'Content', 'zeropress-static' ),
+			'export_media_info'               => __( 'Media information', 'zeropress-static' ),
+			/* translators: {media} is the localized count of exported media information records. */
+			'export_media_count'              => __( '{media}', 'zeropress-static' ),
+			'menu_preview'                    => __( 'View items', 'zeropress-static' ),
+			'menu_preview_title'              => __( 'Menu preview', 'zeropress-static' ),
+			'menu_preview_note'               => __( 'Destinations use your saved site settings. Preparation excludes unavailable or non-public items.', 'zeropress-static' ),
+			/* translators: {menus} is the localized count of menus; accessible name for the menu count button. */
+			'review_menus'                    => __( 'View menus: {menus}', 'zeropress-static' ),
+			/* translators: {media} is the localized count of media information records; accessible name for the media count button. */
+			'review_media'                    => __( 'View media information: {media}', 'zeropress-static' ),
+			'review_menus_title'              => __( 'Menus to publish', 'zeropress-static' ),
+			'review_note'                     => __( 'These details belong to the last preparation. Prepare again to include later changes.', 'zeropress-static' ),
+			'review_loading'                  => __( 'Loading details…', 'zeropress-static' ),
+			'review_empty'                    => __( 'No items to show.', 'zeropress-static' ),
+			'review_range'                    => __( '{start}–{end} of {total}', 'zeropress-static' ),
+			'review_count'                    => __( 'Items: {count}', 'zeropress-static' ),
+			'review_previous'                 => __( 'Previous', 'zeropress-static' ),
+			'review_next'                     => __( 'Next', 'zeropress-static' ),
+			'review_url_pending'              => __( 'Destination will be determined during the site build.', 'zeropress-static' ),
+			'review_new_window'               => __( 'New window', 'zeropress-static' ),
+			'review_edit_menu'                => __( 'Edit in WordPress', 'zeropress-static' ),
+			'review_featured'                 => __( 'Featured image', 'zeropress-static' ),
+			'review_media_reference'          => __( 'Media URL reference', 'zeropress-static' ),
+			'review_untitled'                 => __( '(No label)', 'zeropress-static' ),
+			'REVIEW_UNAVAILABLE'              => __( 'These details are unavailable. Prepare again, or download the WXR to inspect the publishing data.', 'zeropress-static' ),
+			'export_build_settings'           => __( 'Build settings', 'zeropress-static' ),
+			'export_size'                     => __( 'Publishing data size', 'zeropress-static' ),
+			'export_size_details'             => __( 'WXR: {wxr} · Build settings: {base}', 'zeropress-static' ),
+			'export_size_note'                => __( 'Download sizes; media files are not included.', 'zeropress-static' ),
+			'memory_export_usage'             => __( 'Memory processing limit', 'zeropress-static' ),
+			'memory_export_percent'           => __( '{percent}% of {limit}', 'zeropress-static' ),
+			'memory_export_note'              => __( 'Uses the larger of the combined files and each encoded upload. This is not PHP RAM usage.', 'zeropress-static' ),
+			'memory_export_exceeded'          => __( 'Publishing data size limit exceeded.', 'zeropress-static' ),
+			'preparation_check'               => __( 'Preparation check', 'zeropress-static' ),
+			'preparation_passed_title'        => __( 'Preparation check passed', 'zeropress-static' ),
+			'preparation_blocked_title'       => __( 'Publishing blocked', 'zeropress-static' ),
+			'preparation_connect_title'       => __( 'GitHub connection required', 'zeropress-static' ),
+			'preparation_passed'              => __( 'Passed for this preparation.', 'zeropress-static' ),
+			'preparation_blocked'             => __( 'Downloads ready; publishing blocked.', 'zeropress-static' ),
+			'preparation_connect'             => __( 'Downloads ready. Connect GitHub and prepare again to check publishing.', 'zeropress-static' ),
+			'preparation_recheck'             => __( 'Memory, time and publishing conditions are checked again when you publish.', 'zeropress-static' ),
+			'wxr_single_file'                 => __( 'Single XML file', 'zeropress-static' ),
+			'wxr_split_files'                 => __( 'Split XML files: {parts}', 'zeropress-static' ),
+			'json_file'                       => __( 'JSON file', 'zeropress-static' ),
+			'split_download_notice'           => __( 'Your starter builds these files as one site. WXR downloads remain a single XML file.', 'zeropress-static' ),
 			'unchanged'                       => __( 'No changes to publish.', 'zeropress-static' ),
 			'unchanged_description'           => __( 'GitHub already contains this data. You do not need to publish again.', 'zeropress-static' ),
-			'download_only'                   => __( 'Data is ready to download. Configure and test GitHub to publish.', 'zeropress-static' ),
 			'review_prepared'                 => __( 'Review prepared data', 'zeropress-static' ),
-			'publication_result'              => __( 'Publication result', 'zeropress-static' ),
 			'published_button'                => __( 'Published to GitHub', 'zeropress-static' ),
 			'published'                       => __( 'Published to GitHub.', 'zeropress-static' ),
 			'unknown'                         => __( 'Publication needs verification. Use Check publication result; do not publish again until the result is confirmed.', 'zeropress-static' ),
@@ -980,10 +1048,24 @@ final class Admin {
 			'confirm_repository'              => __( 'GitHub repository', 'zeropress-static' ),
 			'confirm_branch'                  => __( 'Publishing branch', 'zeropress-static' ),
 			'confirm_files'                   => __( 'Files to update', 'zeropress-static' ),
-			'confirm_description'             => __( 'The export files will be updated together in one commit.', 'zeropress-static' ),
+			'confirm_description'             => __( 'Publishing data files will be updated together in one commit.', 'zeropress-static' ),
 			'confirm_cancel'                  => __( 'Cancel', 'zeropress-static' ),
 			'confirm_close'                   => __( 'Close confirmation', 'zeropress-static' ),
 			'confirmation_unavailable'        => __( 'The confirmation dialog could not be loaded. Reload this page and try again.', 'zeropress-static' ),
+			'privacy_title'                   => __( 'Privacy Policy', 'zeropress-static' ),
+			'privacy_intro'                   => __( 'ZeroPress Static does not send your site\'s content or usage statistics to ZeroPress.', 'zeropress-static' ),
+			'privacy_github_title'            => __( 'GitHub', 'zeropress-static' ),
+			'privacy_github'                  => __( 'If you connect GitHub, the plugin contacts it when you test the connection, prepare data or publish. Publishing sends public content and site settings to your selected repository.', 'zeropress-static' ),
+			'privacy_turnstile_title'         => __( 'Cloudflare Turnstile (optional)', 'zeropress-static' ),
+			'privacy_turnstile'               => __( 'Off by default. If you use Turnstile for comment writing, visitors\' browsers and WordPress contact Cloudflare to verify visitors.', 'zeropress-static' ),
+			'privacy_newsletter_title'        => __( 'Newsletter (optional)', 'zeropress-static' ),
+			'privacy_newsletter'              => __( 'If you connect a newsletter signup page, visitors contact that service when they open or view it on your site. The service handles their subscription information.', 'zeropress-static' ),
+			'privacy_storage'                 => __( 'GitHub tokens and Turnstile secret keys are stored encrypted in WordPress.', 'zeropress-static' ),
+			'privacy_policies'                => __( 'External services handle data under their own privacy policies.', 'zeropress-static' ),
+			'privacy_github_policy'           => __( 'GitHub Privacy Statement', 'zeropress-static' ),
+			'privacy_cloudflare_policy'       => __( 'Cloudflare Privacy Policy', 'zeropress-static' ),
+			'privacy_details'                 => __( 'Learn more (English)', 'zeropress-static' ),
+			'privacy_close'                   => __( 'Close', 'zeropress-static' ),
 			'saving'                          => __( 'Saving…', 'zeropress-static' ),
 			'testing'                         => __( 'Testing connection…', 'zeropress-static' ),
 			'preparing'                       => __( 'Preparing data…', 'zeropress-static' ),
@@ -1013,8 +1095,8 @@ final class Admin {
 			'GITHUB_PERMISSION_DENIED'        => __( 'The token cannot access this repository. Check its selected repositories and permissions.', 'zeropress-static' ),
 			'GITHUB_RATE_LIMITED'             => __( 'GitHub request limit reached. Wait before trying again.', 'zeropress-static' ),
 			'GITHUB_UNAVAILABLE'              => __( 'GitHub is temporarily unavailable or the request timed out.', 'zeropress-static' ),
-			'TARGET_NOT_FOUND'                => __( 'Repository, branch or required export files not found. Check access and the starter input files.', 'zeropress-static' ),
-			'TARGET_NOT_REGULAR_FILE'         => __( 'Export inputs must be regular files, not directories, symlinks or submodules.', 'zeropress-static' ),
+			'TARGET_NOT_FOUND'                => __( 'Repository, branch or required publishing data files not found. Check access and the starter input files.', 'zeropress-static' ),
+			'TARGET_NOT_REGULAR_FILE'         => __( 'Publishing data inputs must be regular files, not directories, symlinks or submodules.', 'zeropress-static' ),
 			'INVALID_URL'                     => __( 'Enter an HTTP(S) URL without credentials, a query or a fragment.', 'zeropress-static' ),
 			'INVALID_SITE_URL'                => __( 'Enter the site origin without a path.', 'zeropress-static' ),
 			'INVALID_COMMENTS_URL'            => __( 'The REST API URL must end in /wp-json/wp/v2.', 'zeropress-static' ),
@@ -1031,18 +1113,16 @@ final class Admin {
 			'body_details'                    => __( 'Post ID: {id}. Body size: {bytes} UTF-8 bytes.', 'zeropress-static' ),
 			'body_warning'                    => __( '{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}.', 'zeropress-static' ),
 			'MEMORY_LIMIT_EXCEEDED'           => __( 'There is not enough PHP memory to complete this request. Increase the server memory allowance and prepare again.', 'zeropress-static' ),
-			'WXR_SPLIT_REQUIRED'              => __( 'This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again.', 'zeropress-static' ),
-			'WXR_SINGLE_MEMORY_LIMIT'         => Publication_Runtime::memory() ? __( 'This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory.', 'zeropress-static' ) : __( 'Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again.', 'zeropress-static' ),
-			'WXR_SPLIT_UNSUPPORTED'           => __( 'This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again.', 'zeropress-static' ),
-			'WXR_TARGET_INVALID'              => __( 'The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again.', 'zeropress-static' ),
-			'WXR_RECORD_TOO_LARGE'            => __( 'One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit.', 'zeropress-static' ),
-			'WXR_BUNDLE_LIMIT_EXCEEDED'       => __( 'This export exceeds the supported split export limits. Review your export settings or contact support before trying again.', 'zeropress-static' ),
-			'EXPORT_STORAGE_UNAVAILABLE'      => __( 'Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again.', 'zeropress-static' ),
-			'GITHUB_PAYLOAD_TOO_LARGE'        => __( 'GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again.', 'zeropress-static' ),
-			'split_summary'                   => __( 'This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file.', 'zeropress-static' ),
-			'single_summary'                  => __( 'This export will be published as a single XML file.', 'zeropress-static' ),
-			'switch_to_single'                => __( 'This publication replaces the split export files with one XML file.', 'zeropress-static' ),
-			'switch_to_bundle'                => __( 'This publication replaces the single XML file with split export files.', 'zeropress-static' ),
+			'WXR_SPLIT_REQUIRED'              => __( 'Publishing data is too large for a single GitHub file. Select Automatic or Split XML, then prepare again.', 'zeropress-static' ),
+			'WXR_SINGLE_MEMORY_LIMIT'         => Publication_Runtime::memory() ? __( 'Processing this publishing data needs more available PHP memory. There is no automatic switch to Files. On Linux, select Files and prepare again, or ask your host to review PHP memory.', 'zeropress-static' ) : __( 'Sending this single XML file needs more PHP memory. Select Automatic or Split XML, or ask your host to increase PHP memory, then prepare again.', 'zeropress-static' ),
+			'WXR_SPLIT_UNSUPPORTED'           => __( 'To publish split XML, update the WXR starter. Or select Single XML and prepare again.', 'zeropress-static' ),
+			'WXR_TARGET_INVALID'              => __( 'The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again.', 'zeropress-static' ),
+			'WXR_RECORD_TOO_LARGE'            => __( 'One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit.', 'zeropress-static' ),
+			'WXR_BUNDLE_LIMIT_EXCEEDED'       => __( 'Publishing data exceeds the supported split-file limits. Review your publishing settings or contact support before trying again.', 'zeropress-static' ),
+			'EXPORT_STORAGE_UNAVAILABLE'      => __( 'Temporary storage for publishing data is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again.', 'zeropress-static' ),
+			'GITHUB_PAYLOAD_TOO_LARGE'        => __( 'GitHub rejected an oversized file or request. Review unusually large content or metadata before preparing again.', 'zeropress-static' ),
+			'switch_to_single'                => __( 'This publication replaces the split files with one XML file.', 'zeropress-static' ),
+			'switch_to_bundle'                => __( 'This publication replaces the single XML file with split files.', 'zeropress-static' ),
 			'publishing_help'                 => __( 'Publishing help', 'zeropress-static' ),
 			'memory_details'                  => __( 'PHP memory limit: {limit}. Estimated memory required: {estimated}.', 'zeropress-static' ),
 			'REQUEST_TIME_LIMIT_EXCEEDED'     => __( 'The server time limit stopped this request. Ask your host to review the request time limit, then prepare again.', 'zeropress-static' ),

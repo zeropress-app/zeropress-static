@@ -37,6 +37,10 @@ All options are in **ZeroPress → Settings**. The Site section shows the title,
 
 = External services =
 
+For a short summary in your language, select **Privacy Policy** at the bottom of **Publish** or **Settings**.
+
+The plugin does not send your site's content or usage statistics to ZeroPress. When you use GitHub publishing or enable optional integrations, data is exchanged with those services as described below. Those services process data under their own privacy policies.
+
 **GitHub**
 
 If you configure GitHub publishing, the plugin connects to [GitHub](https://github.com/) when you test the connection, prepare publishing data or publish. It uses your saved GitHub token to access the selected repository. Publishing sends your public posts and pages, selected menus, media information and site settings. The plugin does not collect usage statistics or publish on a schedule.
@@ -99,7 +103,7 @@ We recommend GitHub publishing with Cloudflare hosting for your first site. This
 2. **Return to WordPress.** After the sample deployment, continue here with the plugin; it prepares your content export for you. Open **ZeroPress → Settings → Site**, enter the new site's address under **Static site URL**, and select **Save site settings**. Leave the other settings at their defaults for this first publication.
 3. **Connect your repository.** Under **GitHub publishing**, enter the URL of the repository created in step 1. Set **Publishing branch** to the branch Cloudflare builds for the live site, usually `main`, and select **Save publishing target**.
 4. **Register a GitHub token.** Select **Create a GitHub token**. Choose **Only select repositories**, select your publishing repository, and grant **Contents: Read and write**. Copy the generated token back to WordPress, select **Register token**, then **Test connection**. Continue when the test succeeds and review whether the repository is private or public. A public repository also shares uploaded source files and their history.
-5. **Publish your content.** Make sure WordPress has at least one public, published post or page. Open **ZeroPress → Publish**, select **Prepare publishing data**, and review the content counts and destination. Select **Publish to GitHub** and confirm.
+5. **Publish your content.** Make sure WordPress has at least one public, published post or page. Open **ZeroPress → Publish**, select **Prepare publishing data**, and review the content counts and destination. You can also view the menus and media information included in the export. Select **Publish to GitHub** and confirm.
 6. **Check your live site.** GitHub publication updates the repository; Cloudflare then builds and deploys the site. In Cloudflare, open your project under **Workers & Pages** and wait for the new build and deployment to succeed. Open or refresh the site address from step 1 and check that your own posts and images appear in place of the sample content.
 
 After checking the site, enable **Allow search engine crawling** under **Site** if you want search engines to crawl it. This option starts off. Save the site settings, then prepare and publish again. You can configure menus, comments, newsletters and media URL replacements later as needed.
@@ -134,7 +138,7 @@ File downloads are available for custom build and hosting workflows.
 
 = Can I choose one XML file or split files for publishing? =
 
-Yes. Under **Settings → GitHub publishing**, choose **WXR publishing format**. **Automatic** keeps small exports in one XML file and uses split files when needed; an existing split export stays split. Choose **Single XML** or **Split XML** to use that format instead. Split files require an up-to-date WXR Starter. Save the publishing target, prepare again and review the format before publishing. Downloads always remain a single XML file. Memory processing supports single XML only. On Linux, use **Settings → Export processing** to choose temporary files or memory; Windows uses memory only. See the [processing guide](https://github.com/zeropress-app/zeropress-static#export-processing).
+Yes. Under **Settings → GitHub publishing**, choose **WXR publishing format**. **Automatic** keeps small exports in one XML file and uses split files when needed; an existing split export stays split. Choose **Single XML** or **Split XML** to use that format instead. Save the publishing target, prepare again and review the format before publishing. WXR downloads always provide one XML file; build settings are a separate JSON file. Memory processing supports single XML only. On Linux, use **Settings → Publishing data processing** to choose **Files (recommended)** or **Memory**; Windows uses memory only. See the [processing guide](https://github.com/zeropress-app/zeropress-static#export-processing).
 
 = Is a static site URL required? =
 
@@ -172,7 +176,7 @@ This option is off by default and takes effect when you save. Other plugins that
 
 = How do menus work? =
 
-In **Settings → Menus**, choose classic WordPress menus for your static site, such as its main menu and footer. Create and edit them in WordPress's classic menu editor. Only menus selected in ZeroPress are published; your WordPress theme's menu assignments are kept separate. Menus created with the Navigation block are not supported.
+In **Settings → Menus**, choose classic WordPress menus for your static site, such as its main menu and footer. Use **View items** to preview a selected menu. Create and edit menus in WordPress's classic menu editor. Only menus selected in ZeroPress are published; your WordPress theme's menu assignments are kept separate. Menus created with the Navigation block are not supported.
 
 = How are media URLs and the Site Icon handled? =
 

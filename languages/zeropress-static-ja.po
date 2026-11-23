@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Project-Id-Version: ZeroPress Static 1.0.0\nContent-Type: text/plain; charset=UTF-8\nLanguage: ja\nPlural-Forms: nplurals=1; plural=0;\n"
 
+msgid "(No label)"
+msgstr "（ラベルなし）"
+
 msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
 msgstr "GitHub のブランチルールにより、直接の発行が拒否されました。リポジトリのルールを確認してください。"
 
@@ -73,8 +76,8 @@ msgstr "認証付き暗号化を利用できません。認証情報を登録す
 msgid "Automatic"
 msgstr "自動"
 
-msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
-msgstr "対応するスターターでは、「自動」は 8 MiB を超える WXR ファイルを分割します。それより小さいファイルも、送信サイズやサーバーのメモリによって分割される場合があります。すでに分割されたエクスポートは分割のまま維持されます。XML のダウンロードは常に単一ファイルです。"
+msgid "Build settings"
+msgstr "ビルド設定"
 
 msgid "Button label"
 msgstr "ボタンのラベル"
@@ -88,6 +91,9 @@ msgstr "公開をキャンセル"
 msgid "Cancellation requested. Waiting for the current request to finish."
 msgstr "キャンセルを要求しました。現在のリクエストの完了を待っています。"
 
+msgid "Cancelling publication…"
+msgstr "公開をキャンセル中…"
+
 msgid "Change keys"
 msgstr "キーを変更"
 
@@ -97,14 +103,14 @@ msgstr "公開結果を確認"
 msgid "Check the values in this section."
 msgstr "このセクションの入力値を確認してください。"
 
-msgid "Check your GitHub settings before publishing."
-msgstr "発行する前に GitHub の設定を確認してください。"
+msgid "Checking publication status…"
+msgstr "公開状況を確認中…"
 
 msgid "Checking the GitHub repository…"
 msgstr "GitHub リポジトリを確認中…"
 
-msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
-msgstr "この WordPress サーバーでエクスポートを準備・ダウンロード・公開する際の処理方式を選択します。GitHub に送るファイルの構成は WXR の公開形式で別途選択します。"
+msgid "Choose how to process publishing data."
+msgstr "公開データの処理方法を選択してください。"
 
 msgid "Click “Save publishing target” to save these changes."
 msgstr "「発行先を保存」をクリックして変更を保存してください。"
@@ -118,8 +124,14 @@ msgstr "閉じる"
 msgid "Close confirmation"
 msgstr "確認画面を閉じる"
 
+msgid "Cloudflare Privacy Policy"
+msgstr "Cloudflare プライバシーポリシー"
+
 msgid "Cloudflare Turnstile"
 msgstr "Cloudflare Turnstile"
+
+msgid "Cloudflare Turnstile (optional)"
+msgstr "Cloudflare Turnstile（任意）"
 
 msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
 msgstr "Cloudflare Turnstile は、自動化されたコメント投稿攻撃の軽減に役立ちます。"
@@ -139,6 +151,9 @@ msgstr "コメント"
 msgid "Connection details changed. Test again to check these values."
 msgstr "接続情報が変更されました。変更後の値で接続を再確認してください。"
 
+msgid "Content"
+msgstr "コンテンツ"
+
 msgid "Continue publication"
 msgstr "公開を続行"
 
@@ -147,12 +162,6 @@ msgstr "著作権・法的表示"
 
 msgid "Create a GitHub token"
 msgstr "GitHub トークンを作成"
-
-msgid "Data is ready to download. Configure and test GitHub to publish."
-msgstr "データをダウンロードできます。発行するには GitHub を設定し、接続を確認してください。"
-
-msgid "Data prepared. Review the result below."
-msgstr "データを準備しました。以下の結果を確認してください。"
 
 msgid "Delete saved keys"
 msgstr "保存済みキーを削除"
@@ -187,6 +196,12 @@ msgstr "置換先 URL の接頭辞"
 msgid "Destination URL prefix example:"
 msgstr "置換先 URL の接頭辞の例:"
 
+msgid "Destination will be determined during the site build."
+msgstr "リンク先はサイトのビルド時に決定されます。"
+
+msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
+msgstr "保存済みのサイト設定に基づくリンク先です。準備時に、利用できない項目や非公開の項目は除外されます。"
+
 msgid "Display and credits"
 msgstr "表示とクレジット"
 
@@ -196,14 +211,26 @@ msgstr "テーマのフッターに <code>Published with ZeroPress</code> を表
 msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
 msgstr "サイト上のポップアップに登録ページを表示します。iframe への埋め込みを許可しているページの URL を使用してください。"
 
-msgid "Do not publish"
-msgstr "発行しない"
-
 msgid "Download WXR"
 msgstr "WXR をダウンロード"
 
 msgid "Download build settings"
 msgstr "ビルド設定をダウンロード"
+
+msgid "Download sizes; media files are not included."
+msgstr "ダウンロードファイルのサイズです。メディアファイルは含まれません。"
+
+msgid "Downloads"
+msgstr "ダウンロード"
+
+msgid "Downloads ready. Connect GitHub and prepare again to check publishing."
+msgstr "ダウンロードの準備ができました。GitHub に接続し、再度準備して公開できるか確認してください。"
+
+msgid "Downloads ready; publishing blocked."
+msgstr "ダウンロードは可能ですが、公開はブロックされています。"
+
+msgid "Edit in WordPress"
+msgstr "WordPress で編集"
 
 msgid "Edit in WordPress settings"
 msgstr "WordPress の設定で編集"
@@ -247,9 +274,6 @@ msgstr "github.com のリポジトリ URL または owner/repository を入力�
 msgid "Enter a signup page URL or an embedded signup page URL."
 msgstr "登録ページ URL または埋め込み用登録ページ URL を入力してください。"
 
-msgid "Enter a static site URL to allow comment writing."
-msgstr "コメントの投稿を許可するには、静的サイト URL を入力してください。"
-
 msgid "Enter a title of up to 200 characters."
 msgstr "タイトルは200文字以内で入力してください。"
 
@@ -283,14 +307,20 @@ msgstr "この WordPress のアドレスを使った例: %s。"
 msgid "Examples: %1$s · %2$s · %3$s"
 msgstr "例: %1$s · %2$s · %3$s"
 
-msgid "Export inputs must be regular files, not directories, symlinks or submodules."
-msgstr "エクスポート入力は、ディレクトリ、シンボリックリンク、サブモジュールではなく通常のファイルである必要があります。"
+msgid "External services handle data under their own privacy policies."
+msgstr "外部サービスは、それぞれのプライバシーポリシーに従ってデータを処理します。"
 
-msgid "Export processing"
-msgstr "エクスポートの処理方式"
+msgid "Featured image"
+msgstr "アイキャッチ画像"
+
+msgid "Files (recommended)"
+msgstr "ファイル（推奨）"
 
 msgid "Files to update"
 msgstr "更新するファイル"
+
+msgid "Files: uses private temporary files to process large amounts of publishing data and supports pausing and continuing publication."
+msgstr "ファイル：非公開の一時ファイルを使って大量の公開データを処理し、公開の一時停止・再開に対応します。"
 
 msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
 msgstr "処理方式を変更する前に、現在の公開を完了またはキャンセルしてください。結果が不確かな場合は、先に結果を確認してください。"
@@ -307,11 +337,20 @@ msgstr "新しい投稿や更新情報をメールでお届けします。"
 msgid "Get the latest news by email"
 msgstr "最新情報をメールで受け取る"
 
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid "GitHub Privacy Statement"
+msgstr "GitHub プライバシーステートメント"
+
 msgid "GitHub already contains this data. You do not need to publish again."
 msgstr "同じデータがすでに GitHub に反映されています。再発行は不要です。"
 
 msgid "GitHub connection confirmed."
 msgstr "GitHub への接続を確認しました。"
+
+msgid "GitHub connection required"
+msgstr "GitHub への接続が必要です"
 
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
 msgstr "GitHub が登録済みのトークンを受け付けませんでした。削除してトークンを再登録し、接続を確認してください。"
@@ -328,8 +367,8 @@ msgstr "GitHub への発行"
 msgid "GitHub publishing (optional)"
 msgstr "GitHub への発行 (任意)"
 
-msgid "GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again."
-msgstr "ファイルまたはリクエストが大きすぎるため、GitHubに拒否されました。WXRスターターの分割エクスポート対応と、大きすぎる項目を確認して、もう一度準備してください。"
+msgid "GitHub rejected an oversized file or request. Review unusually large content or metadata before preparing again."
+msgstr "GitHub が大きすぎるファイルまたはリクエストを拒否しました。特に大きな本文やメタデータを確認してから、再度準備してください。"
 
 msgid "GitHub rejected the write. Check repository permissions and branch rules."
 msgstr "GitHub が書き込みを拒否しました。リポジトリの権限とブランチのルールを確認してください。"
@@ -346,8 +385,17 @@ msgstr "GitHub トークン"
 msgid "GitHub token management"
 msgstr "GitHub トークン管理"
 
+msgid "GitHub tokens and Turnstile secret keys are stored encrypted in WordPress."
+msgstr "GitHub トークンと Turnstile のシークレットキーは、WordPress に暗号化して保存されます。"
+
 msgid "Icon URLs for publishing"
 msgstr "発行に使用するアイコン URL"
+
+msgid "If you connect GitHub, the plugin contacts it when you test the connection, prepare data or publish. Publishing sends public content and site settings to your selected repository."
+msgstr "GitHub に接続すると、接続テスト、データの準備、公開時にプラグインが GitHub と通信します。公開時には、公開コンテンツとサイト設定が選択したリポジトリに送信されます。"
+
+msgid "If you connect a newsletter signup page, visitors contact that service when they open or view it on your site. The service handles their subscription information."
+msgstr "ニュースレターの登録ページを連携すると、訪問者がそのページを開くかサイト内で表示した際に、そのサービスと通信します。購読情報はそのサービスで処理されます。"
 
 msgid "Information from WordPress"
 msgstr "WordPress の情報"
@@ -355,11 +403,20 @@ msgstr "WordPress の情報"
 msgid "Internal"
 msgstr "内部"
 
+msgid "Items: {count}"
+msgstr "項目数: {count}"
+
+msgid "JSON file"
+msgstr "JSONファイル"
+
+msgid "Learn more (English)"
+msgstr "詳しく見る（英語）"
+
 msgid "Learn more about API protection"
 msgstr "API 保護について詳しく見る"
 
-msgid "Learn more about export processing"
-msgstr "エクスポートの処理方式について詳しく見る"
+msgid "Learn more about publishing data processing"
+msgstr "公開データの処理について"
 
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr "空欄にすると、<code>sitemap.xml</code>、<code>feed.xml</code>、ページの正規 URL を指定する <code>&lt;link rel=\"canonical\"&gt;</code> タグは生成されません。"
@@ -373,8 +430,14 @@ msgstr "タイトル、説明、ボタンのラベルを空欄にすると、テ
 msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
 msgstr "ZeroPress Static のコメント機能に必要な API のみを公開します。"
 
+msgid "Loading details…"
+msgstr "詳細を読み込み中…"
+
 msgid "Manage Cloudflare Turnstile"
 msgstr "Cloudflare Turnstile を管理"
+
+msgid "Media URL reference"
+msgstr "メディア URL の確認用"
 
 msgid "Media URL replacements"
 msgstr "メディア URL の置換"
@@ -382,26 +445,53 @@ msgstr "メディア URL の置換"
 msgid "Media URLs are replaced according to your rules."
 msgstr "設定したルールに従ってメディア URL を置き換えます。"
 
-msgid "Memory (small sites)"
-msgstr "メモリ（小規模サイト）"
+msgid "Media information"
+msgstr "メディア情報"
 
-msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
-msgstr "メモリ方式では単一 XML のみ対応しています。WXR の公開形式で単一 XML を選択してください。Linux で分割公開する場合は一時ファイルを選択してください。"
+msgid "Memory"
+msgstr "メモリ"
 
-msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
-msgstr "メモリ方式では「自動」も単一 XML を使用します。既存の分割エクスポートを置き換えるには単一 XML を選択してください。分割 XML には一時ファイル方式が必要です。"
+msgid "Memory processing limit"
+msgstr "メモリ方式の上限使用率"
 
-msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
-msgstr "メモリ：一時エクスポートファイルを作らずに単一 XML を公開します。公開の一時停止・再開はできません。"
+msgid "Memory processing publishes single XML even when Automatic is selected."
+msgstr "メモリ方式では「自動」を選んでも単一 XML で公開します。"
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Files on Linux for split publishing."
+msgstr "メモリ方式では単一 XML のみ対応しています。WXR の公開形式で単一 XML を選択してください。Linux で分割公開する場合はファイルを選択してください。"
+
+msgid "Memory, time and publishing conditions are checked again when you publish."
+msgstr "公開時にメモリ・時間と公開条件を再チェックします。"
+
+msgid "Memory: publishes a single XML without temporary files. Publishing data is limited to 8 MiB; upload size and server resources may impose a lower limit."
+msgstr "メモリ：一時ファイルを作らずに単一 XML を公開します。公開データは最大 8 MiB ですが、送信サイズやサーバーのリソースによって上限がさらに低くなる場合があります。"
 
 msgid "Menu ID"
 msgstr "メニュー ID"
 
+msgid "Menu preview"
+msgstr "メニューのプレビュー"
+
 msgid "Menus"
 msgstr "メニュー"
 
+msgid "Menus to publish"
+msgstr "公開するメニュー"
+
+msgid "Menus: {menus}"
+msgstr "メニュー: {menus}件"
+
+msgid "New window"
+msgstr "新しいウィンドウ"
+
+msgid "Newsletter (optional)"
+msgstr "ニュースレター（任意）"
+
 msgid "Newsletter connection"
 msgstr "ニュースレター連携"
+
+msgid "Next"
+msgstr "次へ"
 
 msgid "No GitHub token is registered. Reload this page to check its current status."
 msgstr "GitHub トークンが登録されていません。このページを再読み込みして、現在の状態を確認してください。"
@@ -412,14 +502,20 @@ msgstr "Turnstile のキーが保存されていません。このページを�
 msgid "No changes to publish."
 msgstr "発行する変更はありません。"
 
+msgid "No items to show."
+msgstr "表示する項目はありません。"
+
 msgid "Not configured"
 msgstr "未設定"
 
-msgid "One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
-msgstr "エクスポートする項目が大きすぎて安全に送信できません。特に大きい投稿本文やメタデータを減らして、もう一度準備してください。PHPメモリの増量だけではこの上限はなくなりません。"
+msgid "Not selected"
+msgstr "未選択"
 
-msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
-msgstr "パスワードで保護されていない公開済みの投稿と固定ページのみをエクスポートします。ショートコードと動的ブロックは実行されません。"
+msgid "Off by default. If you use Turnstile for comment writing, visitors' browsers and WordPress contact Cloudflare to verify visitors."
+msgstr "初期設定では無効です。コメント投稿に Turnstile を使用すると、訪問者を確認するために訪問者のブラウザーと WordPress が Cloudflare と通信します。"
+
+msgid "One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
+msgstr "公開データの項目が大きすぎて、安全に送信できません。特に大きな投稿本文やメタデータを減らしてから再度準備してください。PHP メモリを増やすだけでは、この制限は解除されません。"
 
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "<strong>Select repositories</strong> を開き、上の <strong>発行先 GitHub リポジトリ URL</strong> に入力したリポジトリのみを選択してください。"
@@ -439,6 +535,12 @@ msgstr "PHP メモリー上限: {limit}。推定必要メモリー: {estimated}�
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 実行時間上限: {limit}秒。リクエストの処理時間上限: {budget}秒。経過時間: {elapsed}秒。"
 
+msgid "Pages: {pages}"
+msgstr "固定ページ: {pages}件"
+
+msgid "Passed for this preparation."
+msgstr "今回の準備データはチェックに合格しました。"
+
 msgid "Pause publication"
 msgstr "公開を一時停止"
 
@@ -451,8 +553,14 @@ msgstr "投稿 ID: {id}。本文のサイズ: UTF-8 で {bytes} バイト。"
 msgid "Posts per page"
 msgstr "1ページあたりの投稿数"
 
-msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
-msgstr "投稿: {posts}件 · 固定ページ: {pages}件 · メディア: {media}件 · メニュー: {menus}件"
+msgid "Posts: {posts}"
+msgstr "投稿: {posts}件"
+
+msgid "Preparation check"
+msgstr "準備チェック"
+
+msgid "Preparation check passed"
+msgstr "準備チェックに合格"
 
 msgid "Prepare and publish"
 msgstr "準備と発行"
@@ -466,8 +574,14 @@ msgstr "データを準備中…"
 msgid "Preparing download…"
 msgstr "ダウンロードを準備中…"
 
-msgid "Private"
-msgstr "非公開"
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Privacy Policy"
+msgstr "プライバシーポリシー"
+
+msgid "Private repository"
+msgstr "非公開リポジトリ"
 
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "非公開の一時ストレージを利用できません。ホスティング事業者に権限と共有ストレージの確認を依頼し、再試行してください。"
@@ -478,11 +592,14 @@ msgstr "処理方式"
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr "処理方式を保存しました。ダウンロードや公開の前に再度準備してください。"
 
-msgid "Public"
-msgstr "公開"
+msgid "Processing this publishing data needs more available PHP memory. There is no automatic switch to Files. On Linux, select Files and prepare again, or ask your host to review PHP memory."
+msgstr "この公開データを処理するには、より多くの PHP 空きメモリが必要です。ファイル方式には自動で切り替わりません。Linux ではファイルを選択して再度準備するか、ホスティング管理者に PHP メモリの確認を依頼してください。"
 
 msgid "Public access to this REST API is restricted."
 msgstr "この REST API への公開アクセスは制限されています。"
+
+msgid "Public repository"
+msgstr "公開リポジトリ"
 
 msgid "Publication cancelled. The branch was not updated."
 msgstr "公開をキャンセルしました。ブランチは更新されていません。"
@@ -499,8 +616,8 @@ msgstr "公開を一時停止しました。続行するか、この公開をキ
 msgid "Publication paused. Continue to retry the remaining steps."
 msgstr "公開処理が一時停止しました。続行すると残りの手順を再試行します。"
 
-msgid "Publication result"
-msgstr "発行結果"
+msgid "Publication status"
+msgstr "公開状況"
 
 msgid "Publish"
 msgstr "発行"
@@ -523,11 +640,50 @@ msgstr "GitHub への発行が完了しました"
 msgid "Published to GitHub."
 msgstr "GitHub に発行しました。"
 
+msgid "Publishes WXR as one XML file. Publication may be limited by file size or server resources."
+msgstr "WXR を単一の XML ファイルとして公開します。ファイルサイズやサーバーのリソースにより、公開が制限される場合があります。"
+
+msgid "Publishes WXR in split format."
+msgstr "WXR を分割形式で公開します。"
+
 msgid "Publishing GitHub repository URL"
 msgstr "発行先 GitHub リポジトリ URL"
 
+msgid "Publishing blocked"
+msgstr "公開がブロックされています"
+
 msgid "Publishing branch"
 msgstr "発行先ブランチ"
+
+msgid "Publishing data"
+msgstr "公開データ"
+
+msgid "Publishing data exceeds the 8 MiB limit for XML and settings combined or an encoded upload. There is no automatic switch to Files. On Linux, select Files and prepare again."
+msgstr "公開データの XML と設定の合計、またはエンコード済みアップロードが 8 MiB の制限を超えています。ファイル方式には自動で切り替わりません。Linux ではファイルを選択して再度準備してください。"
+
+msgid "Publishing data exceeds the supported split-file limits. Review your publishing settings or contact support before trying again."
+msgstr "公開データが分割ファイルの対応上限を超えています。公開設定を確認するか、サポートに問い合わせてから再度お試しください。"
+
+msgid "Publishing data files will be updated together in one commit."
+msgstr "公開データファイルは、1 つのコミットでまとめて更新されます。"
+
+msgid "Publishing data includes only published posts and pages without a password."
+msgstr "公開データには、パスワード保護されていない公開済みの投稿と固定ページのみが含まれます。"
+
+msgid "Publishing data inputs must be regular files, not directories, symlinks or submodules."
+msgstr "公開データの入力には、ディレクトリ、シンボリックリンク、サブモジュールではなく、通常のファイルが必要です。"
+
+msgid "Publishing data is too large for a single GitHub file. Select Automatic or Split XML, then prepare again."
+msgstr "公開データが GitHub の単一ファイルとして公開するには大きすぎます。「自動」または「分割 XML」を選択し、再度準備してください。"
+
+msgid "Publishing data processing"
+msgstr "公開データの処理"
+
+msgid "Publishing data size"
+msgstr "公開データのサイズ"
+
+msgid "Publishing data size limit exceeded."
+msgstr "公開データのサイズ上限を超えています。"
 
 msgid "Publishing destination"
 msgstr "発行先"
@@ -541,11 +697,11 @@ msgstr "発行先"
 msgid "Publishing to GitHub…"
 msgstr "GitHub に発行中…"
 
+msgid "Questions, bug reports, or feature ideas?"
+msgstr "ご質問、不具合の報告、機能のご提案はありますか？"
+
 msgid "Reading settings"
 msgstr "表示設定"
-
-msgid "Ready to publish to {repository} ({branch})."
-msgstr "{repository} ({branch}) に発行する準備ができました。"
 
 msgid "Refresh status"
 msgstr "状態を更新"
@@ -577,8 +733,8 @@ msgstr "選択するリポジトリ:"
 msgid "Repository visibility"
 msgstr "リポジトリの公開範囲"
 
-msgid "Repository, branch or required export files not found. Check access and the starter input files."
-msgstr "リポジトリ、ブランチ、または必要なエクスポートファイルが見つかりません。アクセス権とスターターの入力ファイルを確認してください。"
+msgid "Repository, branch or required publishing data files not found. Check access and the starter input files."
+msgstr "リポジトリ、ブランチ、または必要な公開データファイルが見つかりません。アクセス権とスターターの入力ファイルを確認してください。"
 
 msgid "Republish options"
 msgstr "再発行オプション"
@@ -646,11 +802,14 @@ msgstr "検索とコンテンツナビゲーション"
 msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
 msgstr "発行する WordPress のクラシックメニューを選択してください。メニュー ID によって、選択したメニューを静的サイトのテーマに対応付けます。"
 
-msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again."
-msgstr "この単一 XML ファイルを送信するには、より多くの PHP メモリが必要です。対応するスターターで「自動」または「分割 XML」を選択するか、ホスティング事業者に PHP メモリの増量を依頼して、もう一度準備してください。"
+msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML, or ask your host to increase PHP memory, then prepare again."
+msgstr "この単一 XML ファイルを送信するには、さらに PHP メモリが必要です。「自動」または「分割 XML」を選択するか、ホスティング管理者に PHP メモリの増量を依頼してから、再度準備してください。"
 
 msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
 msgstr "<strong>Contents</strong> の権限を <strong>Read and write</strong> に設定してください。"
+
+msgid "Set up a GitHub repository using the WXR starter template."
+msgstr "WXR スターターテンプレートを使って GitHub リポジトリを準備してください。"
 
 msgid "Set up a WXR starter repository"
 msgstr "WXR スターターリポジトリを準備"
@@ -666,6 +825,9 @@ msgstr "設定セクション"
 
 msgid "Settings take effect immediately after saving."
 msgstr "設定は保存後すぐに適用されます。"
+
+msgid "Share them on GitHub Issues"
+msgstr "GitHub Issuesにお寄せください"
 
 msgid "Show WordPress comments on the static site"
 msgstr "静的サイトに WordPress のコメントを表示"
@@ -687,6 +849,9 @@ msgstr "登録ページ URL"
 
 msgid "Single XML"
 msgstr "単一 XML"
+
+msgid "Single XML file"
+msgstr "単一のXMLファイル"
 
 msgid "Site"
 msgstr "サイト"
@@ -715,8 +880,11 @@ msgstr "置換元 URL の接頭辞の例:"
 msgid "Split XML"
 msgstr "分割 XML"
 
-msgid "Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json."
-msgstr "WXRスターターテンプレートから始めてください。公開時にエクスポート入力が更新され、対応スターターでは大きなエクスポートを自動的に分割ファイルで処理します。独自の設定はwxr-import-base.override.jsonに保存してください。"
+msgid "Split XML files: {parts}"
+msgstr "分割XMLファイル：{parts}個"
+
+msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
+msgstr "WXR が 8 MiB を超える場合、または送信サイズやサーバーメモリの都合で必要な場合に分割します。既存の分割形式はそのまま維持します。"
 
 msgid "Static site URL"
 msgstr "静的サイト URL"
@@ -724,14 +892,8 @@ msgstr "静的サイト URL"
 msgid "Subscribe"
 msgstr "登録する"
 
-msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
-msgstr "エクスポート用の一時保存領域を利用できません。ホスティング会社にディスク空き容量とPHP一時ファイルの権限を確認してもらい、もう一度準備してください。"
-
-msgid "Temporary files (default)"
-msgstr "一時ファイル（既定）"
-
-msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
-msgstr "一時ファイル：非公開の保存領域を使用し、大きなエクスポートや公開の一時停止・再開に対応します。"
+msgid "Temporary storage for publishing data is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
+msgstr "公開データ用の一時保存領域を利用できません。ホスティング管理者にディスクの空き容量と PHP 一時ファイルの権限の確認を依頼してから、再度準備してください。"
 
 msgid "Test connection"
 msgstr "接続を確認"
@@ -760,20 +922,14 @@ msgstr "ダウンロードを完了できなかったため、ファイルは保
 msgid "The download is ready. Check your browser downloads."
 msgstr "ダウンロードの準備ができました。ブラウザーのダウンロード一覧を確認してください。"
 
-msgid "The export files will be updated together in one commit."
-msgstr "エクスポートファイルは1つのコミットでまとめて更新されます。"
-
-msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
-msgstr "メモリ方式では XML と設定の合計、およびエンコード済みの各アップロードがそれぞれ 8 MiB 以下である必要があります。サーバーのリソースによっては、より小さなエクスポートも制限されます。一時ファイル方式には自動で切り替わりません。"
-
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "準備したデータの有効期限が切れたか、設定が変更されました。もう一度準備してください。"
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "準備したデータが無効です。もう一度準備してください。"
 
-msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
-msgstr "リポジトリの分割エクスポートが不完全か、変更されています。スターターの入力ファイルを確認し、完全な公開済みエクスポートを復元してから、もう一度準備してください。"
+msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
+msgstr "リポジトリ内の公開データファイルが不完全か、変更されています。スターターの入力ファイルを確認し、完全な公開データを復元してから再度準備してください。"
 
 msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
 msgstr "準備後にリポジトリの公開範囲が変更されました。もう一度準備し、公開範囲を確認してから公開してください。"
@@ -811,38 +967,23 @@ msgstr "リクエストを完了するための PHP メモリーが不足して�
 msgid "There is not enough time left on the server to complete this request. Ask your host to review the request time limit, then prepare again."
 msgstr "このリクエストを完了するには、サーバーの残り処理時間が不足しています。ホスティング事業者にリクエストの処理時間制限を確認してから、再度準備してください。"
 
-msgid "These values are read from WordPress when preparing publishing data."
-msgstr "発行データの準備時に、これらの値を WordPress から読み込みます。"
+msgid "These details are unavailable. Prepare again, or download the WXR to inspect the publishing data."
+msgstr "詳細情報を取得できません。再度準備するか、WXR をダウンロードして公開データを確認してください。"
+
+msgid "These details belong to the last preparation. Prepare again to include later changes."
+msgstr "最後に準備したデータの詳細です。その後の変更を反映するには、もう一度準備してください。"
 
 msgid "This WordPress installation: %s."
 msgstr "この WordPress のアドレス: %s。"
 
-msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
-msgstr "XML と設定の合計、またはエンコード済みアップロードがメモリ方式の 8 MiB 制限を超えています。Linux では一時ファイルを選択して再度準備してください。"
-
-msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
-msgstr "分割エクスポートの対応上限を超えています。エクスポート設定を確認するか、サポートに相談してから再試行してください。"
-
-msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
-msgstr "このエクスポートは、GitHub の単一ファイルとして公開するには大きすぎます。対応するスターターで「自動」または「分割 XML」を選択し、もう一度準備してください。"
-
-msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
-msgstr "このエクスポートにはより多くの PHP 空きメモリが必要です。Linux では一時ファイルを選択して再度準備するか、ホスティング管理者に PHP メモリの確認を依頼してください。"
-
-msgid "This export will be published as a single XML file."
-msgstr "このエクスポートは単一の XML ファイルとして公開されます。"
-
-msgid "This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file."
-msgstr "このエクスポートは{parts}個のファイルに分割して公開され、スターターで1つのサイトとしてビルドされます。XMLのダウンロードは単一ファイルのままです。"
-
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "この WordPress は、サポート対象の <code>/wp-json/wp/v2</code> URL 形式を使用していません。このパスで訪問者がアクセスできる API を設定してください。クエリー形式の REST URL はサポートされていません。"
 
-msgid "This publication replaces the single XML file with split export files."
-msgstr "今回の公開では、既存の単一 XML ファイルを分割エクスポートファイルに置き換えます。"
+msgid "This publication replaces the single XML file with split files."
+msgstr "今回の公開では、既存の単一 XML ファイルを分割ファイルに置き換えます。"
 
-msgid "This publication replaces the split export files with one XML file."
-msgstr "今回の公開では、既存の分割エクスポートファイルを1つの XML ファイルに置き換えます。"
+msgid "This publication replaces the split files with one XML file."
+msgstr "今回の公開では、既存の分割ファイルを 1 つの XML ファイルに置き換えます。"
 
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
 msgstr "このプラグインに保存されているトークンを削除します。GitHub に発行するには、トークンを再登録してください。"
@@ -871,9 +1012,6 @@ msgstr "このセクションの設定を保存しました。コメント表示
 msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
 msgstr "単一リクエストの公開処理が停止しました。この公開をキャンセルして、もう一度準備してください。アップロードの途中から再開することはできません。"
 
-msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
-msgstr "このスターターは分割 XML に対応していません。WXR スターター全体を更新するか、「自動」または「単一 XML」を選択し、もう一度準備してください。"
-
 msgid "This version supports single-site WordPress only."
 msgstr "このバージョンは WordPress のシングルサイト構成のみをサポートしています。"
 
@@ -888,6 +1026,9 @@ msgstr "タイトル"
 
 msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
 msgstr "コメントの投稿を許可するには、「サイト」セクションで静的サイト URL を保存してください。このアドレスを基準にリクエストのオリジンを確認します。"
+
+msgid "To publish split XML, update the WXR starter. Or select Single XML and prepare again."
+msgstr "分割 XML で公開するには、WXR スターターを更新してください。または「単一 XML」を選択し、再度準備してください。"
 
 msgid "Too many comment requests. Please try again shortly."
 msgstr "コメントのリクエストが多すぎます。しばらく待ってから、もう一度お試しください。"
@@ -906,9 +1047,6 @@ msgstr "未確認"
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
 msgstr "<strong>Repository access</strong> で <strong>Only select repositories</strong> を選択してください。"
-
-msgid "Unfinished publication"
-msgstr "未完了の公開"
 
 msgid "Unknown author"
 msgstr "不明な投稿者"
@@ -937,6 +1075,9 @@ msgstr "メニュー ID は重複しない値にしてください。先頭は�
 msgid "Use up to 50 complete source and destination URL pairs."
 msgstr "置換元 URL と置換先 URL の両方を入力してください。最大50組まで設定できます。"
 
+msgid "Uses the larger of the combined files and each encoded upload. This is not PHP RAM usage."
+msgstr "ファイルの合計とエンコード後の各送信サイズのうち、最大の値を使います。PHP の RAM 使用量ではありません。"
+
 msgid "Verifying publishing data…"
 msgstr "発行データを確認中…"
 
@@ -946,6 +1087,15 @@ msgstr "GitHub の発行結果を確認中…"
 msgid "View commit"
 msgstr "コミットを表示"
 
+msgid "View items"
+msgstr "項目を表示"
+
+msgid "View media information: {media}"
+msgstr "メディア情報{media}件を表示"
+
+msgid "View menus: {menus}"
+msgstr "メニュー: {menus}件を表示"
+
 msgid "View on static site"
 msgstr "静的サイトで表示"
 
@@ -954,6 +1104,9 @@ msgstr "保存済みの発行先リポジトリを表示"
 
 msgid "WXR publishing format"
 msgstr "WXR の公開形式"
+
+msgid "WXR: {wxr} · Build settings: {base}"
+msgstr "WXR: {wxr} · ビルド設定: {base}"
 
 msgid "Wait for WordPress to finish saving your post."
 msgstr "WordPress が投稿の保存を完了するまでお待ちください。"
@@ -985,11 +1138,17 @@ msgstr "WordPress メニュー"
 msgid "Working…"
 msgstr "処理中…"
 
+msgid "Your starter builds these files as one site. WXR downloads remain a single XML file."
+msgstr "スターターはこれらのファイルから1つのサイトをビルドします。WXRのダウンロードは常に1つのXMLファイルです。"
+
 msgid "ZeroPress"
 msgstr "ZeroPress"
 
 msgid "ZeroPress Static"
 msgstr "ZeroPress Static"
+
+msgid "ZeroPress Static does not send your site's content or usage statistics to ZeroPress."
+msgstr "ZeroPress Static は、サイトのコンテンツや利用統計を ZeroPress に送信しません。"
 
 msgid "ZeroPress Static – Static Site Publisher"
 msgstr "ZeroPress Static – 静的サイトの発行"
@@ -999,3 +1158,12 @@ msgstr "ZeroPress 発行"
 
 msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
 msgstr "本文が 256 KiB 以上の投稿または固定ページが {count} 件あります（最大: UTF-8 で {bytes} バイト）。小さな投稿への分割をご検討ください。ID の例: {ids}。"
+
+msgid "{media}"
+msgstr "{media}件"
+
+msgid "{percent}% of {limit}"
+msgstr "{limit} の {percent}%"
+
+msgid "{start}–{end} of {total}"
+msgstr "全{total}件中{start}–{end}件"

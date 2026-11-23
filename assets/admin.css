@@ -2,7 +2,11 @@
 .zpsp-panel { background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin: 24px 0; }
 .zpsp label:has(> .regular-text), .zpsp p > label[for] { display: block; margin-bottom: 6px; font-weight: 600; }
 .zpsp .regular-text { width: 100%; max-width: 680px; }
+.zpsp #zpsp-publication_backend { max-width: 100%; }
 .zpsp .description { overflow-wrap: anywhere; }
+.zpsp .zpsp-help-paragraphs { margin: 8px 0 16px; }
+.zpsp .zpsp-help-paragraphs p { margin: 0; line-height: 1.7; }
+.zpsp .zpsp-help-paragraphs p + p { margin-top: 8px; }
 .zpsp code { overflow-wrap: anywhere; }
 .zpsp .dashicons { vertical-align: middle; }
 .zpsp a .dashicons { text-decoration: none; }
@@ -25,14 +29,36 @@
 }
 .zpsp [hidden] { display: none !important; }
 .zpsp .nav-tab-wrapper { margin-bottom: 20px; }
+.zpsp .zpsp-footer { margin: 24px 0; color: #50575e; overflow-wrap: anywhere; }
+.zpsp .zpsp-footer p { margin: 6px 0; font-size: 13px; }
+.zpsp .zpsp-footer .dashicons { width: 14px; height: 14px; font-size: 14px; line-height: 1; vertical-align: text-bottom; }
 .zpsp .zpsp-feedback { scroll-margin-block: 60px; }
 .zpsp .zpsp-feedback:not(:empty) { margin: 12px 0 0; padding: 12px; }
 .zpsp #zpsp-test-notice:has(> .zpsp-repository) { padding: 0; }
 /* Shared by the page and WordPress modal portals outside its wrapper. */
-.zpsp-repository { margin: 12px 0; padding: 16px; border: 1px solid #c3c4c7; background: #fff; color: #1d2327; }
-.zpsp-repository .zpsp-repository-label { margin: 0 0 8px; color: #50575e; font-size: 13px; }
+.zpsp-repository, .zpsp-export { margin: 12px 0; padding: 16px; border: 1px solid #c3c4c7; background: #fff; color: #1d2327; }
+.zpsp-repository .zpsp-repository-label, .zpsp-export .zpsp-export-label { margin: 0 0 12px; color: #1d2327; font-size: 16px; font-weight: 600; line-height: 1.4; }
+.zpsp-export .zpsp-export-details { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+.zpsp-export-details dt { font-weight: 600; }
+.zpsp-export-details dd { margin: 0; overflow-wrap: anywhere; }
+.zpsp-export-details .zpsp-export-count { display: inline-block; max-width: 100%; margin: 0; padding: 0; font: inherit; vertical-align: baseline; white-space: normal; }
+.zpsp-export-detail { display: block; margin-top: 4px; color: #50575e; font-size: 13px; }
+.zpsp-export-limit-exceeded { color: #b32d2e; }
+.zpsp-export .zpsp-export-note, .zpsp-export .zpsp-export-warning { margin: 12px 0 0; overflow-wrap: anywhere; }
+/* Preparation is a separate result, not another export property or a publication receipt. */
+.zpsp-export-check { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; margin: 16px -16px -16px; padding: 16px; border-top: 1px solid #c3c4c7; overflow-wrap: anywhere; }
+.zpsp-export-check-success { background: #edfaef; --zpsp-check-color: #008a20; }
+.zpsp-export-check-warning { background: #fff8e5; --zpsp-check-color: #996800; }
+.zpsp-export-check-info { background: #f0f6fc; --zpsp-check-color: #2271b1; }
+.zpsp-export-check > .dashicons { width: 20px; height: 20px; font-size: 20px; line-height: 1; color: var(--zpsp-check-color); }
+.zpsp-export-check-title { display: block; font-size: 14px; font-weight: 600; line-height: 20px; }
+.zpsp-export-check p { margin: 6px 0 0; padding: 0; }
+@media (max-width: 640px) {
+	.zpsp-export .zpsp-export-details { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+	.zpsp-export-details dd + dt { margin-top: 8px; }
+}
 .zpsp-repository-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.zpsp-repository-link { min-width: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; color: var(--wp-admin-theme-color, #2271b1); text-decoration: none; }
+.zpsp-repository-link { min-width: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; text-decoration: none; }
 .zpsp-repository-link:hover { text-decoration: underline; }
 .zpsp-repository .dashicons { flex-shrink: 0; font-size: 16px; width: 16px; height: 16px; line-height: 1; vertical-align: text-bottom; }
 .zpsp-repository .zpsp-repository-link .dashicons { font-size: 14px; width: 14px; height: 14px; text-decoration: none; }
@@ -50,7 +76,19 @@
 .zpsp-loading-progress { display: block; max-width: 360px; margin-top: 12px; }
 .zpsp .zpsp-progress-bar { width: 100%; }
 .zpsp .zpsp-actions { margin-top: 20px; align-items: center; }
-.zpsp .zpsp-publication-recovery { margin-bottom: 20px; }
+/* The result and its next actions stay together, ahead of preparation details. */
+.zpsp .zpsp-publication-status { margin-top: 24px; padding: 16px; border: 1px solid #c3c4c7; background: #fff; }
+.zpsp .zpsp-publication-status > :is(h2, h3) { margin: 0 0 12px; font-size: 18px; font-weight: 600; line-height: 1.4; }
+.zpsp .zpsp-publication-status .zpsp-feedback:not(:empty), .zpsp .zpsp-publication-status .zpsp-unchanged { margin: 0; box-shadow: none; }
+.zpsp .zpsp-publication-status .notice-info { background: #f0f6fc; --zpsp-status-color: #2271b1; }
+.zpsp .zpsp-publication-status .notice-success { background: #edfaef; --zpsp-status-color: #008a20; }
+.zpsp .zpsp-publication-status .notice-warning { background: #fff8e5; --zpsp-status-color: #996800; }
+.zpsp .zpsp-publication-status .notice-error { background: #fcf0f1; --zpsp-status-color: #b32d2e; }
+.zpsp .zpsp-status-icon { color: var(--zpsp-status-color); margin-inline-end: 8px; }
+.zpsp .zpsp-publication-status .zpsp-actions { margin-top: 12px; }
+.zpsp .zpsp-publication-status .zpsp-pause, .zpsp #zpsp-pause-publication { margin-top: 12px; }
+.zpsp .zpsp-download-actions { padding-top: 16px; border-top: 1px solid #dcdcde; }
+.zpsp #zpsp-publish-actions:empty { display: none; }
 .zpsp .zpsp-dirty { color: #646970; font-style: italic; }
 .zpsp-token-help, .zpsp-turnstile-help { box-sizing: border-box; max-width: 680px; margin: 20px 0; padding: 16px; border: 1px solid #dcdcde; background: #f6f7f7; }
 .zpsp-token-help p, .zpsp-turnstile-help p { margin: 0; }
@@ -67,11 +105,12 @@
 .zpsp .zpsp-target dd { margin: 0; overflow-wrap: anywhere; }
 .zpsp [aria-invalid="true"] { border-color: #d63638; }
 .zpsp #zpsp-result { border-top: 1px solid #dcdcde; margin-top: 24px; padding-top: 8px; }
-.zpsp #zpsp-result-heading { scroll-margin-block: 60px; }
+.zpsp #zpsp-result-heading { scroll-margin-block: 60px; font-size: 18px; }
+.zpsp[data-page="publish"] > .zpsp-panel > h2 { font-size: 20px; }
 .zpsp #zpsp-state { scroll-margin-block: 60px; }
-.zpsp .zpsp-unchanged { margin: 16px 0; padding: 16px; background: #edfaef; }
+.zpsp .zpsp-unchanged { margin: 16px 0; padding: 16px; background: #f0f6fc; }
 .zpsp .zpsp-unchanged-title { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-.zpsp .zpsp-unchanged-title .dashicons { flex-shrink: 0; color: #008a20; }
+.zpsp .zpsp-unchanged-title .dashicons { flex-shrink: 0; color: #2271b1; }
 .zpsp .zpsp-unchanged p { margin: 8px 0 0; padding: 0; }
 .zpsp #zpsp-republish-options { margin-top: 20px; }
 .zpsp #zpsp-republish-options summary { width: fit-content; cursor: pointer; }
@@ -85,16 +124,56 @@
 .zpsp form, .zpsp input, .zpsp textarea { scroll-margin-block: 60px; }
 .zpsp fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 /* WordPress renders the modal in a portal outside the plugin page wrapper. */
-.zpsp-confirm-modal .zpsp-confirm-target { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 20px; }
-.zpsp-confirm-modal .zpsp-confirm-target dt { font-weight: 600; }
-.zpsp-confirm-modal .zpsp-confirm-target dd { margin: 0; overflow-wrap: anywhere; }
-.zpsp-confirm-modal .zpsp-confirm-target ul { margin: 0; }
+/* Override core's medium-width and 70% height limits only for the privacy dialog. */
+.components-modal__frame.zpsp-privacy-modal {
+	box-sizing: border-box;
+	width: 720px;
+	min-width: 0;
+	max-width: calc(100% - 32px);
+	height: auto;
+	max-height: calc(100vh - 64px);
+	max-height: calc(100dvh - 64px);
+	margin: auto;
+	border-radius: 8px;
+	overflow-wrap: anywhere;
+}
+.zpsp-privacy-modal .components-modal__content { min-height: 0; overflow: auto; }
+.zpsp-privacy-modal p { margin: 0 0 12px; line-height: 1.6; }
+.zpsp-privacy-modal .zpsp-privacy-section { margin: 20px 0; }
+.zpsp-privacy-modal .zpsp-privacy-section h2 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+.zpsp-privacy-modal .zpsp-privacy-links { display: grid; gap: 8px; padding: 0; margin: 16px 0; list-style: none; }
+.zpsp-privacy-modal .zpsp-privacy-links li { margin: 0; }
+.zpsp-privacy-modal .zpsp-privacy-links a { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; text-decoration: none; }
+.zpsp-privacy-modal .zpsp-privacy-link-label { min-width: 0; text-decoration: underline; }
+.zpsp-privacy-modal .dashicons-external { flex-shrink: 0; width: 14px; height: 14px; font-size: 14px; line-height: 1; text-decoration: none; }
+.zpsp-privacy-modal .zpsp-privacy-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+.zpsp-privacy-modal .button { white-space: normal; }
+.components-modal__frame.zpsp-review-modal { box-sizing: border-box; width: 720px; min-width: 0; max-width: calc(100% - 32px); height: auto; max-height: calc(100vh - 64px); max-height: calc(100dvh - 64px); margin: auto; border-radius: 8px; overflow-wrap: anywhere; }
+.zpsp-review-modal .components-modal__content { min-height: 0; overflow: auto; }
+.zpsp-review-modal h2 { margin: 20px 0 8px; font-size: 16px; font-weight: 600; }
+.zpsp-review-modal .zpsp-review-note, .zpsp-review-modal .zpsp-review-url, .zpsp-review-slots { color: #50575e; }
+.zpsp-review-items { list-style: none; margin: 12px 0; padding: 0; }
+.zpsp-review-items li { margin: 12px 0; }
+.zpsp-review-items ul { list-style: none; padding: 0; margin-inline-start: 16px; border-inline-start: 1px solid #dcdcde; padding-inline-start: 12px; }
+.zpsp-review-item-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.zpsp-review-url { display: block; margin-top: 4px; overflow-wrap: anywhere; }
+.zpsp-review-badge { display: inline-block; font-size: 12px; padding: 1px 6px; border: 1px solid #c3c4c7; border-radius: 4px; }
+.zpsp-review-actions, .zpsp-review-pagination { display: flex; flex-wrap: wrap; gap: 8px; }
+.zpsp-review-actions { justify-content: space-between; margin-top: 20px; }
+.zpsp-review-actions .zpsp-review-close { margin-inline-start: auto; }
+.zpsp-review-modal .button { white-space: normal; }
+.zpsp-menu-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-height: 30px; }
+@media (max-width: 480px) {
+	.zpsp-review-items ul { margin-inline-start: 6px; padding-inline-start: 6px; }
+}
+.zpsp-confirm-modal .zpsp-confirm-files { margin: 16px 0; }
+.zpsp-confirm-modal .zpsp-confirm-files h2 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.zpsp-confirm-modal .zpsp-confirm-files p { margin: 0 0 12px; }
+.zpsp-confirm-modal .zpsp-confirm-files ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.zpsp-confirm-modal .zpsp-confirm-files li { margin: 0; }
+.zpsp-confirm-modal .zpsp-confirm-files code { overflow-wrap: anywhere; }
 .zpsp-confirm-modal .zpsp-confirm-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 24px; }
 .zpsp-confirm-modal .button { white-space: normal; }
-@media (max-width: 640px) {
-	.zpsp-confirm-modal .zpsp-confirm-target { grid-template-columns: minmax(0, 1fr); gap: 6px; }
-	.zpsp-confirm-modal .zpsp-confirm-target dd { margin-bottom: 12px; }
-}
 
 .zpsp-menu-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(180px, 2fr) minmax(180px, 1fr); gap: 12px; align-items: end; margin: 16px 0; }
 .zpsp-menu-row > * { min-width: 0; }
@@ -141,7 +220,16 @@
 }
 .zpsp-editor-modal { width: 680px; max-width: 100%; }
 .zpsp-editor-modal .zpsp-editor-result { border-top: 1px solid #dcdcde; margin-top: 20px; padding-top: 16px; }
-.zpsp-editor-modal .zpsp-editor-result h2 { font-size: 16px; margin: 0 0 12px; }
+.zpsp-editor-modal .zpsp-editor-result h2 { font-size: 18px; margin: 0 0 12px; }
 .zpsp-editor-modal .zpsp-unchanged .zpsp-feedback-message { font-weight: 600; }
 .zpsp-editor-modal .zpsp-actions .button { white-space: normal; height: auto; }
-.zpsp-editor-modal .zpsp-feedback:focus { outline: 2px solid var(--wp-admin-theme-color, #2271b1); outline-offset: 2px; }
+.zpsp :is(.zpsp-export-check, #zpsp-result-heading, .zpsp-editor-result h2):focus { outline: none; }
+@media (max-width: 640px) {
+	.zpsp .zpsp-publication-recovery .zpsp-actions, .zpsp .zpsp-editor-footer, .zpsp .zpsp-download-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+	.zpsp .zpsp-publication-recovery .button, .zpsp .zpsp-editor-footer .button, .zpsp .zpsp-download-actions .button, .zpsp #zpsp-publish-actions .button { width: 100%; min-width: 0; justify-content: center; }
+}
+/* Keep the main action reachable on phones; leave short landscape views scrollable. */
+@media (max-width: 640px) and (min-height: 600px) {
+	.zpsp-editor-modal .components-modal__content { padding-bottom: 0; scroll-padding-bottom: 190px; }
+	.zpsp .zpsp-editor-footer { position: sticky; bottom: 0; padding: 12px 0; border-top: 1px solid #dcdcde; background: #fff; z-index: 1; }
+}

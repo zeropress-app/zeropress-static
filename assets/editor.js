@@ -9,6 +9,7 @@
 	const { createElement: el, createRoot, createPortal, useState, useEffect, useRef } = window.wp.element;
 	const { Modal, Button, Spinner, ProgressBar } = window.wp.components;
 	const publication = window.zeroPressPublication(config);
+	const reviews = window.zeroPressReview?.(config, publication);
 	const { message } = publication;
 	const blockEditor = config.editor === 'block';
 
@@ -85,12 +86,16 @@
 		const [postUrl, setPostUrl] = useState(readPostUrl);
 		const [busy, setBusy] = useState('');
 		const [prepared, setPrepared] = useState(null);
+		const [review, setReview] = useState(null);
 		const [session, setSession] = useState(null);
 		const [publicationControl, setPublicationControl] = useState(null);
 		const [feedback, setFeedback] = useState(null);
 		const running = useRef(false);
 		const revision = useRef(0);
 		const status = useRef(null);
+		const preparation = useRef(null);
+		const gateStatus = useRef(null);
+		const prepareAction = useRef(null);
 		const latestGate = useRef(gate);
 		function checkEditor() {
 			const next = readState();
@@ -119,10 +124,20 @@
 			};
 		}, []);
 		useEffect(() => {
-			if (!busy && feedback) status.current?.focus();
-		}, [busy, feedback]);
+			if (busy) return;
+			if (feedback || session) status.current?.focus();
+			else if (gate) gateStatus.current?.focus();
+			else if (prepared) preparation.current?.querySelector(prepared.state === 'download_only' ? '.zpsp-export-check' : 'h2')?.focus();
+			else prepareAction.current?.focus();
+		}, [busy, feedback, prepared, session, gate]);
+		useEffect(() => { if (busy) status.current?.focus(); }, [busy]);
 		function showSession(value) {
 			setSession(['active', 'paused', 'unknown', 'expired', 'cancel_pending', 'busy'].includes(value?.state) ? value : null);
+		}
+		function showResult(result) {
+			showSession(result);
+			const text = publication.resultMessage(result);
+			setFeedback(text ? { kind: publication.resultKind(result), text, state: result.state, code: result.code, commitUrl: result.commit_url } : null);
 		}
 		useEffect(() => {
 			if (!config.session_publication) return;
@@ -132,12 +147,12 @@
 		}, []);
 		async function recover(operation) {
 			if (running.current || (operation === 'continue' && session.state !== 'unknown' && checkEditor())) return;
-			running.current = true; setBusy('publish');
+			running.current = true; setBusy(operation === 'continue' ? 'publish' : operation);
+			setFeedback({ kind: 'info', text: message(operation === 'continue' ? 'publishing' : operation === 'cancel' ? 'session_cancelling' : 'session_refreshing') });
 			try {
 				const result = operation === 'cancel' ? await publication.cancel(session.job_id) : operation === 'refresh' ? await publication.sessionStatus(session.job_id) : await publication.resume(session, (text) => setFeedback({ kind: 'info', text }), setPublicationControl);
-				showSession(result);
-				setFeedback({ kind: ['published', 'unchanged'].includes(result.state) ? 'success' : result.pause_reason === 'requested' ? 'info' : 'warning', text: publication.resultMessage(result), code: result.code, commitUrl: result.commit_url });
-			} catch (error) { setFeedback({ kind: 'error', text: error.message, code: error.code }); }
+				showResult(result);
+			} catch (error) { setFeedback({ kind: publication.resultKind({ state: 'failed', code: error.code }), text: error.message, code: error.code }); }
 			finally { running.current = false; setBusy(''); }
 		}
 		const close = () => { if (!running.current) onClose(); };
@@ -159,16 +174,14 @@
 						return;
 					}
 					setPrepared(data);
-					setFeedback(data.state === 'download_only' ? {
-						kind: 'error', code: data.connection_error, text: data.connection_error ? publication.failureMessage(data.connection_error, data.connection_error_details) : message('editor_unavailable'),
-					} : { kind: data.state === 'unchanged' ? 'success' : 'info', text: message(data.state === 'unchanged' ? 'unchanged' : 'prepared') });
+					// The export card owns the preparation result, including its blocking reason.
+					setFeedback(data.state === 'unchanged' && !session ? { kind: 'info', state: 'unchanged', text: message('unchanged') } : null);
 				} else {
 					const result = await publication.publish(receipt, false, (text) => setFeedback({ kind: 'info', text }), setPublicationControl);
-					showSession(result);
-					setFeedback({ kind: ['published', 'unchanged'].includes(result.state) ? 'success' : result.pause_reason === 'requested' ? 'info' : 'warning', text: publication.resultMessage(result), code: result.code, commitUrl: result.commit_url });
+					showResult(result);
 				}
 			} catch (error) {
-				setFeedback({ kind: 'error', code: error.code, text: error.message });
+				setFeedback({ kind: publication.resultKind({ state: 'failed', code: error.code }), code: error.code, text: error.message });
 			} finally {
 				running.current = false;
 				setBusy('');
@@ -176,40 +189,53 @@
 		}
 		const target = prepared ? prepared.target || config.settings : session?.target || config.settings;
 		const canPublish = !session && prepared?.state === 'ready' && !!prepared.receipt;
+		const currentFeedback = feedback || (session ? { kind: publication.resultKind(session), text: publication.resultMessage(session), code: session.code } : null);
+		const unchanged = currentFeedback?.state === 'unchanged';
+		const prepareButton = el('button', { ref: prepareAction, key: 'prepare', type: 'button', className: 'button button-' + (canPublish || session ? 'secondary' : 'primary'), disabled: !!busy || !!gate, onClick: () => execute('prepare') }, message('editor_prepare'));
+		const publishButton = el('button', { key: 'publish', type: 'button', className: 'button button-' + (canPublish ? 'primary' : 'secondary'), disabled: !!busy || !!gate || !canPublish, onClick: () => execute('publish') }, message('confirm_title'));
 		return el(Modal, {
 			title: message('editor_title'), className: 'zpsp-editor-modal', onRequestClose: close,
 			shouldCloseOnClickOutside: false, shouldCloseOnEsc: !busy, isDismissible: !busy,
 		}, el('div', { className: 'zpsp' },
 			el('p', null, message('editor_scope')),
-			publication.repositoryView(el, target),
+			publication.repositoryView(el, target, { headingLevel: 2 }),
 			postUrl && el('dl', { className: 'zpsp-target' },
 				el('dt', null, message('editor_site')),
 				el('dd', null, el(ExternalLink, { href: postUrl }, postUrl))),
-			el('div', { role: 'status', 'aria-live': 'polite' }, gate && el('p', { className: 'notice notice-warning zpsp-feedback' }, message(gate))),
-			session && !publicationControl && el('section', { className: 'zpsp-publication-recovery' },
-				el('h2', null, message('session_title')), feedback?.text !== publication.resultMessage(session) && el('p', null, publication.resultMessage(session)),
-				el('div', { className: 'zpsp-actions' },
-					(session.state === 'unknown' || session.can_continue) && el('button', { type: 'button', className: 'button', disabled: !!busy || (!!gate && session.state !== 'unknown'), onClick: () => recover('continue') }, message(session.state === 'unknown' ? 'session_verify' : 'session_continue')),
-					session.job_id && session.state !== 'unknown' && el('button', { type: 'button', className: 'button', disabled: !!busy, onClick: () => recover('cancel') }, message('session_cancel')),
-					el('button', { type: 'button', className: 'button', disabled: !!busy, onClick: () => recover('refresh') }, message('session_refresh')))),
-			prepared && el('section', { className: 'zpsp-editor-result', 'aria-label': message('review_prepared') },
-				el('h2', null, message('review_prepared')), el('p', null, publication.summary(prepared))),
-			el('div', {
-				ref: status, tabIndex: -1, role: 'status', 'aria-live': 'polite', 'aria-atomic': true,
-				className: feedback ? 'zpsp-feedback notice notice-' + feedback.kind + (prepared?.state === 'unchanged' ? ' zpsp-unchanged' : '') : '',
-			}, feedback && el('div', null,
-				busy === 'prepare' && el('span', { className: 'zpsp-loading-spinner' }, el(Spinner, { 'aria-hidden': true })),
-				el('span', { className: 'zpsp-feedback-message' }, feedback.text),
-				prepared?.state === 'unchanged' && el('p', null, message('unchanged_description')),
-				publication.helpUrl(feedback.code) && el('p', null, el(ExternalLink, { href: publication.helpUrl(feedback.code) }, message('publishing_help'))),
-				feedback.commitUrl && el('p', null, el(ExternalLink, { href: feedback.commitUrl }, message('commit'))),
-				busy === 'publish' && el('div', { className: 'zpsp-loading-progress' }, el(ProgressBar, { className: 'zpsp-progress-bar', 'aria-label': message('publishing') })))),
-			el('div', { className: 'zpsp-actions' },
-				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'secondary' : 'primary'), disabled: !!busy || !!gate, onClick: () => execute('prepare') }, message('editor_prepare')),
-				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'primary' : 'secondary'), disabled: !!busy || !!gate || !canPublish, onClick: () => execute('publish') }, message('confirm_title')),
-				publicationControl && (publicationControl.pause || publicationControl.pausing)
-					? el('button', { type: 'button', className: 'button button-secondary', disabled: !publicationControl.pause, onClick: () => publicationControl.pause?.() }, message(publicationControl.pausing ? 'session_pausing' : 'session_pause'))
-					: el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: close }, message('editor_close')))));
+			el('div', { role: 'status', 'aria-live': 'polite' }, gate && el('p', { ref: gateStatus, tabIndex: -1, className: 'notice notice-warning zpsp-feedback' }, message(gate))),
+			el('section', { className: 'zpsp-publication-status', hidden: !currentFeedback, 'aria-labelledby': 'zpsp-editor-status-heading' },
+				el('h2', { id: 'zpsp-editor-status-heading' }, message('publication_status')),
+				el('div', {
+					ref: status, tabIndex: -1, role: 'status', 'aria-live': 'polite', 'aria-atomic': true,
+					className: currentFeedback ? 'zpsp-feedback notice notice-' + currentFeedback.kind + (unchanged ? ' zpsp-unchanged' : '') : '',
+				}, currentFeedback && el('div', null,
+					busy && busy !== 'publish' ? el('span', { className: 'zpsp-loading-spinner' }, el(Spinner, { 'aria-hidden': true }))
+						: el('span', { className: 'zpsp-status-icon dashicons dashicons-' + publication.statusIcon(currentFeedback.kind), 'aria-hidden': true }),
+					el('span', { className: 'zpsp-feedback-message' }, currentFeedback.text),
+					unchanged && el('p', null, message('unchanged_description')),
+					publication.helpUrl(currentFeedback.code) && el('p', null, el(ExternalLink, { href: publication.helpUrl(currentFeedback.code) }, message('publishing_help'))),
+					currentFeedback.commitUrl && el('p', null, el(ExternalLink, { href: currentFeedback.commitUrl }, message('commit'))),
+					busy === 'publish' && el('div', { className: 'zpsp-loading-progress' }, el(ProgressBar, { className: 'zpsp-progress-bar', 'aria-label': message('publishing') })))),
+				session && !publicationControl && el('div', { className: 'zpsp-publication-recovery' },
+					el('div', { className: 'zpsp-actions' },
+						(session.state === 'unknown' || session.can_continue) && el('button', { type: 'button', className: 'button button-primary', disabled: !!busy || (!!gate && session.state !== 'unknown'), onClick: () => recover('continue') }, message(session.state === 'unknown' ? 'session_verify' : 'session_continue')),
+						session.job_id && session.state !== 'unknown' && el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: () => recover('cancel') }, message('session_cancel')),
+						el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: () => recover('refresh') }, message('session_refresh')))),
+				publicationControl && (publicationControl.pause || publicationControl.pausing) && el('button', { type: 'button', className: 'button button-secondary zpsp-pause', disabled: !publicationControl.pause, onClick: () => publicationControl.pause?.() }, message(publicationControl.pausing ? 'session_pausing' : 'session_pause'))),
+			prepared && el('section', { ref: preparation, className: 'zpsp-editor-result', 'aria-label': message('review_prepared') },
+				el('h2', { tabIndex: -1 }, message('review_prepared')), publication.exportView(el, prepared, {
+					headingLevel: 3, disabled: !!busy || !!gate,
+					onDetails: reviews && ((kind, trigger) => { if (!running.current && !checkEditor() && prepared?.receipt) setReview({ kind, receipt: prepared.receipt, trigger }); }),
+				})),
+			el('div', { className: 'zpsp-actions zpsp-editor-footer' },
+				...(canPublish ? [publishButton, prepareButton] : [prepareButton, publishButton]),
+				el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: close }, message('editor_close')))),
+			// Keep the detail modal in the parent's React context. WordPress closes
+			// sibling modals created in a separate root, losing prepared state.
+			review && el(reviews.Details, { options: review, close: () => {
+				setReview(null);
+				requestAnimationFrame(() => { if (review.trigger?.isConnected) review.trigger.focus(); });
+			} }));
 	}
 	function EditorIcon() {
 		// Inherit the WordPress button color, including hover and custom editor accents.

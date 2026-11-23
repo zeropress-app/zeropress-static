@@ -9,13 +9,15 @@
 	if (!root || !window.zeroPressPublisher) return;
 	const config = zeroPressPublisher;
 	const publication = window.zeroPressPublication(config);
-	const { request, message, failureMessage } = publication;
+	const reviews = window.zeroPressReview?.(config, publication);
+	const { request, message } = publication;
 	const $ = (id) => document.getElementById('zpsp-' + id);
 	const forms = [...root.querySelectorAll('form[data-section]')];
 	const baselines = new Map();
 	const dirty = new Set();
 	const loadingIndicators = new Map();
 	const repositoryViews = new Map();
+	let exportView;
 	let settings = config.settings;
 	let processingBlocked = !!$('processing');
 	let processingStatusError = '';
@@ -36,14 +38,21 @@
 		repositoryViews.get(id + '-notice')?.unmount();
 		repositoryViews.delete(id + '-notice');
 		const element = $(id + '-notice');
+		const kind = typeof error === 'string' ? error : error ? 'error' : 'info';
 		element.textContent = '';
 		if (text) {
+			if (id === 'result') {
+				const icon = document.createElement('span');
+				icon.className = 'zpsp-status-icon dashicons dashicons-' + publication.statusIcon(kind);
+				icon.setAttribute('aria-hidden', 'true');
+				element.append(icon);
+			}
 			const label = document.createElement('span');
 			label.className = 'zpsp-feedback-message';
 			label.textContent = text;
 			element.append(label);
 		}
-		element.className = 'zpsp-feedback' + (text ? ' notice ' + (error ? 'notice-error' : 'notice-info') : '');
+		element.className = 'zpsp-feedback' + (text ? ' notice notice-' + kind : '');
 		const help = publication.helpUrl(code);
 		if (commitUrl || help) {
 			const link = document.createElement('a');
@@ -57,6 +66,11 @@
 			link.append(' ', icon);
 			element.append(' ', link);
 		}
+		if (id === 'result') syncPublicationStatus();
+	}
+	function syncPublicationStatus() {
+		if (!$('publication-status')) return;
+		$('publication-status').hidden = !$('result-notice').textContent && $('state').hidden && !session;
 	}
 	function showRepository(id, target, options) {
 		const { createElement: el, createRoot } = window.wp.element;
@@ -66,7 +80,7 @@
 		container.hidden = false;
 	}
 	function startLoading(id, progress) {
-		const component = { preparing: 'Spinner', downloading: 'Spinner', publishing: 'ProgressBar' }[progress];
+		const component = { preparing: 'Spinner', downloading: 'Spinner', session_refreshing: 'Spinner', session_cancelling: 'Spinner', publishing: 'ProgressBar' }[progress];
 		const Component = window.wp?.components?.[component];
 		const { createElement: el, createRoot } = window.wp?.element || {};
 		if (!Component || !el || !createRoot) return;
@@ -197,6 +211,25 @@
 		if (source && !config.menus.some((menu) => menu.id === source)) select.add(new Option(message('menu_missing', { id: source }), source));
 		select.value = source;
 		sourceField.append(sourceLabel, select); row.append(sourceField);
+		const menuActions = document.createElement('div');
+		menuActions.className = 'zpsp-menu-actions';
+		if (reviews) {
+			const preview = document.createElement('button');
+			preview.type = 'button'; preview.className = 'button-link zpsp-menu-preview';
+			preview.setAttribute('aria-haspopup', 'dialog');
+			preview.textContent = message('menu_preview');
+			const updatePreview = () => {
+				const selected = config.menus.some((menu) => menu.id === select.value);
+				preview.hidden = !selected;
+				preview.disabled = !selected;
+			};
+			updatePreview();
+			select.addEventListener('change', updatePreview);
+			preview.addEventListener('click', () => {
+				if (!busy && !confirmation && select.value) reviews.open({ kind: 'menu_preview', menu_id: select.value }, preview);
+			});
+			menuActions.append(preview);
+		}
 		if (!fixed) {
 			const remove = document.createElement('button');
 			remove.type = 'button'; remove.className = 'button zpsp-icon-button';
@@ -204,8 +237,9 @@
 			icon.className = 'dashicons dashicons-trash'; icon.setAttribute('aria-hidden', 'true');
 			remove.append(icon, document.createTextNode(message('menu_remove')));
 			remove.addEventListener('click', () => { row.remove(); changed($('menus')); $('add-menu').focus(); });
-			row.append(remove);
+			menuActions.append(remove);
 		}
+		row.append(menuActions);
 		$('menu-rows').append(row);
 		return row;
 	}
@@ -255,7 +289,13 @@
 		const format = $('wxr_publish_format');
 		if (format) {
 			format.querySelector('option[value="bundle"]').disabled = runtime.backend === 'memory';
-			$('wxr_publish_format-help').textContent = message(runtime.backend === 'memory' ? 'memory_format_help' : 'files_format_help');
+			const selected = format.value || 'auto';
+			let help = selected + '_format_help';
+			if (runtime.backend === 'memory') {
+				if (selected === 'auto') help = 'memory_format_help';
+				else if (selected === 'bundle') help = 'MEMORY_SINGLE_REQUIRED';
+			}
+			$('wxr_publish_format-help').textContent = message(help);
 		}
 	}
 	function commentControls() {
@@ -365,7 +405,7 @@
 			input.setAttribute('aria-describedby', [help?.id, errorId].filter(Boolean).join(' '));
 			input.focus();
 		} else {
-			notice(id, text, true, '', error.code);
+			notice(id, text, id === 'result' ? publication.resultKind({ state: 'failed', code: error.code }) : true, '', error.code);
 			$(id + '-notice').focus();
 		}
 	}
@@ -373,6 +413,9 @@
 		if (!$('publish')) return;
 		const publishable = ['ready', 'unchanged'].includes(prepared?.state);
 		$('publish').disabled = busy || !publishable || !!session;
+		$('publish').classList.toggle('button-primary', prepared?.state === 'ready' && !session);
+		$('prepare').classList.toggle('button-primary', !session && prepared?.state !== 'ready');
+		root.querySelectorAll('.zpsp-publication-recovery button').forEach((button) => { button.disabled = busy; });
 		if (!busy && prepared?.state !== 'attempted') {
 			const republish = prepared?.state === 'unchanged';
 			const published = prepared?.state === 'published';
@@ -380,7 +423,6 @@
 			if ($('publish').parentElement !== actions) actions.append($('publish'));
 			$('republish-options').hidden = !republish;
 			$('publish').querySelector('.zpsp-button-label').textContent = message(published ? 'published_button' : republish ? 'republish_title' : 'confirm_title');
-			$('publish').classList.toggle('button-primary', !republish && !published);
 			$('publish').querySelector('.dashicons').className = 'dashicons ' + (republish ? 'dashicons-update' : 'dashicons-upload');
 		}
 		root.querySelectorAll('[data-download]').forEach((button) => { button.disabled = busy || !prepared; });
@@ -396,12 +438,13 @@
 		const label = labelElement.textContent;
 		labelElement.textContent = message(progress);
 		// Keep live stage announcements outside the busy element during publication.
-		const scope = progress === 'publishing' ? button : form || button.closest('section');
+		const scope = id === 'result' ? button : form || button.closest('section');
 		scope.setAttribute('aria-busy', 'true');
 		notice(id, message(progress));
 		let failure;
 		try {
 			startLoading(id, progress);
+			if (id === 'result') $(id + '-notice').focus();
 			await work();
 		} catch (error) {
 			failure = error;
@@ -451,6 +494,7 @@
 		form.querySelector('fieldset').disabled = false;
 		processingControls();
 	});
+	$('wxr_publish_format')?.addEventListener('change', processingControls);
 	async function refreshProcessingStatus() {
 		if (!$('processing') || busy) return;
 		try {
@@ -586,36 +630,46 @@
 		$('result').hidden = true;
 		$('republish-options').open = false;
 		$('result-heading').textContent = message('review_prepared');
-		notice('result', '');
+		$('state').hidden = true;
+		if (!session) notice('result', '');
 		notice('download', '');
 		run(event.currentTarget, 'prepare', 'preparing', async () => {
 			prepared = await request('prepare');
-			$('summary').textContent = publication.summary(prepared);
+			const { createElement: el, createRoot } = window.wp.element;
+			exportView ||= createRoot($('summary'));
+			exportView.render(publication.exportView(el, prepared, { onDetails: reviews && ((kind, trigger) => {
+				if (!busy && !confirmation && prepared?.receipt) reviews.open({ kind, receipt: prepared.receipt }, trigger);
+			}) }));
 			showRepository('visibility', prepared.target);
 			const unchanged = prepared.state === 'unchanged';
 			const state = $('state');
-			state.className = unchanged ? 'notice notice-success zpsp-unchanged' : '';
+			state.className = unchanged ? 'notice notice-info zpsp-unchanged' : '';
 			state.textContent = '';
 			if (unchanged) {
 				const title = document.createElement('strong');
 				title.className = 'zpsp-unchanged-title';
 				const icon = document.createElement('span');
-				icon.className = 'dashicons dashicons-yes-alt';
+				icon.className = 'dashicons dashicons-info-outline';
 				icon.setAttribute('aria-hidden', 'true');
 				title.append(icon, message('unchanged'));
 				const description = document.createElement('p');
 				description.textContent = message('unchanged_description');
 				state.append(title, description);
-			} else state.textContent = message(prepared.state, prepared.target || {});
-			$('state').hidden = false;
+			}
+			$('state').hidden = !unchanged || !!session;
 			$('result').hidden = false;
-			notice('prepare', prepared.connection_error ? failureMessage(prepared.connection_error, prepared.connection_error_details) : unchanged ? '' : message('prepared'), !!prepared.connection_error, '', prepared.connection_error);
-			$(unchanged ? 'state' : 'result-heading').focus();
+			notice('prepare', '');
+			syncPublicationStatus();
+			// Wait for the shared card to render before focusing its specific next step.
+			requestAnimationFrame(() => {
+				const check = prepared?.state === 'download_only' && $('summary').querySelector('.zpsp-export-check');
+				(check || $(unchanged && !session ? 'state' : 'result-heading')).focus();
+			});
 		});
 	});
 
 	// This panel survives preparing again; server-side status is authoritative.
-	const recovery = config.session_publication && $('prepare') ? document.createElement('section') : null;
+	const recovery = config.session_publication && $('prepare') ? document.createElement('div') : null;
 	let publicationControl = null;
 	const livePause = recovery ? document.createElement('button') : null;
 	if (livePause) {
@@ -632,36 +686,42 @@
 			livePause.textContent = message(control?.pausing ? 'session_pausing' : 'session_pause');
 		}
 		if (recovery) recovery.hidden = !!control || !session;
+		syncPublicationStatus();
+	}
+	function updatePublicationStage(text) {
+		// Keep the progress bar mounted while announcing actual server stages.
+		const label = $('result-notice').querySelector('.zpsp-feedback-message');
+		if (label && label.textContent !== text) label.textContent = text;
 	}
 	function showSession(value) {
 		if (!recovery) return;
 		session = ['active', 'paused', 'unknown', 'expired', 'cancel_pending', 'busy'].includes(value?.state) ? value : null;
 		recovery.replaceChildren(); recovery.hidden = !!publicationControl || !session;
+		syncPublicationStatus();
 		if (!session) { publishControls(); return; }
-		const title = document.createElement('h3'); title.textContent = message('session_title'); recovery.append(title);
 		const description = publication.resultMessage(session);
 		if (!$('result-notice')?.textContent.includes(description)) {
-			const text = document.createElement('p'); text.textContent = description; recovery.append(text);
+			notice('result', description, publication.resultKind(session), session.commit_url, session.code);
 		}
 		const actions = document.createElement('div'); actions.className = 'zpsp-actions'; recovery.append(actions);
 		const captured = session;
-		const add = (key, work) => {
-			const button = document.createElement('button'); button.type = 'button'; button.className = 'button button-secondary'; button.textContent = message(key);
-			button.addEventListener('click', () => run(button, 'result', 'publishing', async () => {
-				$('result').hidden = false;
+		const add = (key, work, progress, primary = false) => {
+			const button = document.createElement('button'); button.type = 'button'; button.className = 'button button-' + (primary ? 'primary' : 'secondary'); button.textContent = message(key);
+			button.addEventListener('click', () => run(button, 'result', progress, async () => {
 				const result = await work(captured);
-				notice('result', publication.resultMessage(result), ['unknown', 'failed'].includes(result.state), result.commit_url, result.code);
+				notice('result', publication.resultMessage(result), publication.resultKind(result), result.commit_url, result.code);
 				showSession(result);
+				$('result-notice').focus();
 			})); actions.append(button);
 		};
-		if (session.state === 'unknown' || session.can_continue) add(session.state === 'unknown' ? 'session_verify' : 'session_continue', (s) => publication.resume(s, (text) => notice('result', text), updatePublicationControl));
-		if (session.job_id && session.state !== 'unknown') add('session_cancel', (s) => publication.cancel(s.job_id));
-		add('session_refresh', (s) => publication.sessionStatus(s.job_id));
+		if (session.state === 'unknown' || session.can_continue) add(session.state === 'unknown' ? 'session_verify' : 'session_continue', (s) => publication.resume(s, updatePublicationStage, updatePublicationControl), 'publishing', true);
+		if (session.job_id && session.state !== 'unknown') add('session_cancel', (s) => publication.cancel(s.job_id), 'session_cancelling');
+		add('session_refresh', (s) => publication.sessionStatus(s.job_id), 'session_refreshing');
 		publishControls();
 	}
 	if (recovery) {
 		recovery.hidden = true; recovery.className = 'zpsp-publication-recovery';
-		$('prepare').before(recovery);
+		$('publication-status').append(recovery);
 		publication.sessionStatus().then(showSession).catch(() => {});
 	}
 
@@ -674,21 +734,84 @@
 			notice('download', '');
 			$('state').textContent = '';
 			$('state').hidden = true;
-			$('result-heading').textContent = message('publication_result');
 			// Every write attempt requires a new preparation, even when its response is uncertain.
 			snapshot.state = 'attempted';
-			const label = $('result-notice').querySelector('.zpsp-feedback-message');
-			const result = await publication.publish(receipt, republish, (text) => {
-				// Keep the progress bar mounted while announcing actual server stages.
-				if (label.textContent !== text) label.textContent = text;
-			}, updatePublicationControl);
+			const result = await publication.publish(receipt, republish, updatePublicationStage, updatePublicationControl);
 			if (result.state === 'published') {
 				snapshot.state = 'published';
 			}
-			notice('result', publication.resultMessage(result), ['unknown', 'failed'].includes(result.state), result.commit_url, result.code);
+			notice('result', publication.resultMessage(result), publication.resultKind(result), result.commit_url, result.code);
 			showSession(result);
-			if (result.state === 'published') $('result-notice').classList.replace('notice-info', 'notice-success');
 			$('result-notice').focus();
+		});
+	}
+	function initializePrivacy() {
+		const link = $('privacy');
+		const available = () => window.wp?.components?.Modal && window.wp?.element?.createElement && window.wp?.element?.createRoot;
+		if (!link || !available()) return;
+		link.setAttribute('aria-haspopup', 'dialog');
+		link.querySelector('.dashicons-external').hidden = true;
+		let open = false;
+		link.addEventListener('click', (event) => {
+			// Keep the original document link for modified clicks and unavailable JavaScript components.
+			if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+			if (!available()) {
+				link.removeAttribute('aria-haspopup');
+				link.querySelector('.dashicons-external').hidden = false;
+				return;
+			}
+			event.preventDefault();
+			if (open || confirmation) return;
+			open = true;
+			const { Modal } = window.wp.components;
+			const { createElement: el, createRoot } = window.wp.element;
+			const container = document.createElement('div');
+			root.append(container);
+			const modalRoot = createRoot(container);
+			let overlay = null;
+			function keepFocus(event) {
+				// A preparation or publication response can otherwise focus the page behind the dialog.
+				if (overlay?.isConnected && !overlay.contains(event.target)) overlay.querySelector('[role="dialog"]')?.focus({ preventScroll: true });
+			}
+			function close() {
+				if (!open) return;
+				open = false;
+				document.removeEventListener('focusin', keepFocus);
+				modalRoot.unmount();
+				container.remove();
+				link.focus();
+			}
+			const section = (id) => el('section', { className: 'zpsp-privacy-section', 'aria-labelledby': 'zpsp-privacy-' + id },
+				el('h2', { id: 'zpsp-privacy-' + id }, message('privacy_' + id + '_title')),
+				el('p', null, message('privacy_' + id)),
+			);
+			// Underline only the label and keep the icon beside it when the text wraps.
+			const policyLink = (id, href) => el('li', null, el('a', { href, target: '_blank', rel: 'noopener noreferrer' },
+				el('span', { className: 'zpsp-privacy-link-label' }, message(id)),
+				el('span', { className: 'dashicons dashicons-external', 'aria-hidden': true }),
+			));
+			document.addEventListener('focusin', keepFocus);
+			modalRoot.render(el(Modal, {
+				ref: (node) => { overlay = node; },
+				title: message('privacy_title'),
+				className: 'zpsp-privacy-modal',
+				focusOnMount: true,
+				closeButtonLabel: message('privacy_close'),
+				shouldCloseOnClickOutside: true, shouldCloseOnEsc: true,
+				onRequestClose: close,
+				aria: { describedby: 'zpsp-privacy-description' },
+			},
+			el('p', { id: 'zpsp-privacy-description' }, message('privacy_intro')),
+			section('github'), section('turnstile'), section('newsletter'),
+			el('p', null, message('privacy_storage')),
+			el('p', null, message('privacy_policies')),
+			el('ul', { className: 'zpsp-privacy-links' },
+				policyLink('privacy_github_policy', 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement'),
+				policyLink('privacy_cloudflare_policy', 'https://www.cloudflare.com/privacypolicy/'),
+				policyLink('privacy_details', link.href),
+			),
+			el('div', { className: 'zpsp-privacy-actions' }, el('button', { type: 'button', className: 'button', onClick: close }, message('privacy_close'))),
+			));
 		});
 	}
 	function confirmAction(button, options) {
@@ -704,6 +827,17 @@
 		const modalRoot = createRoot(container);
 		confirmation = options;
 		let settled = false;
+		let overlay = null;
+		function keepBackdropFocus(event) {
+			if (event.target === event.currentTarget) event.preventDefault();
+		}
+		function setOverlay(node) {
+			overlay?.removeEventListener('pointerdown', keepBackdropFocus);
+			overlay = node;
+			// WordPress omits its backdrop focus guard when outside closing is disabled.
+			// Keep keyboard focus inside so Esc and constrained tabbing still work.
+			if (options.shouldCloseOnClickOutside === false) overlay?.addEventListener('pointerdown', keepBackdropFocus);
+		}
 		function close(accepted) {
 			if (settled) return;
 			settled = true;
@@ -714,11 +848,13 @@
 			if (accepted) options.onConfirm();
 		}
 		modalRoot.render(el(Modal, {
+			ref: setOverlay,
 			title: options.title,
 			className: 'zpsp-confirm-modal',
 			size: 'medium',
 			focusOnMount: 'firstContentElement',
 			closeButtonLabel: message('confirm_close'),
+			shouldCloseOnClickOutside: options.shouldCloseOnClickOutside ?? true,
 			onRequestClose: () => close(false),
 			aria: { describedby: 'zpsp-confirm-description' },
 		},
@@ -731,20 +867,22 @@
 	}
 	function confirmPublication(button, snapshot) {
 		const republish = snapshot.state === 'unchanged';
+		const change = publication.formatChange(snapshot);
 		confirmAction(button, {
 			title: message(republish ? 'republish_title' : 'confirm_title'),
 			description: message(republish ? 'republish_description' : 'confirm_description'),
+			shouldCloseOnClickOutside: false,
 			feedback: 'result', onConfirm: () => publish(button, snapshot),
 			content: (el) => el('div', null,
-				publication.repositoryView(el, snapshot.target),
-				el('dl', { className: 'zpsp-confirm-target' },
-					el('dt', null, message('confirm_files')),
-					el('dd', null, publication.formatSummary(snapshot)),
-					el('dd', null, el('ul', null,
+				publication.repositoryView(el, snapshot.target, { headingLevel: 2 }),
+				el('section', { className: 'zpsp-confirm-files', 'aria-labelledby': 'zpsp-confirm-files-heading' },
+					el('h2', { id: 'zpsp-confirm-files-heading' }, message('confirm_files')),
+					change ? el('p', null, change) : null,
+					el('ul', null,
 						el('li', null, el('code', null, snapshot.publication?.format === 'bundle' ? 'wordpress-export.manifest.json' : 'wordpress-export.xml')),
 						!republish && snapshot.publication?.format === 'bundle' ? el('li', null, el('code', null, 'wordpress-export.parts/')) : null,
 						republish ? null : el('li', null, el('code', null, 'wxr-import-base.json')),
-					)),
+					),
 				)),
 		});
 	}
@@ -768,4 +906,5 @@
 			notice('download', message('downloaded'));
 		});
 	}));
+	initializePrivacy();
 })();

@@ -45,11 +45,16 @@ final class Publisher {
 			}
 		}
 		// An incompatible publishing target must not prevent ordinary XML downloads.
-		$export = ( new Exporter( $budget ) )->generate_files( $settings, $generated_at, $mode );
-		$plan   = null;
+		$review          = new Export_Review( $budget );
+		$export          = ( new Exporter( $budget, $review ) )->generate_files( $settings, $generated_at, $mode );
+		$plan            = null;
+		$memory_capacity = null;
 		try {
 			if ( $snapshot && ! $connection_error ) {
-				$plan = self::plan( $export, $budget );
+				$plan = self::plan( $export, $budget, $memory_capacity );
+			} elseif ( Publication_Runtime::memory() ) {
+				// Local size information is useful before a GitHub connection is configured.
+				$memory_capacity = self::memory_capacity( $export );
 			}
 		} catch ( Failure $error ) {
 			$connection_error = $error->reason;
@@ -64,7 +69,7 @@ final class Publisher {
 			unset( $snapshot['parts'] );
 		}
 		Publication_Runtime::assert_current();
-		$receipt = array(
+		$receipt           = array(
 			'backend'      => Publication_Runtime::backend(),
 			'user'         => get_current_user_id(),
 			'revision'     => $settings['revision'],
@@ -74,12 +79,16 @@ final class Publisher {
 			'snapshot'     => $snapshot,
 			'plan'         => $plan,
 		);
+		$receipt['review'] = $review->finish( $receipt );
+		Publication_Runtime::assert_current();
+		$lock?->check();
 		$payload = base64_encode( wp_json_encode( $receipt ) );
 		$result  = array(
 			'runtime'          => Publication_Runtime::describe( $settings ),
 			'receipt'          => $payload . '.' . hash_hmac( 'sha256', $payload, Settings::key( 'preparation' ) ),
 			'counts'           => $export['counts'],
 			'bytes'            => $export['bytes'],
+			'memory_capacity'  => $memory_capacity,
 			'rewritten_values' => $export['rewritten_values'],
 			'warnings'         => $export['warnings'],
 			'target'           => $snapshot ? array(
@@ -329,17 +338,20 @@ final class Publisher {
 	 *
 	 * @param array           $export Request-owned generated artifacts.
 	 * @param Resource_Budget $budget Shared request memory and time budget.
+	 * @param array|null      $memory_capacity Output-only size diagnostics, also retained on a rejected plan.
 	 * @return array
 	 * @throws Failure If validation, storage or the request budget fails.
 	 */
-	public static function plan( array $export, Resource_Budget $budget ): array {
+	public static function plan( array $export, Resource_Budget $budget, ?array &$memory_capacity = null ): array {
+		$memory_capacity = null;
 		if ( Publication_Runtime::memory() ) {
 			if ( ! empty( $export['bundle'] ) ) {
 				throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
 			}
 			Publication_Runtime::check_size( $export['wxr']->size() + strlen( $export['base'] ) );
-			Publication_Runtime::check_size( $export['wxr']->request_size() );
-			Publication_Runtime::check_size( Wxr_Bundle::request_size( $export['base'] ) );
+			$memory_capacity = self::memory_capacity( $export );
+			Publication_Runtime::check_size( $memory_capacity['wxr_request_bytes'] );
+			Publication_Runtime::check_size( $memory_capacity['base_request_bytes'] );
 		}
 		if ( ! empty( $export['bundle'] ) ) {
 			$bundle = $export['bundle'];
@@ -358,8 +370,8 @@ final class Publisher {
 			throw new Failure( 'WXR_SPLIT_REQUIRED', 413 );
 		}
 		try {
-			$budget->check( $export['wxr']->request_size() );
-			$budget->check( Wxr_Bundle::request_size( $export['base'] ) );
+			$budget->check( $memory_capacity['wxr_request_bytes'] ?? $export['wxr']->request_size() );
+			$budget->check( $memory_capacity['base_request_bytes'] ?? Wxr_Bundle::request_size( $export['base'] ) );
 		} catch ( Failure $error ) {
 			if ( 'MEMORY_LIMIT_EXCEEDED' === $error->reason ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Failure retains only allowlisted numeric diagnostics; AJAX encodes them.
@@ -371,6 +383,22 @@ final class Publisher {
 			'format'     => 'single',
 			'part_count' => 1,
 			'digest'     => hash( 'sha256', $export['wxr']->blob_sha() . GitHub::blob_sha( $export['base'] ) ),
+		);
+	}
+
+	/**
+	 * Measure memory-mode size limits without materializing encoded upload bodies.
+	 * These diagnostics are not approval; every publication regenerates and checks its plan.
+	 *
+	 * @param array $export Request-owned single XML and build settings.
+	 * @return array
+	 */
+	private static function memory_capacity( array $export ): array {
+		return array(
+			'limit_bytes'        => Publication_Runtime::MAX_BYTES,
+			'raw_bytes'          => $export['wxr']->size() + strlen( $export['base'] ),
+			'wxr_request_bytes'  => $export['wxr']->request_size(),
+			'base_request_bytes' => Wxr_Bundle::request_size( $export['base'] ),
 		);
 	}
 	/**

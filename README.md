@@ -31,8 +31,7 @@ newsletter services may have separate costs under each provider's pricing and te
 
 ZeroPress Static generates WXR content and `wxr-import-base.json`. The starter
 builds them as one site. Small exports and downloads use `wordpress-export.xml`;
-large GitHub publications can use [split WXR files](#split-publication-and-starter-compatibility)
-with a compatible starter.
+large GitHub publications can use [split WXR files](#split-publication-and-starter-compatibility).
 
 ```mermaid
 flowchart LR
@@ -168,7 +167,7 @@ by your hosting.
 
 **Test connection**, the prepared publication, and the publishing dialogs show
 the repository's full name as a GitHub link, its branch, and an icon badge for
-its visibility: **Private**, **Public**, or **Internal**. The badge is
+its visibility: **Private repository**, **Public repository**, or **Internal**. The badge is
 **Unconfirmed** until visibility is checked. Connection results describe the
 target that was tested, including unsaved settings; editing the connection
 settings clears the previous result. A private repository is recommended for source
@@ -225,9 +224,13 @@ project's icon defaults remain in place.
 ### Menus
 
 Select a classic WordPress menu for `primary`, `footer`, or a custom ID used by
-your static theme. Choose **Do not publish** to leave a slot empty. Only selected
+your static theme. Choose **Not selected** to leave a slot empty. Only selected
 menus and their public targets are exported. The same source menu can serve more
-than one ID.
+than one ID. Select **View items** beside a selection to inspect its labels,
+links, hierarchy and new-window settings without saving or leaving this screen.
+**View items** appears only when an available menu is selected. The preview uses
+saved site settings for link destinations; unsaved menu selections can still be
+inspected. Preparation excludes unavailable or non-public targets.
 
 Create and edit menus in WordPress's classic menu editor, available with themes
 that support it. Assignments in this plugin are independent of WordPress theme
@@ -396,6 +399,21 @@ GitHub again**. This creates a new commit by updating the WXR generation time.
 Post dates and build settings stay unchanged. This can trigger the build service
 configured for your repository. The branch is never force-updated.
 
+The admin page's **Publish to GitHub** and **Publish to GitHub again** confirmation
+dialogs stay open when you click outside them. Use **Cancel**, the close button
+or **Esc** to dismiss them without publishing.
+
+The admin page and editor group progress, results and recovery buttons under
+**Publication status**. Blue indicates progress, no changes or an intentional
+pause/cancellation; yellow asks for attention, including expired approval and
+an unconfirmed result. Green confirms publication to GitHub; red reports a
+confirmed failure. A GitHub publication still needs the connected hosting
+service to finish its build and deployment before the public site changes.
+Preparation details and any blocking reason remain in **Publishing data**.
+When ready, **Publish to GitHub** is the primary action; during recovery,
+**Continue publication** or **Check publication result** takes priority.
+Downloads are grouped separately on the admin page.
+
 A lost browser response or a terminated server request can leave the branch
 update unconfirmed. The plugin does not repeat an uncertain branch write.
 If **Publication needs verification** appears, open **ZeroPress → Publish** or
@@ -414,17 +432,30 @@ before enabling this capability on an existing site. Adding only the marker
 does not upgrade the importer or build scripts.
 
 Choose **WXR publishing format** under **GitHub publishing** and save the publishing
-target before preparing again. With **Temporary files** processing, the settings
+target before preparing again. With **Files** processing, the settings
 work as follows. **Memory** processing uses [single XML only](#export-processing).
 Selecting Single XML does not select Memory processing.
+The help below the selector follows the selected format immediately. With Memory
+processing, Automatic is described as single XML and Split XML remains unavailable.
+Changing a selection does not apply it until the publishing target is saved.
 
 | Setting | Behavior |
 | --- | --- |
-| **Automatic** (default) | Splits WXR files larger than 8 MiB on a compatible starter. Smaller files may also split depending on upload size or server memory. Existing split exports stay split. |
-| **Single XML** | Publishes one XML file if the file-size, memory and time checks pass. Can replace a verified split export. A failed check stops publication and offers next steps; it does not silently switch formats. |
-| **Split XML** | Uses split files even for a small site. Requires a compatible starter; it does not mean one file per post. |
+| **Automatic** (default) | Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split exports stay split. |
+| **Single XML** | Publishes WXR as one XML file. Publication may be limited by file size or server resources. |
+| **Split XML** | Publishes WXR in split format. |
 
-When a compatible starter currently uses single XML, Automatic keeps it only
+Single XML can replace a verified split export. A failed size, memory or time check
+stops publication and offers next steps; it does not silently switch formats.
+Split XML applies even to small exports; it does not mean one file per post.
+
+These formats describe the WXR content. Build settings are a separate
+`wxr-import-base.json` file in either format. **Download WXR** always provides
+one XML file, and **Download build settings** provides the separate JSON file.
+Keep custom starter settings in `wxr-import-base.override.json`; publishing
+replaces the generated base settings and preserves the override file.
+
+With the verified capability marker, Automatic keeps an existing single XML only
 when both its raw size and encoded upload request fit 8 MiB and the memory check
 passes. Explicit **Single XML** uses
 the existing single-file transport checks instead of this automatic threshold.
@@ -434,7 +465,64 @@ requires upgrading the complete starter, not just adding its marker.
 
 Split publication uses `wordpress-export.manifest.json`, content-addressed XML
 parts under `wordpress-export.parts/`, and the same `wxr-import-base.json`.
-The preparation summary shows the actual format and any format change. Switching
+The **Publishing data** card in the preparation result and editor lists post,
+page and menu counts under **Content**, with a separate **Media information**
+count. Media information counts the attachment records included in WXR, not
+the Media Library total or the number of image files. Featured images retain
+their addresses, dimensions and alternative text. Body-only media usually need
+no separate metadata because their URLs are already in the saved content. The
+export keeps only enough additional attachment URLs to preserve the importer's
+existing media-prefix inference, including sites without featured images and
+sites with multiple media domains. Unusual URL spellings are kept individually
+when they cannot be safely grouped. Actual media files are not copied or uploaded
+to GitHub. The card also lists the WXR format and the separate
+JSON build settings. Split exports also
+show the XML part count and explain that WXR downloads remain a single XML file.
+The card also shows the downloadable WXR and build-settings sizes, their total
+(excluding media files), and the preparation check result. In Memory processing,
+it shows the percentage of the 8 MiB limit for publishing data used by the largest of the
+combined raw files, encoded XML upload, and encoded settings upload. This is not
+PHP RAM usage or a supported post count. An encoded upload can exceed the limit
+even when the downloadable files are smaller. Files processing does
+not show this memory-mode percentage.
+
+Select the menu count or media information count in this card to inspect the
+records from that preparation. Counts of zero are plain text. Menu details show labels, destination links,
+hierarchy, new-window settings and assigned theme menu IDs. The **Edit in
+WordPress** link opens the classic menu editor when the active theme supports it.
+Media details show the exported URL and whether the record describes a featured
+image or preserves media URL inference. These are read-only text lists: opening
+them does not load images or contact media servers. Lists are fetched one page
+at a time, with up to 50 records per page.
+
+Menu destinations use the static site address and the default WXR importer's
+post, page, category and tag routes. Custom and external links keep their
+meaning. Category and tag links can therefore differ from WordPress's archive
+URLs. Changes to routes in the starter's override file are outside this preview.
+An unresolved destination is labeled for resolution during the site build,
+rather than showing a WordPress source URL as a confirmed destination.
+
+Prepared details remain tied to the last preparation, even if WordPress content
+changes afterward. Prepare again to review later changes. If details expire or
+are evicted from the cache, prepare again or inspect the downloaded WXR.
+The settings preview inspects eligible source links through the existing guarded
+reader without generating files or contacting GitHub. Both views retain the
+request's memory/time budget. Optional route metadata has a separate bounded
+allowance; unsupported normalization or exhausted display capacity leaves the
+destination unresolved and does not change the export contract.
+
+The preparation result appears in a separate area at the bottom of the card:
+a green check for a passed preparation, a warning when publishing is blocked,
+or an information icon when GitHub needs to be connected. Each state also has a
+text label, so its meaning does not depend on color.
+Preparation checks do not write to GitHub. A passed check describes that
+preparation only: available memory, remaining request time, content, settings and
+GitHub state are checked again during publication. A download-only result shows
+the blocking reason or asks you to connect GitHub and prepare again. If generation
+itself exceeds a resource limit, preparation stops with its existing error instead
+of showing a completed export card.
+
+Any format change is shown below these details. Switching
 to split removes `wordpress-export.xml` in the same commit; switching to single
 removes the verified manifest and managed parts directory in that commit.
 Content need not change to publish a format change. Changing a preference without
@@ -488,10 +576,10 @@ survive retries, cancellation and new publication attempts.
 
 ### Interrupted publication and recovery
 
-With **Temporary files** processing, the admin page and both post editors publish
+With **Files** processing, the admin page and both post editors publish
 through a sequence of authenticated requests. **Memory** processing uses
 [one publication request](#memory-processing) on both Linux/Unix and Windows.
-The pause and resume controls below apply to Temporary files processing.
+The pause and resume controls below apply to Files processing.
 Each ordinary publication step inspects one metadata object or uploads one
 blob/tree/commit. The final request regenerates the source at the approved
 snapshot's timestamp, checks its full logical hash and transport plan, and checks
@@ -533,13 +621,13 @@ local journal is not a safe retry procedure.
 
 The server maintains one active job per WordPress installation. A bounded,
 non-autoloaded option holds IDs, hashes, progress and results, but no credentials,
-receipts or WXR bodies. With Temporary files processing, a private snapshot directory holds the approved bytes;
+receipts or WXR bodies. With Files processing, a private snapshot directory holds the approved bytes;
 files use mode `0600` and directories `0700`. Contents and file identity are
 checked again before upload. An exclusive per-site OS file lock prevents parallel
 workers; time passing never authorizes taking over a live worker's lock.
 Duplicate/stale request IDs return current status rather than repeating a step.
 
-Temporary files processing requires private local storage with stable file identities,
+Files processing requires private local storage with stable file identities,
 POSIX permissions and working cross-process locks. The following storage and
 cleanup requirements apply to that method. Memory processing uses a database
 connection lock; see [Memory processing](#memory-processing).
@@ -663,7 +751,7 @@ Titles and other display text are decoded once to preserve characters such as
 apostrophes and ampersands.
 
 Publishing is a manual full export. Preparation, downloads and publication are
-separate operations. Downloads regenerate the data; Temporary files publication captures a
+separate operations. Downloads regenerate the data; Files publication captures a
 validated snapshot at start and regenerates it again before final dispatch.
 The memory path generates and revalidates the source within its single publication
 request without retaining an export snapshot between requests.
@@ -671,7 +759,7 @@ Each request shares its original resource budget across generation and GitHub
 communication. The legacy PHP publication API still performs a single request,
 with the same site lock, durable final-write fence and pacing protections.
 
-With Temporary files processing, WXR records are written to registered, request-owned files in a private subdirectory
+With Files processing, WXR records are written to registered, request-owned files in a private subdirectory
 of PHP's system temporary directory, then assembled into a single XML or bounded
 parts. Downloads replay that file in bounded buffers after receipt and content
 validation. Each open file retains an exclusive lock until its last read and
@@ -768,9 +856,11 @@ If the server terminates a publication request before returning its result,
 read the retained status and use the recovery actions above. The plugin cannot
 infer whether the branch was updated from a lost response.
 
-### Export processing
+<a id="export-processing"></a>
 
-In **ZeroPress → Settings → Export processing**, choose **Temporary files** or
+### Publishing data processing
+
+In **ZeroPress → Settings → Publishing data processing**, choose **Files (recommended)** or
 **Memory**, then select **Save processing method**. No MU plugin is needed on
 Linux/Unix. This setting controls preparation, downloads and publication on the
 WordPress server. **WXR publishing format** separately controls the file layout
@@ -778,8 +868,8 @@ published to GitHub; it does not choose the processing method.
 
 | Method | Use and limits |
 | --- | --- |
-| **Temporary files** (Linux/Unix default) | Uses private temporary storage. Supports single or split XML and pausing/continuing publication. Existing storage, resource and ownership checks apply. |
-| **Memory** (small sites) | Uses PHP memory without temporary export files. Supports single XML only, with no pause/continue. XML and base settings combined, and each encoded upload request, must fit 8 MiB. Available memory or time can stop smaller exports. |
+| **Files (recommended)** | Default on Linux/Unix. Uses private temporary storage. Supports single or split XML and pausing/continuing publication. Existing storage, resource and ownership checks apply. |
+| **Memory** | Uses PHP memory without temporary export files. Supports single XML only, with no pause/continue. XML and base settings combined, and each encoded upload request, must fit 8 MiB. Available memory or time can stop smaller exports. |
 
 Choose Single XML before switching from an explicit Split XML preference to
 Memory. Automatic uses single XML in Memory processing, but an existing split
@@ -807,7 +897,7 @@ publication. Export bodies and credentials never enter the reservation.
 
 #### Memory processing
 
-Memory processing supports small single-XML exports using **PHP memory only**.
+Memory processing exports a single XML using **PHP memory only**.
 Preparation, downloads and publication use `php://memory`; no WXR body or
 publication snapshot is written to the filesystem. A private temporary directory
 is not required. Linux/Unix administrators can select this method in Settings;
@@ -862,12 +952,12 @@ PHP setting leaves a 25-second shared work budget, including WordPress startup,
 source checks and GitHub waits; publication reserves a further two seconds for
 local checkpoints. IIS/FastCGI and proxies may impose shorter hard deadlines.
 A larger memory allowance does not increase the 8 MiB memory-path limit. Reduce
-the export or, on Linux/Unix, select Temporary files for larger or slower publications.
+the export or, on Linux/Unix, select Files for larger or slower publications.
 
 The existing `zeropress_static_memory_publication` filter remains compatible.
 Returning `true` fixes Memory processing on Linux/Unix and locks the selector with
 a server-configuration explanation. Returning `false` leaves the saved preference
-in control; it does not force Temporary files. Windows always uses Memory.
+in control; it does not force Files. Windows always uses Memory.
 The effective method is sealed into
 preparation receipts and jobs; a storage error never silently selects another
 backend. Resolve or cancel pre-dispatch work on the original backend before
@@ -878,15 +968,23 @@ verification remains available even when the old private files cannot be read.
 
 Windows/IIS always uses **Memory** with the limits and recovery behavior above.
 The settings screen displays the fixed method, and server validation prevents
-selecting Temporary files. The plugin does not invoke PowerShell, start an
+selecting Files. The plugin does not invoke PowerShell, start an
 external process, or inspect or modify Windows ACLs.
 
 ## Stored data and external services
 
+Select **Privacy Policy** at the bottom of **Publish** or **Settings**
+for a short, translated summary with links to GitHub's and Cloudflare's privacy
+policies and this detailed English guide. Opening the summary makes no external
+request. Close it with **Close**, **X**, **Esc** or a click outside; focus returns
+to the footer link. With JavaScript disabled or the dialog unavailable, the link
+opens this section in a new tab instead.
+
 The plugin does not send your site's content or usage statistics to ZeroPress.
 
 When you use GitHub publishing or enable optional integrations, data is exchanged with
-those services as described below.
+those services as described below. Those services process data under their own privacy
+policies.
 
 GitHub tokens and Turnstile secrets use authenticated AES-256-GCM encryption with
 separate keys derived from WordPress secrets. Their plaintext is never
@@ -894,6 +992,18 @@ returned to the admin screen. If the WordPress secrets change, register the
 credentials again. Deactivation retains settings; uninstall removes the plugin's
 settings, credentials and temporary verification records. The bounded publication
 journal remains to protect any unresolved final update.
+
+Preparation also caches a read-only menu/media summary in WordPress transients
+(database or the site's object cache) for at most ten minutes. Each cache is bound
+to the preparation receipt, user, settings revision and export hash. Pages contain
+at most 50 records and 64 KiB of JSON; the optional summary is capped at 16 MiB.
+These are detail-view bounds, not additional export limits. If the cache cannot
+be stored within those bounds, downloads and publishing retain their normal
+checks and the detail view asks for another preparation or a WXR download.
+No content bodies, credentials or media files enter this cache, and Memory
+processing does not create temporary files for it. Expired entries use WordPress's
+normal transient cleanup. Publication and download still regenerate and verify
+content; cached summaries never authorize publication or supply export content.
 
 ### GitHub
 

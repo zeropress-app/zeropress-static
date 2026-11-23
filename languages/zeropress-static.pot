@@ -1,3 +1,6 @@
+msgid "(No label)"
+msgstr ""
+
 msgid "A GitHub branch rule rejected direct publication. Review the repository rules."
 msgstr ""
 
@@ -70,7 +73,7 @@ msgstr ""
 msgid "Automatic"
 msgstr ""
 
-msgid "Automatic splits WXR files larger than 8 MiB on compatible starters. Smaller files may also be split depending on upload size or server memory. Existing split exports stay split. XML downloads always remain a single file."
+msgid "Build settings"
 msgstr ""
 
 msgid "Button label"
@@ -85,6 +88,9 @@ msgstr ""
 msgid "Cancellation requested. Waiting for the current request to finish."
 msgstr ""
 
+msgid "Cancelling publication…"
+msgstr ""
+
 msgid "Change keys"
 msgstr ""
 
@@ -94,13 +100,13 @@ msgstr ""
 msgid "Check the values in this section."
 msgstr ""
 
-msgid "Check your GitHub settings before publishing."
+msgid "Checking publication status…"
 msgstr ""
 
 msgid "Checking the GitHub repository…"
 msgstr ""
 
-msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
+msgid "Choose how to process publishing data."
 msgstr ""
 
 msgid "Click “Save publishing target” to save these changes."
@@ -115,7 +121,13 @@ msgstr ""
 msgid "Close confirmation"
 msgstr ""
 
+msgid "Cloudflare Privacy Policy"
+msgstr ""
+
 msgid "Cloudflare Turnstile"
+msgstr ""
+
+msgid "Cloudflare Turnstile (optional)"
 msgstr ""
 
 msgid "Cloudflare Turnstile can help reduce automated comment submission attacks."
@@ -136,6 +148,9 @@ msgstr ""
 msgid "Connection details changed. Test again to check these values."
 msgstr ""
 
+msgid "Content"
+msgstr ""
+
 msgid "Continue publication"
 msgstr ""
 
@@ -143,12 +158,6 @@ msgid "Copyright or legal notice"
 msgstr ""
 
 msgid "Create a GitHub token"
-msgstr ""
-
-msgid "Data is ready to download. Configure and test GitHub to publish."
-msgstr ""
-
-msgid "Data prepared. Review the result below."
 msgstr ""
 
 msgid "Delete saved keys"
@@ -184,6 +193,12 @@ msgstr ""
 msgid "Destination URL prefix example:"
 msgstr ""
 
+msgid "Destination will be determined during the site build."
+msgstr ""
+
+msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
+msgstr ""
+
 msgid "Display and credits"
 msgstr ""
 
@@ -193,13 +208,25 @@ msgstr ""
 msgid "Displays the signup page in a popup on your site. Use a page URL that allows iframe embedding."
 msgstr ""
 
-msgid "Do not publish"
-msgstr ""
-
 msgid "Download WXR"
 msgstr ""
 
 msgid "Download build settings"
+msgstr ""
+
+msgid "Download sizes; media files are not included."
+msgstr ""
+
+msgid "Downloads"
+msgstr ""
+
+msgid "Downloads ready. Connect GitHub and prepare again to check publishing."
+msgstr ""
+
+msgid "Downloads ready; publishing blocked."
+msgstr ""
+
+msgid "Edit in WordPress"
 msgstr ""
 
 msgid "Edit in WordPress settings"
@@ -244,9 +271,6 @@ msgstr ""
 msgid "Enter a signup page URL or an embedded signup page URL."
 msgstr ""
 
-msgid "Enter a static site URL to allow comment writing."
-msgstr ""
-
 msgid "Enter a title of up to 200 characters."
 msgstr ""
 
@@ -280,13 +304,19 @@ msgstr ""
 msgid "Examples: %1$s · %2$s · %3$s"
 msgstr ""
 
-msgid "Export inputs must be regular files, not directories, symlinks or submodules."
+msgid "External services handle data under their own privacy policies."
 msgstr ""
 
-msgid "Export processing"
+msgid "Featured image"
+msgstr ""
+
+msgid "Files (recommended)"
 msgstr ""
 
 msgid "Files to update"
+msgstr ""
+
+msgid "Files: uses private temporary files to process large amounts of publishing data and supports pausing and continuing publication."
 msgstr ""
 
 msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
@@ -304,10 +334,19 @@ msgstr ""
 msgid "Get the latest news by email"
 msgstr ""
 
+msgid "GitHub"
+msgstr ""
+
+msgid "GitHub Privacy Statement"
+msgstr ""
+
 msgid "GitHub already contains this data. You do not need to publish again."
 msgstr ""
 
 msgid "GitHub connection confirmed."
+msgstr ""
+
+msgid "GitHub connection required"
 msgstr ""
 
 msgid "GitHub did not accept the registered token. Delete it and register a token again, then test the connection."
@@ -325,7 +364,7 @@ msgstr ""
 msgid "GitHub publishing (optional)"
 msgstr ""
 
-msgid "GitHub rejected an oversized file or request. Check that your WXR starter supports split exports and review unusually large entries before preparing again."
+msgid "GitHub rejected an oversized file or request. Review unusually large content or metadata before preparing again."
 msgstr ""
 
 msgid "GitHub rejected the write. Check repository permissions and branch rules."
@@ -343,7 +382,16 @@ msgstr ""
 msgid "GitHub token management"
 msgstr ""
 
+msgid "GitHub tokens and Turnstile secret keys are stored encrypted in WordPress."
+msgstr ""
+
 msgid "Icon URLs for publishing"
+msgstr ""
+
+msgid "If you connect GitHub, the plugin contacts it when you test the connection, prepare data or publish. Publishing sends public content and site settings to your selected repository."
+msgstr ""
+
+msgid "If you connect a newsletter signup page, visitors contact that service when they open or view it on your site. The service handles their subscription information."
 msgstr ""
 
 msgid "Information from WordPress"
@@ -352,10 +400,19 @@ msgstr ""
 msgid "Internal"
 msgstr ""
 
+msgid "Items: {count}"
+msgstr ""
+
+msgid "JSON file"
+msgstr ""
+
+msgid "Learn more (English)"
+msgstr ""
+
 msgid "Learn more about API protection"
 msgstr ""
 
-msgid "Learn more about export processing"
+msgid "Learn more about publishing data processing"
 msgstr ""
 
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
@@ -370,7 +427,13 @@ msgstr ""
 msgid "Limit public REST API access to the APIs needed for ZeroPress Static comments."
 msgstr ""
 
+msgid "Loading details…"
+msgstr ""
+
 msgid "Manage Cloudflare Turnstile"
+msgstr ""
+
+msgid "Media URL reference"
 msgstr ""
 
 msgid "Media URL replacements"
@@ -379,25 +442,52 @@ msgstr ""
 msgid "Media URLs are replaced according to your rules."
 msgstr ""
 
-msgid "Memory (small sites)"
+msgid "Media information"
 msgstr ""
 
-msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
+msgid "Memory"
 msgstr ""
 
-msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
+msgid "Memory processing limit"
 msgstr ""
 
-msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
+msgid "Memory processing publishes single XML even when Automatic is selected."
+msgstr ""
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Files on Linux for split publishing."
+msgstr ""
+
+msgid "Memory, time and publishing conditions are checked again when you publish."
+msgstr ""
+
+msgid "Memory: publishes a single XML without temporary files. Publishing data is limited to 8 MiB; upload size and server resources may impose a lower limit."
 msgstr ""
 
 msgid "Menu ID"
 msgstr ""
 
+msgid "Menu preview"
+msgstr ""
+
 msgid "Menus"
 msgstr ""
 
+msgid "Menus to publish"
+msgstr ""
+
+msgid "Menus: {menus}"
+msgstr ""
+
+msgid "New window"
+msgstr ""
+
+msgid "Newsletter (optional)"
+msgstr ""
+
 msgid "Newsletter connection"
+msgstr ""
+
+msgid "Next"
 msgstr ""
 
 msgid "No GitHub token is registered. Reload this page to check its current status."
@@ -409,13 +499,19 @@ msgstr ""
 msgid "No changes to publish."
 msgstr ""
 
+msgid "No items to show."
+msgstr ""
+
 msgid "Not configured"
 msgstr ""
 
-msgid "One exported entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
+msgid "Not selected"
 msgstr ""
 
-msgid "Only published posts and pages without a password are exported. Shortcodes and dynamic blocks are not executed."
+msgid "Off by default. If you use Turnstile for comment writing, visitors' browsers and WordPress contact Cloudflare to verify visitors."
+msgstr ""
+
+msgid "One publishing data entry is too large to send safely. Reduce unusually large post content or metadata, then prepare again. Increasing PHP memory alone will not remove this limit."
 msgstr ""
 
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
@@ -436,6 +532,12 @@ msgstr ""
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr ""
 
+msgid "Pages: {pages}"
+msgstr ""
+
+msgid "Passed for this preparation."
+msgstr ""
+
 msgid "Pause publication"
 msgstr ""
 
@@ -448,7 +550,13 @@ msgstr ""
 msgid "Posts per page"
 msgstr ""
 
-msgid "Posts: {posts} · Pages: {pages} · Media: {media} · Menus: {menus}"
+msgid "Posts: {posts}"
+msgstr ""
+
+msgid "Preparation check"
+msgstr ""
+
+msgid "Preparation check passed"
 msgstr ""
 
 msgid "Prepare and publish"
@@ -463,7 +571,13 @@ msgstr ""
 msgid "Preparing download…"
 msgstr ""
 
-msgid "Private"
+msgid "Previous"
+msgstr ""
+
+msgid "Privacy Policy"
+msgstr ""
+
+msgid "Private repository"
 msgstr ""
 
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
@@ -475,10 +589,13 @@ msgstr ""
 msgid "Processing method saved. Prepare again before downloading or publishing."
 msgstr ""
 
-msgid "Public"
+msgid "Processing this publishing data needs more available PHP memory. There is no automatic switch to Files. On Linux, select Files and prepare again, or ask your host to review PHP memory."
 msgstr ""
 
 msgid "Public access to this REST API is restricted."
+msgstr ""
+
+msgid "Public repository"
 msgstr ""
 
 msgid "Publication cancelled. The branch was not updated."
@@ -496,7 +613,7 @@ msgstr ""
 msgid "Publication paused. Continue to retry the remaining steps."
 msgstr ""
 
-msgid "Publication result"
+msgid "Publication status"
 msgstr ""
 
 msgid "Publish"
@@ -520,10 +637,49 @@ msgstr ""
 msgid "Published to GitHub."
 msgstr ""
 
+msgid "Publishes WXR as one XML file. Publication may be limited by file size or server resources."
+msgstr ""
+
+msgid "Publishes WXR in split format."
+msgstr ""
+
 msgid "Publishing GitHub repository URL"
 msgstr ""
 
+msgid "Publishing blocked"
+msgstr ""
+
 msgid "Publishing branch"
+msgstr ""
+
+msgid "Publishing data"
+msgstr ""
+
+msgid "Publishing data exceeds the 8 MiB limit for XML and settings combined or an encoded upload. There is no automatic switch to Files. On Linux, select Files and prepare again."
+msgstr ""
+
+msgid "Publishing data exceeds the supported split-file limits. Review your publishing settings or contact support before trying again."
+msgstr ""
+
+msgid "Publishing data files will be updated together in one commit."
+msgstr ""
+
+msgid "Publishing data includes only published posts and pages without a password."
+msgstr ""
+
+msgid "Publishing data inputs must be regular files, not directories, symlinks or submodules."
+msgstr ""
+
+msgid "Publishing data is too large for a single GitHub file. Select Automatic or Split XML, then prepare again."
+msgstr ""
+
+msgid "Publishing data processing"
+msgstr ""
+
+msgid "Publishing data size"
+msgstr ""
+
+msgid "Publishing data size limit exceeded."
 msgstr ""
 
 msgid "Publishing destination"
@@ -538,10 +694,10 @@ msgstr ""
 msgid "Publishing to GitHub…"
 msgstr ""
 
-msgid "Reading settings"
+msgid "Questions, bug reports, or feature ideas?"
 msgstr ""
 
-msgid "Ready to publish to {repository} ({branch})."
+msgid "Reading settings"
 msgstr ""
 
 msgid "Refresh status"
@@ -574,7 +730,7 @@ msgstr ""
 msgid "Repository visibility"
 msgstr ""
 
-msgid "Repository, branch or required export files not found. Check access and the starter input files."
+msgid "Repository, branch or required publishing data files not found. Check access and the starter input files."
 msgstr ""
 
 msgid "Republish options"
@@ -643,10 +799,13 @@ msgstr ""
 msgid "Select classic WordPress menus to publish. Menu IDs connect these selections to your static site theme."
 msgstr ""
 
-msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML with a compatible starter, or ask your host to increase PHP memory, then prepare again."
+msgid "Sending this single XML file needs more PHP memory. Select Automatic or Split XML, or ask your host to increase PHP memory, then prepare again."
 msgstr ""
 
 msgid "Set <strong>Contents</strong> to <strong>Read and write</strong>."
+msgstr ""
+
+msgid "Set up a GitHub repository using the WXR starter template."
 msgstr ""
 
 msgid "Set up a WXR starter repository"
@@ -662,6 +821,9 @@ msgid "Settings sections"
 msgstr ""
 
 msgid "Settings take effect immediately after saving."
+msgstr ""
+
+msgid "Share them on GitHub Issues"
 msgstr ""
 
 msgid "Show WordPress comments on the static site"
@@ -683,6 +845,9 @@ msgid "Signup page URL"
 msgstr ""
 
 msgid "Single XML"
+msgstr ""
+
+msgid "Single XML file"
 msgstr ""
 
 msgid "Site"
@@ -712,7 +877,10 @@ msgstr ""
 msgid "Split XML"
 msgstr ""
 
-msgid "Start with the WXR starter template. Publishing updates its export inputs; compatible starters automatically use split files for large exports. Keep your own settings in wxr-import-base.override.json."
+msgid "Split XML files: {parts}"
+msgstr ""
+
+msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
 msgstr ""
 
 msgid "Static site URL"
@@ -721,13 +889,7 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
-msgstr ""
-
-msgid "Temporary files (default)"
-msgstr ""
-
-msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
+msgid "Temporary storage for publishing data is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
 msgstr ""
 
 msgid "Test connection"
@@ -757,19 +919,13 @@ msgstr ""
 msgid "The download is ready. Check your browser downloads."
 msgstr ""
 
-msgid "The export files will be updated together in one commit."
-msgstr ""
-
-msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
-msgstr ""
-
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr ""
 
 msgid "The preparation is invalid. Prepare again."
 msgstr ""
 
-msgid "The repository contains incomplete or modified split export files. Review the starter input files and restore a complete published export before preparing again."
+msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
 msgstr ""
 
 msgid "The repository visibility changed after preparation. Prepare again and review its visibility before publishing."
@@ -808,37 +964,22 @@ msgstr ""
 msgid "There is not enough time left on the server to complete this request. Ask your host to review the request time limit, then prepare again."
 msgstr ""
 
-msgid "These values are read from WordPress when preparing publishing data."
+msgid "These details are unavailable. Prepare again, or download the WXR to inspect the publishing data."
+msgstr ""
+
+msgid "These details belong to the last preparation. Prepare again to include later changes."
 msgstr ""
 
 msgid "This WordPress installation: %s."
 msgstr ""
 
-msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
-msgstr ""
-
-msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
-msgstr ""
-
-msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
-msgstr ""
-
-msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
-msgstr ""
-
-msgid "This export will be published as a single XML file."
-msgstr ""
-
-msgid "This export will be published in {parts} parts. Your starter will build them as one site. XML downloads remain a single file."
-msgstr ""
-
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr ""
 
-msgid "This publication replaces the single XML file with split export files."
+msgid "This publication replaces the single XML file with split files."
 msgstr ""
 
-msgid "This publication replaces the split export files with one XML file."
+msgid "This publication replaces the split files with one XML file."
 msgstr ""
 
 msgid "This removes the token stored in this plugin. Register a token again to publish to GitHub."
@@ -868,9 +1009,6 @@ msgstr ""
 msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
 msgstr ""
 
-msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
-msgstr ""
-
 msgid "This version supports single-site WordPress only."
 msgstr ""
 
@@ -884,6 +1022,9 @@ msgid "Title"
 msgstr ""
 
 msgid "To allow comment writing, save a static site URL in the Site section. Request origins are checked against this address."
+msgstr ""
+
+msgid "To publish split XML, update the WXR starter. Or select Single XML and prepare again."
 msgstr ""
 
 msgid "Too many comment requests. Please try again shortly."
@@ -902,9 +1043,6 @@ msgid "Unconfirmed"
 msgstr ""
 
 msgid "Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong>."
-msgstr ""
-
-msgid "Unfinished publication"
 msgstr ""
 
 msgid "Unknown author"
@@ -934,6 +1072,9 @@ msgstr ""
 msgid "Use up to 50 complete source and destination URL pairs."
 msgstr ""
 
+msgid "Uses the larger of the combined files and each encoded upload. This is not PHP RAM usage."
+msgstr ""
+
 msgid "Verifying publishing data…"
 msgstr ""
 
@@ -943,6 +1084,15 @@ msgstr ""
 msgid "View commit"
 msgstr ""
 
+msgid "View items"
+msgstr ""
+
+msgid "View media information: {media}"
+msgstr ""
+
+msgid "View menus: {menus}"
+msgstr ""
+
 msgid "View on static site"
 msgstr ""
 
@@ -950,6 +1100,9 @@ msgid "View saved publishing repository"
 msgstr ""
 
 msgid "WXR publishing format"
+msgstr ""
+
+msgid "WXR: {wxr} · Build settings: {base}"
 msgstr ""
 
 msgid "Wait for WordPress to finish saving your post."
@@ -982,10 +1135,16 @@ msgstr ""
 msgid "Working…"
 msgstr ""
 
+msgid "Your starter builds these files as one site. WXR downloads remain a single XML file."
+msgstr ""
+
 msgid "ZeroPress"
 msgstr ""
 
 msgid "ZeroPress Static"
+msgstr ""
+
+msgid "ZeroPress Static does not send your site's content or usage statistics to ZeroPress."
 msgstr ""
 
 msgid "ZeroPress Static – Static Site Publisher"
@@ -995,4 +1154,13 @@ msgid "ZeroPress publish"
 msgstr ""
 
 msgid "{count} posts or pages have bodies of 256 KiB or more (largest: {bytes} UTF-8 bytes). Consider splitting them into smaller posts. Example IDs: {ids}."
+msgstr ""
+
+msgid "{media}"
+msgstr ""
+
+msgid "{percent}% of {limit}"
+msgstr ""
+
+msgid "{start}–{end} of {total}"
 msgstr ""
