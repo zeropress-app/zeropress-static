@@ -211,7 +211,7 @@
 			el('div', { className: 'zpsp-actions' },
 				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'secondary' : 'primary'), disabled: !!busy || !!gate, onClick: () => execute('prepare') }, message('editor_prepare')),
 				el('button', { type: 'button', className: 'button button-' + (canPublish ? 'primary' : 'secondary'), disabled: !!busy || !!gate || !canPublish, onClick: () => execute('publish') }, message('confirm_title')),
-				publicationControl
+				publicationControl && (publicationControl.pause || publicationControl.pausing)
 					? el('button', { type: 'button', className: 'button button-secondary', disabled: !publicationControl.pause, onClick: () => publicationControl.pause?.() }, message(publicationControl.pausing ? 'session_pausing' : 'session_pause'))
 					: el('button', { type: 'button', className: 'button button-secondary', disabled: !!busy, onClick: close }, message('editor_close')))));
 	}

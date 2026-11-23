@@ -16,6 +16,9 @@ msgstr "Une clé secrète Turnstile est enregistrée."
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "Le contenu d’un article ou d’une page dépasse la limite de 4 MiB. Divisez ou raccourcissez le contenu, puis préparez à nouveau les données."
 
+msgid "A processing-method change is in progress or was interrupted. Reload settings and save the processing method again before preparing."
+msgstr "Un changement de mode de traitement est en cours ou a été interrompu. Rechargez les réglages et enregistrez à nouveau le mode avant de préparer."
+
 msgid "A publication is in progress. Continue it here if the previous page was closed."
 msgstr "Une publication est en cours. Si vous avez fermé la page précédente, vous pouvez continuer ici."
 
@@ -48,6 +51,9 @@ msgstr "Autoriser l’envoi de commentaires sur le site statique"
 
 msgid "Allow search engine crawling"
 msgstr "Autoriser l’exploration par les moteurs de recherche"
+
+msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
+msgstr "Une publication inachevée utilise le mode de traitement précédent. Résolvez-la avant de changer de mode. Un résultat incertain peut toujours être vérifié."
 
 msgid "Another publication is in progress."
 msgstr "Une autre publication est en cours."
@@ -96,6 +102,9 @@ msgstr "Vérifiez vos réglages GitHub avant de publier."
 
 msgid "Checking the GitHub repository…"
 msgstr "Vérification du dépôt GitHub…"
+
+msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
+msgstr "Choisissez comment ce serveur WordPress prépare, télécharge et publie les exports. Le format de publication WXR détermine séparément les fichiers envoyés à GitHub."
 
 msgid "Click “Save publishing target” to save these changes."
 msgstr "Cliquez sur « Enregistrer la cible de publication » pour enregistrer ces modifications."
@@ -277,8 +286,14 @@ msgstr "Exemples : %1$s · %2$s · %3$s"
 msgid "Export inputs must be regular files, not directories, symlinks or submodules."
 msgstr "Les entrées d’export doivent être des fichiers ordinaires, pas des dossiers, des liens symboliques ou des sous-modules."
 
+msgid "Export processing"
+msgstr "Traitement des exports"
+
 msgid "Files to update"
 msgstr "Fichiers à mettre à jour"
+
+msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
+msgstr "Terminez ou annulez la publication en cours avant de changer de mode. Si le résultat est incertain, vérifiez-le d’abord."
 
 msgid "Generate RSS feed"
 msgstr "Générer un flux RSS"
@@ -337,6 +352,9 @@ msgstr "Informations provenant de WordPress"
 msgid "Learn more about API protection"
 msgstr "En savoir plus sur la protection de l’API"
 
+msgid "Learn more about export processing"
+msgstr "En savoir plus sur le traitement des exports"
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr "Laissez ce champ vide pour omettre <code>sitemap.xml</code>, <code>feed.xml</code> et la balise <code>&lt;link rel=\"canonical\"&gt;</code> indiquant l’URL préférée de la page."
 
@@ -357,6 +375,18 @@ msgstr "Remplacements des URL des médias"
 
 msgid "Media URLs are replaced according to your rules."
 msgstr "Les URL des médias sont remplacées selon vos règles."
+
+msgid "Memory (small sites)"
+msgstr "Mémoire (petits sites)"
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
+msgstr "Le traitement en mémoire prend uniquement en charge un seul XML. Sélectionnez XML unique dans le format de publication WXR, ou Fichiers temporaires sous Linux pour une publication fractionnée."
+
+msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
+msgstr "Le traitement en mémoire utilise un seul XML, y compris en mode Automatique. Pour remplacer un export fractionné, sélectionnez XML unique. Le XML fractionné nécessite les fichiers temporaires."
+
+msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
+msgstr "Mémoire : publie un seul XML sans fichiers temporaires d’export. La pause et la reprise de la publication ne sont pas disponibles."
 
 msgid "Menu ID"
 msgstr "Identifiant du menu"
@@ -433,11 +463,20 @@ msgstr "Préparation du téléchargement…"
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "Le stockage temporaire privé est indisponible. Demandez à votre hébergeur de vérifier ses autorisations et le stockage partagé, puis réessayez."
 
+msgid "Processing method"
+msgstr "Mode de traitement"
+
+msgid "Processing method saved. Prepare again before downloading or publishing."
+msgstr "Mode de traitement enregistré. Préparez à nouveau avant de télécharger ou de publier."
+
 msgid "Public access to this REST API is restricted."
 msgstr "L’accès public à cette API REST est restreint."
 
 msgid "Publication cancelled. The branch was not updated."
 msgstr "Publication annulée. La branche n’a pas été mise à jour."
+
+msgid "Publication is running in one request. Refresh the status if its response was lost."
+msgstr "La publication s’effectue en une seule requête. Actualisez l’état si la réponse a été perdue."
 
 msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
 msgstr "La publication doit être vérifiée. Utilisez Vérifier le résultat et ne publiez pas à nouveau tant que le résultat n’est pas confirmé."
@@ -535,6 +574,9 @@ msgstr "Restreindre l’accès public à l’API REST"
 msgid "Review prepared data"
 msgstr "Vérifier les données préparées"
 
+msgid "Safe publication locking is unavailable. Ask your host to check the WordPress database connection requirements in the publishing guide."
+msgstr "Le verrouillage sécurisé de la publication n’est pas disponible. Demandez à votre hébergeur de vérifier les exigences de connexion à la base de données WordPress dans le guide de publication."
+
 msgid "Save API protection settings"
 msgstr "Enregistrer les réglages de protection de l’API"
 
@@ -561,6 +603,9 @@ msgstr "Enregistrer les réglages des menus"
 
 msgid "Save newsletter settings"
 msgstr "Enregistrer les réglages de la lettre d’information"
+
+msgid "Save processing method"
+msgstr "Enregistrer le mode de traitement"
 
 msgid "Save publishing target"
 msgstr "Enregistrer la cible de publication"
@@ -667,6 +712,12 @@ msgstr "S’inscrire"
 msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
 msgstr "Le stockage temporaire d’export est indisponible. Demandez à votre hébergeur de vérifier l’espace disque et les droits sur les fichiers temporaires PHP, puis préparez à nouveau les données."
 
+msgid "Temporary files (default)"
+msgstr "Fichiers temporaires (par défaut)"
+
+msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
+msgstr "Fichiers temporaires : utilise un stockage privé et prend en charge les exports plus volumineux ainsi que la pause et la reprise de la publication."
+
 msgid "Test connection"
 msgstr "Tester la connexion"
 
@@ -685,6 +736,9 @@ msgstr "L’URL de l’API REST doit se terminer par /wp-json/wp/v2."
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr "La fenêtre de confirmation n’a pas pu être chargée. Rechargez cette page et réessayez."
 
+msgid "The database connection changed during publication. Check the publication status before trying again."
+msgstr "La connexion à la base de données a changé pendant la publication. Vérifiez l’état de la publication avant de réessayer."
+
 msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
 msgstr "Le téléchargement n’a pas pu être terminé, donc aucun fichier n’a été enregistré. Réessayez. Si le problème persiste, demandez à votre hébergeur de vérifier la connexion et les délais des requêtes."
 
@@ -693,6 +747,9 @@ msgstr "Le téléchargement est prêt. Consultez les téléchargements de votre 
 
 msgid "The export files will be updated together in one commit."
 msgstr "Les fichiers d’export seront actualisés ensemble dans un seul commit."
+
+msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
+msgstr "La limite en mémoire est de 8 MiB pour le XML et les réglages réunis, et de 8 MiB par envoi encodé. Les ressources du serveur peuvent limiter des exports plus petits. Aucun passage automatique aux fichiers temporaires n’a lieu."
 
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "Les données préparées ont expiré ou les réglages ont changé. Préparez à nouveau les données."
@@ -718,6 +775,12 @@ msgstr "Les clés enregistrées ont été supprimées et Cloudflare Turnstile es
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr "Le jeton enregistré ne peut pas être déchiffré. Supprimez-le et enregistrez-le à nouveau ; les clés secrètes de WordPress ont peut-être changé."
 
+msgid "The server configuration fixes the processing method to Memory."
+msgstr "La configuration du serveur impose le traitement en mémoire."
+
+msgid "The server fixes the processing method to Memory. This setting cannot be changed here."
+msgstr "Le serveur impose le traitement en mémoire. Ce réglage ne peut pas être modifié ici."
+
 msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
 msgstr "La limite de temps du serveur a interrompu cette requête. Demandez à votre hébergeur de vérifier la limite de temps des requêtes, puis préparez à nouveau les données."
 
@@ -736,11 +799,17 @@ msgstr "Ces valeurs sont lues depuis WordPress lors de la préparation des donn�
 msgid "This WordPress installation: %s."
 msgstr "Cette installation WordPress : %s."
 
+msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
+msgstr "Cet export dépasse la limite en mémoire de 8 MiB pour le XML et les réglages réunis ou un envoi encodé. Sous Linux, sélectionnez Fichiers temporaires et préparez à nouveau."
+
 msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
 msgstr "Cet export dépasse les limites prises en charge pour les exports fractionnés. Vérifiez les paramètres d’export ou contactez l’assistance avant de réessayer."
 
 msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
 msgstr "Cette exportation est trop volumineuse pour un seul fichier GitHub. Sélectionnez Automatique ou XML fractionné avec un modèle de démarrage compatible, puis préparez à nouveau les données."
+
+msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
+msgstr "Cet export nécessite davantage de mémoire PHP disponible. Sous Linux, sélectionnez Fichiers temporaires et préparez à nouveau, ou demandez à votre hébergeur de vérifier la mémoire PHP."
 
 msgid "This export will be published as a single XML file."
 msgstr "Cette exportation sera publiée sous forme d’un seul fichier XML."
@@ -777,6 +846,9 @@ msgstr "Cette section a été enregistrée. Les modifications d’affichage des 
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "Cette section a été enregistrée. Les modifications d’affichage des commentaires prendront effet après la prochaine publication ; les réglages d’envoi s’appliquent aux nouvelles requêtes de commentaires."
+
+msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
+msgstr "Cette publication en une seule requête s’est arrêtée. Annulez-la et préparez à nouveau les données. Les envois ne peuvent pas être repris."
 
 msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
 msgstr "Ce modèle de démarrage ne prend pas en charge le XML fractionné. Mettez à jour l’ensemble du modèle WXR ou sélectionnez Automatique ou XML unique, puis préparez à nouveau les données."
@@ -870,6 +942,9 @@ msgstr "Lorsque cette option est décochée, <code>Disallow: /</code> est ajout�
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
 msgstr "Lorsque l’envoi est désactivé, les commentaires sont uniquement affichés. Vos réglages de commentaires WordPress restent applicables."
+
+msgid "Windows supports Memory processing only."
+msgstr "Windows prend uniquement en charge le traitement en mémoire."
 
 msgid "WordPress REST API URL"
 msgstr "URL de l’API REST WordPress"

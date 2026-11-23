@@ -17,6 +17,13 @@ final class Settings {
 		return array_merge( self::defaults(), is_array( $value ) ? $value : array() );
 	}
 
+	/** Re-read after acquiring exclusion; another request may have changed settings. */
+	public static function fresh(): array {
+		wp_cache_delete( self::OPTION, 'options' );
+		wp_cache_delete( 'notoptions', 'options' );
+		return self::read();
+	}
+
 	/** Default values for missing settings. */
 	private static function defaults(): array {
 		return array(
@@ -24,6 +31,7 @@ final class Settings {
 			'repository'               => '',
 			'branch'                   => 'main',
 			'wxr_publish_format'       => 'auto',
+			'publication_backend'      => 'files',
 			'public_url'               => '',
 			'allow_indexing'           => false,
 			'media_rules'              => array(),
@@ -93,6 +101,7 @@ final class Settings {
 				'api'         => array( 'restrict_public_rest_api' ),
 				'turnstile'   => array( 'comment_verification', 'turnstile_keys' ),
 				'github'      => array( 'repository', 'branch', 'wxr_publish_format' ),
+				'processing'  => array( 'publication_backend' ),
 			);
 			if ( ! isset( $sections[ $section ] ) || array_diff( array_keys( $input ), array_merge( array( 'revision' ), $sections[ $section ] ) ) ) {
 				throw new Failure( 'INVALID_SETTINGS' );
@@ -100,6 +109,7 @@ final class Settings {
 			// Merge only this panel into the same revision used by the atomic save.
 			$input = array_merge( $current, $input );
 		}
+		$input      = array_merge( array( 'publication_backend' => $current['publication_backend'] ), $input );
 		$input      = array_merge( self::defaults(), $input );
 		$newsletter = array( 'newsletter_enabled' => self::boolean( $input, 'newsletter_enabled' ) );
 		foreach ( array(
@@ -129,6 +139,18 @@ final class Settings {
 		$publish_format = $input['wxr_publish_format'];
 		if ( ! in_array( $publish_format, array( 'auto', 'single', 'bundle' ), true ) ) {
 			throw new Failure( 'INVALID_SETTINGS' );
+		}
+		$backend = $input['publication_backend'];
+		if ( ! in_array( $backend, array( 'files', 'memory' ), true ) ) {
+			throw new Failure( 'INVALID_SETTINGS' );
+		}
+		$runtime = Publication_Runtime::describe( $input );
+		if ( $runtime['fixed'] && ( $backend !== $current['publication_backend'] || 'processing' === $section ) ) {
+			throw new Failure( 'PUBLICATION_BACKEND_FIXED', 409 );
+		}
+		if ( 'memory' === $runtime['backend'] && 'bundle' === $publish_format &&
+			( 'github' === $section || $backend !== $current['publication_backend'] || $publish_format !== $current['wxr_publish_format'] ) ) {
+			throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
 		}
 		$public_url       = self::origin( self::string( $input, 'public_url' ) );
 		$api_url          = self::api_url( self::string( $input, 'comments_api_url' ) );
@@ -181,6 +203,7 @@ final class Settings {
 				'repository'               => $repository,
 				'branch'                   => $branch,
 				'wxr_publish_format'       => $publish_format,
+				'publication_backend'      => $backend,
 				'public_url'               => $public_url,
 				'allow_indexing'           => self::boolean( $input, 'allow_indexing' ),
 				'media_rules'              => $rules,
@@ -212,9 +235,22 @@ final class Settings {
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
 	public static function save( array $input, ?string $section = null ): array {
+		$current = self::fresh();
 		$stored  = get_option( self::OPTION, false );
-		$current = self::read();
-		return self::persist( self::draft( $input, $current, $section ), $stored );
+		$next    = self::draft( $input, $current, $section );
+		if ( 'processing' === $section || $next['publication_backend'] !== $current['publication_backend'] ) {
+			if ( ! current_user_can( 'manage_options' ) || is_multisite() ) {
+				throw new Failure( 'FORBIDDEN', 403 );
+			}
+			$store = new Publication_Store();
+			if ( $next['publication_backend'] === $current['publication_backend'] && ! isset( $store->data['backend_switch'] ) ) {
+				return self::public_view( $current );
+			}
+			return $store->change_backend(
+				static fn( $guard ) => self::persist( $next, $stored, $guard )
+			);
+		}
+		return self::persist( $next, $stored );
 	}
 
 	/**
@@ -293,14 +329,27 @@ final class Settings {
 	/**
 	 * Atomically persist a complete settings snapshot.
 	 *
-	 * @param array       $next Validated next state.
-	 * @param array|false $stored Previously stored option used for comparison.
+	 * @param array                  $next Validated next state.
+	 * @param array|false            $stored Previously stored option used for comparison.
+	 * @param Publication_Store|null $guard Optional exclusive backend transition.
 	 * @throws Failure If another request changed the option or the write failed.
 	 */
-	private static function persist( array $next, $stored ): array {
+	private static function persist( array $next, $stored, ?Publication_Store $guard = null ): array {
 		global $wpdb;
 		$next['revision'] = wp_generate_uuid4();
-		if ( false === $stored ) {
+		if ( $guard ) {
+			$predicate = $guard->settings_predicate();
+			if ( false === $stored ) {
+				$query = $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) SELECT %s, %s, 'no' FROM {$wpdb->options} AS control WHERE ", self::OPTION, maybe_serialize( $next ) ) . $predicate;
+			} else {
+				$query = $wpdb->prepare( "UPDATE {$wpdb->options} AS target INNER JOIN {$wpdb->options} AS control ON control.option_name = %s SET target.option_value = %s WHERE target.option_name = %s AND BINARY target.option_value = BINARY %s AND ", Publication_Store::OPTION, maybe_serialize( $next ), self::OPTION, maybe_serialize( $stored ) ) . $predicate;
+			}
+			// phpcs:ignore WordPress.DB -- Prepared values and a connection-owned journal reservation.
+			$saved = 1 === $wpdb->query( $query );
+			$guard->check_lock();
+			wp_cache_delete( self::OPTION, 'options' );
+			wp_cache_delete( 'notoptions', 'options' );
+		} elseif ( false === $stored ) {
 			$saved = add_option( self::OPTION, $next, '', false );
 		} else {
 			// Atomic revision protection is not provided by update_option().

@@ -16,6 +16,9 @@ msgstr "Turnstile Secret Key が登録されています。"
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "投稿または固定ページの本文が 4 MiB の上限を超えています。本文を分割または短縮してから、再度準備してください。"
 
+msgid "A processing-method change is in progress or was interrupted. Reload settings and save the processing method again before preparing."
+msgstr "処理方式の変更が進行中、または中断されています。設定を再読み込みし、処理方式を再保存してから準備してください。"
+
 msgid "A publication is in progress. Continue it here if the previous page was closed."
 msgstr "公開処理が進行中です。前のページを閉じた場合は、ここから続行できます。"
 
@@ -48,6 +51,9 @@ msgstr "静的サイトでコメントの投稿を許可"
 
 msgid "Allow search engine crawling"
 msgstr "検索エンジンのクロールを許可"
+
+msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
+msgstr "未完了の公開が以前の処理方式を使用しています。方式を変更する前にその公開を解決してください。不確かな結果は引き続き確認できます。"
 
 msgid "Another publication is in progress."
 msgstr "別の公開処理が進行中です。"
@@ -96,6 +102,9 @@ msgstr "発行する前に GitHub の設定を確認してください。"
 
 msgid "Checking the GitHub repository…"
 msgstr "GitHub リポジトリを確認中…"
+
+msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
+msgstr "この WordPress サーバーでエクスポートを準備・ダウンロード・公開する際の処理方式を選択します。GitHub に送るファイルの構成は WXR の公開形式で別途選択します。"
 
 msgid "Click “Save publishing target” to save these changes."
 msgstr "「発行先を保存」をクリックして変更を保存してください。"
@@ -277,8 +286,14 @@ msgstr "例: %1$s · %2$s · %3$s"
 msgid "Export inputs must be regular files, not directories, symlinks or submodules."
 msgstr "エクスポート入力は、ディレクトリ、シンボリックリンク、サブモジュールではなく通常のファイルである必要があります。"
 
+msgid "Export processing"
+msgstr "エクスポートの処理方式"
+
 msgid "Files to update"
 msgstr "更新するファイル"
+
+msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
+msgstr "処理方式を変更する前に、現在の公開を完了またはキャンセルしてください。結果が不確かな場合は、先に結果を確認してください。"
 
 msgid "Generate RSS feed"
 msgstr "RSS フィードを生成"
@@ -337,6 +352,9 @@ msgstr "WordPress の情報"
 msgid "Learn more about API protection"
 msgstr "API 保護について詳しく見る"
 
+msgid "Learn more about export processing"
+msgstr "エクスポートの処理方式について詳しく見る"
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr "空欄にすると、<code>sitemap.xml</code>、<code>feed.xml</code>、ページの正規 URL を指定する <code>&lt;link rel=\"canonical\"&gt;</code> タグは生成されません。"
 
@@ -357,6 +375,18 @@ msgstr "メディア URL の置換"
 
 msgid "Media URLs are replaced according to your rules."
 msgstr "設定したルールに従ってメディア URL を置き換えます。"
+
+msgid "Memory (small sites)"
+msgstr "メモリ（小規模サイト）"
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
+msgstr "メモリ方式では単一 XML のみ対応しています。WXR の公開形式で単一 XML を選択してください。Linux で分割公開する場合は一時ファイルを選択してください。"
+
+msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
+msgstr "メモリ方式では「自動」も単一 XML を使用します。既存の分割エクスポートを置き換えるには単一 XML を選択してください。分割 XML には一時ファイル方式が必要です。"
+
+msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
+msgstr "メモリ：一時エクスポートファイルを作らずに単一 XML を公開します。公開の一時停止・再開はできません。"
 
 msgid "Menu ID"
 msgstr "メニュー ID"
@@ -433,11 +463,20 @@ msgstr "ダウンロードを準備中…"
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "非公開の一時ストレージを利用できません。ホスティング事業者に権限と共有ストレージの確認を依頼し、再試行してください。"
 
+msgid "Processing method"
+msgstr "処理方式"
+
+msgid "Processing method saved. Prepare again before downloading or publishing."
+msgstr "処理方式を保存しました。ダウンロードや公開の前に再度準備してください。"
+
 msgid "Public access to this REST API is restricted."
 msgstr "この REST API への公開アクセスは制限されています。"
 
 msgid "Publication cancelled. The branch was not updated."
 msgstr "公開をキャンセルしました。ブランチは更新されていません。"
+
+msgid "Publication is running in one request. Refresh the status if its response was lost."
+msgstr "1 回のリクエストで公開処理を実行中です。応答を受信できなかった場合は、状態を更新してください。"
 
 msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
 msgstr "公開結果の確認が必要です。「公開結果を確認」を選択してください。結果が確認できるまで再公開しないでください。"
@@ -535,6 +574,9 @@ msgstr "公開 REST API へのアクセスを制限"
 msgid "Review prepared data"
 msgstr "準備したデータを確認"
 
+msgid "Safe publication locking is unavailable. Ask your host to check the WordPress database connection requirements in the publishing guide."
+msgstr "安全な公開ロックを利用できません。ホスティング管理者に、公開ガイドに記載されている WordPress データベース接続の要件を確認してもらってください。"
+
 msgid "Save API protection settings"
 msgstr "API 保護設定を保存"
 
@@ -561,6 +603,9 @@ msgstr "メニュー設定を保存"
 
 msgid "Save newsletter settings"
 msgstr "ニュースレター設定を保存"
+
+msgid "Save processing method"
+msgstr "処理方式を保存"
 
 msgid "Save publishing target"
 msgstr "発行先を保存"
@@ -667,6 +712,12 @@ msgstr "登録する"
 msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
 msgstr "エクスポート用の一時保存領域を利用できません。ホスティング会社にディスク空き容量とPHP一時ファイルの権限を確認してもらい、もう一度準備してください。"
 
+msgid "Temporary files (default)"
+msgstr "一時ファイル（既定）"
+
+msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
+msgstr "一時ファイル：非公開の保存領域を使用し、大きなエクスポートや公開の一時停止・再開に対応します。"
+
 msgid "Test connection"
 msgstr "接続を確認"
 
@@ -685,6 +736,9 @@ msgstr "REST API URL の末尾は /wp-json/wp/v2 にしてください。"
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr "確認画面を読み込めませんでした。このページを再読み込みしてから、もう一度お試しください。"
 
+msgid "The database connection changed during publication. Check the publication status before trying again."
+msgstr "公開処理中にデータベース接続が変わりました。再試行する前に公開状態を確認してください。"
+
 msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
 msgstr "ダウンロードを完了できなかったため、ファイルは保存されませんでした。もう一度ダウンロードしてください。問題が続く場合は、接続状況とリクエストの制限時間をホスティング事業者に確認してください。"
 
@@ -693,6 +747,9 @@ msgstr "ダウンロードの準備ができました。ブラウザーのダウ
 
 msgid "The export files will be updated together in one commit."
 msgstr "エクスポートファイルは1つのコミットでまとめて更新されます。"
+
+msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
+msgstr "メモリ方式では XML と設定の合計、およびエンコード済みの各アップロードがそれぞれ 8 MiB 以下である必要があります。サーバーのリソースによっては、より小さなエクスポートも制限されます。一時ファイル方式には自動で切り替わりません。"
 
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "準備したデータの有効期限が切れたか、設定が変更されました。もう一度準備してください。"
@@ -718,6 +775,12 @@ msgstr "保存済みのキーを削除し、Cloudflare Turnstile を無効にし
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr "保存済みのトークンを復号できません。削除して再登録してください。WordPress の認証用キーが変更された可能性があります。"
 
+msgid "The server configuration fixes the processing method to Memory."
+msgstr "サーバー設定により処理方式がメモリに固定されています。"
+
+msgid "The server fixes the processing method to Memory. This setting cannot be changed here."
+msgstr "サーバーによりメモリ方式に固定されています。この画面では変更できません。"
+
 msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
 msgstr "サーバーの処理時間制限により、このリクエストを完了できませんでした。ホスティング事業者にリクエストの処理時間制限を確認してから、再度準備してください。"
 
@@ -736,11 +799,17 @@ msgstr "発行データの準備時に、これらの値を WordPress から読�
 msgid "This WordPress installation: %s."
 msgstr "この WordPress のアドレス: %s。"
 
+msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
+msgstr "XML と設定の合計、またはエンコード済みアップロードがメモリ方式の 8 MiB 制限を超えています。Linux では一時ファイルを選択して再度準備してください。"
+
 msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
 msgstr "分割エクスポートの対応上限を超えています。エクスポート設定を確認するか、サポートに相談してから再試行してください。"
 
 msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
 msgstr "このエクスポートは、GitHub の単一ファイルとして公開するには大きすぎます。対応するスターターで「自動」または「分割 XML」を選択し、もう一度準備してください。"
+
+msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
+msgstr "このエクスポートにはより多くの PHP 空きメモリが必要です。Linux では一時ファイルを選択して再度準備するか、ホスティング管理者に PHP メモリの確認を依頼してください。"
 
 msgid "This export will be published as a single XML file."
 msgstr "このエクスポートは単一の XML ファイルとして公開されます。"
@@ -777,6 +846,9 @@ msgstr "このセクションの設定を保存しました。コメント表示
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "このセクションの設定を保存しました。コメント表示の変更は次回の発行後に反映されます。投稿設定は新しいコメントリクエストに適用されます。"
+
+msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
+msgstr "単一リクエストの公開処理が停止しました。この公開をキャンセルして、もう一度準備してください。アップロードの途中から再開することはできません。"
 
 msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
 msgstr "このスターターは分割 XML に対応していません。WXR スターター全体を更新するか、「自動」または「単一 XML」を選択し、もう一度準備してください。"
@@ -870,6 +942,9 @@ msgstr "チェックを外すと、静的サイトの <code>robots.txt</code> �
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
 msgstr "投稿を無効にすると、コメントの表示のみになります。WordPress の既存のコメント設定も適用されます。"
+
+msgid "Windows supports Memory processing only."
+msgstr "Windows ではメモリ方式のみ対応しています。"
 
 msgid "WordPress REST API URL"
 msgstr "WordPress REST API URL"

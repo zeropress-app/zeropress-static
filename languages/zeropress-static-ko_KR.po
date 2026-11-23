@@ -16,6 +16,9 @@ msgstr "Turnstile Secret Key가 등록되어 있습니다."
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr "글 또는 페이지 본문이 4 MiB 한도를 초과했습니다. 본문을 나누거나 줄인 후 다시 준비하세요."
 
+msgid "A processing-method change is in progress or was interrupted. Reload settings and save the processing method again before preparing."
+msgstr "처리 방식 변경이 진행 중이거나 중단되었습니다. 설정을 새로고침하고 처리 방식을 다시 저장한 뒤 준비하세요."
+
 msgid "A publication is in progress. Continue it here if the previous page was closed."
 msgstr "진행 중인 발행이 있습니다. 이전 페이지를 닫았다면 여기에서 계속할 수 있습니다."
 
@@ -48,6 +51,9 @@ msgstr "정적 사이트에서 댓글 작성 허용"
 
 msgid "Allow search engine crawling"
 msgstr "검색엔진 크롤링 허용"
+
+msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
+msgstr "완료되지 않은 발행이 이전 처리 방식을 사용하고 있습니다. 해당 발행을 처리한 뒤 방식을 변경하세요. 불확실한 결과는 계속 확인할 수 있습니다."
 
 msgid "Another publication is in progress."
 msgstr "다른 발행이 진행 중입니다."
@@ -96,6 +102,9 @@ msgstr "GitHub 발행 설정을 확인해 주세요."
 
 msgid "Checking the GitHub repository…"
 msgstr "GitHub 저장소를 확인하고 있습니다…"
+
+msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
+msgstr "이 WordPress 서버가 내보내기를 준비·다운로드·발행할 때 사용할 처리 방식을 선택합니다. GitHub에 보낼 파일 구성은 WXR 발행 형식에서 별도로 선택합니다."
 
 msgid "Click “Save publishing target” to save these changes."
 msgstr "변경한 내용을 저장하려면 ‘발행 대상 저장’을 클릭하세요."
@@ -277,8 +286,14 @@ msgstr "예: %1$s · %2$s · %3$s"
 msgid "Export inputs must be regular files, not directories, symlinks or submodules."
 msgstr "내보내기 입력은 디렉터리, 심볼릭 링크 또는 서브모듈이 아닌 일반 파일이어야 합니다."
 
+msgid "Export processing"
+msgstr "내보내기 처리 방식"
+
 msgid "Files to update"
 msgstr "갱신할 파일"
+
+msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
+msgstr "처리 방식을 변경하려면 현재 발행을 완료하거나 취소하세요. 결과가 불확실하면 먼저 발행 결과를 확인하세요."
 
 msgid "Generate RSS feed"
 msgstr "RSS 피드 생성"
@@ -337,6 +352,9 @@ msgstr "WordPress에서 가져온 정보"
 msgid "Learn more about API protection"
 msgstr "API 보호 자세히 알아보기"
 
+msgid "Learn more about export processing"
+msgstr "내보내기 처리 방식 자세히 알아보기"
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr "비워두면 <code>sitemap.xml</code>, <code>feed.xml</code>과 페이지의 대표 주소를 지정하는 <code>&lt;link rel=\"canonical\"&gt;</code> 태그를 생성하지 않습니다."
 
@@ -357,6 +375,18 @@ msgstr "미디어 URL 치환"
 
 msgid "Media URLs are replaced according to your rules."
 msgstr "미디어 URL을 설정한 규칙에 따라 치환합니다."
+
+msgid "Memory (small sites)"
+msgstr "메모리 기반 (소규모 사이트)"
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
+msgstr "메모리 기반은 단일 XML만 지원합니다. WXR 발행 형식에서 단일 XML을 선택하세요. Linux에서 분할 발행하려면 임시 파일 기반을 선택하세요."
+
+msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
+msgstr "메모리 기반은 자동을 선택해도 단일 XML을 사용합니다. 기존 분할 내보내기를 교체하려면 단일 XML을 선택하세요. 분할 XML은 임시 파일 기반에서 지원합니다."
+
+msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
+msgstr "메모리 기반: 임시 내보내기 파일 없이 단일 XML로 발행합니다. 발행 일시정지·계속 발행은 지원하지 않습니다."
 
 msgid "Menu ID"
 msgstr "메뉴 ID"
@@ -433,11 +463,20 @@ msgstr "다운로드 준비 중…"
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr "비공개 임시 저장소를 사용할 수 없습니다. 호스팅 업체에 권한과 공유 저장소 확인을 요청한 뒤 다시 시도해 주세요."
 
+msgid "Processing method"
+msgstr "처리 방식"
+
+msgid "Processing method saved. Prepare again before downloading or publishing."
+msgstr "처리 방식을 저장했습니다. 다운로드하거나 발행하려면 다시 준비해 주세요."
+
 msgid "Public access to this REST API is restricted."
 msgstr "이 REST API에 대한 공개 접근이 제한되어 있습니다."
 
 msgid "Publication cancelled. The branch was not updated."
 msgstr "발행을 취소했습니다. 브랜치는 갱신되지 않았습니다."
+
+msgid "Publication is running in one request. Refresh the status if its response was lost."
+msgstr "하나의 요청으로 발행 중입니다. 응답이 끊겼다면 상태를 새로고침하세요."
 
 msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
 msgstr "발행 결과 확인이 필요합니다. 발행 결과 확인을 선택해 주세요. 결과가 확인되기 전에는 다시 발행하지 마세요."
@@ -535,6 +574,9 @@ msgstr "공개 REST API 제한"
 msgid "Review prepared data"
 msgstr "준비 결과 확인"
 
+msgid "Safe publication locking is unavailable. Ask your host to check the WordPress database connection requirements in the publishing guide."
+msgstr "안전한 발행 잠금을 사용할 수 없습니다. 호스팅 담당자에게 발행 가이드의 WordPress 데이터베이스 연결 요구사항을 확인해 달라고 요청하세요."
+
 msgid "Save API protection settings"
 msgstr "API 보호 설정 저장"
 
@@ -561,6 +603,9 @@ msgstr "메뉴 설정 저장"
 
 msgid "Save newsletter settings"
 msgstr "뉴스레터 설정 저장"
+
+msgid "Save processing method"
+msgstr "처리 방식 저장"
 
 msgid "Save publishing target"
 msgstr "발행 대상 저장"
@@ -667,6 +712,12 @@ msgstr "구독하기"
 msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
 msgstr "내보내기용 임시 저장 공간을 사용할 수 없습니다. 호스팅 업체에 디스크 여유 공간과 PHP 임시 파일 권한 확인을 요청한 뒤 다시 준비하세요."
 
+msgid "Temporary files (default)"
+msgstr "임시 파일 기반 (기본값)"
+
+msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
+msgstr "임시 파일 기반: 비공개 저장 공간을 사용하며, 큰 내보내기와 발행 일시정지·계속 발행을 지원합니다."
+
 msgid "Test connection"
 msgstr "연결 확인"
 
@@ -685,6 +736,9 @@ msgstr "REST API URL은 /wp-json/wp/v2로 끝나야 합니다."
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr "발행 확인창을 불러오지 못했습니다. 페이지를 새로고침한 뒤 다시 시도하세요."
 
+msgid "The database connection changed during publication. Check the publication status before trying again."
+msgstr "발행 중 데이터베이스 연결이 변경되었습니다. 다시 시도하기 전에 발행 상태를 확인하세요."
+
 msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
 msgstr "다운로드를 완료하지 못해 파일을 저장하지 않았습니다. 다시 다운로드해 주세요. 문제가 계속되면 호스팅 업체에 연결 상태와 요청 시간 제한을 확인해 달라고 요청해 주세요."
 
@@ -693,6 +747,9 @@ msgstr "다운로드가 준비되었습니다. 브라우저의 다운로드 목�
 
 msgid "The export files will be updated together in one commit."
 msgstr "내보내기 파일이 하나의 커밋으로 함께 갱신됩니다."
+
+msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
+msgstr "메모리 기반에서는 XML과 설정의 합계 및 인코딩된 각 업로드가 각각 8 MiB 이하여야 합니다. 서버 자원에 따라 더 작은 내보내기도 제한될 수 있습니다. 임시 파일 기반으로 자동 전환하지 않습니다."
 
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "준비 결과가 만료되었거나 설정이 변경되었습니다. 다시 준비하세요."
@@ -718,6 +775,12 @@ msgstr "저장된 키를 삭제하고 Cloudflare Turnstile 사용을 껐습니�
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr "저장된 토큰을 복호화할 수 없습니다. WordPress 비밀값이 변경되었을 수 있습니다. 토큰을 삭제하고 다시 등록하세요."
 
+msgid "The server configuration fixes the processing method to Memory."
+msgstr "서버 설정에 의해 메모리 기반 처리로 고정되어 있습니다."
+
+msgid "The server fixes the processing method to Memory. This setting cannot be changed here."
+msgstr "서버에서 메모리 기반 처리로 고정했습니다. 이 화면에서는 변경할 수 없습니다."
+
 msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
 msgstr "서버의 처리 시간 제한으로 요청을 완료하지 못했습니다. 호스팅 업체에 요청 처리 시간 제한을 확인한 후 다시 준비해 주세요."
 
@@ -736,11 +799,17 @@ msgstr "발행 데이터를 준비할 때 WordPress에서 가져오는 값입니
 msgid "This WordPress installation: %s."
 msgstr "현재 WordPress REST API 주소: %s."
 
+msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
+msgstr "XML과 설정의 합계 또는 인코딩된 업로드가 메모리 기반의 8 MiB 제한을 초과합니다. Linux에서는 임시 파일 기반을 선택하고 다시 준비하세요."
+
 msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
 msgstr "분할 내보내기 지원 한도를 초과했습니다. 내보내기 설정을 확인하거나 지원 채널에 문의한 뒤 다시 시도하세요."
 
 msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
 msgstr "이 내보내기는 하나의 GitHub 파일로 발행하기에 너무 큽니다. 호환되는 스타터에서 자동 또는 분할 XML을 선택한 뒤 다시 준비하세요."
+
+msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
+msgstr "이 내보내기에는 더 많은 PHP 가용 메모리가 필요합니다. Linux에서는 임시 파일 기반을 선택하고 다시 준비하거나, 호스팅 관리자에게 PHP 메모리 검토를 요청하세요."
 
 msgid "This export will be published as a single XML file."
 msgstr "이 내보내기는 하나의 XML 파일로 발행됩니다."
@@ -777,6 +846,9 @@ msgstr "이 섹션을 저장했습니다. 댓글 표시 변경은 다음 발행 
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
 msgstr "이 섹션을 저장했습니다. 댓글 표시 설정은 다음 발행 후, 작성 설정은 새로운 댓글 요청부터 반영됩니다."
+
+msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
+msgstr "단일 요청 발행이 중단되었습니다. 이 발행을 취소하고 다시 준비하세요. 업로드를 이어서 진행할 수 없습니다."
 
 msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
 msgstr "이 스타터는 분할 XML을 지원하지 않습니다. WXR 스타터 전체를 업데이트하거나 자동 또는 단일 XML을 선택한 뒤 다시 준비하세요."
@@ -870,6 +942,9 @@ msgstr "선택하지 않으면 정적 사이트의 <code>robots.txt</code>에 <c
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
 msgstr "댓글 작성을 끄면 댓글만 표시합니다. WordPress의 기존 댓글 설정은 그대로 적용됩니다."
+
+msgid "Windows supports Memory processing only."
+msgstr "Windows에서는 메모리 기반 처리만 지원합니다."
 
 msgid "WordPress REST API URL"
 msgstr "WordPress REST API URL"

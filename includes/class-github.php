@@ -275,10 +275,11 @@ final class GitHub {
 	 * @param array                     $export Generated public WXR and base settings.
 	 * @param bool                      $republish Whether this commit explicitly republishes unchanged content.
 	 * @param Publication_Progress|null $progress Optional stage feedback for this attempt.
+	 * @param \Closure|null             $final_guard Optional source revalidation after releasing upload buffers.
 	 * @return array
 	 * @throws Failure If validation or the operation cannot be completed.
 	 */
-	public function publish( array $snapshot, array $export, bool $republish = false, ?Publication_Progress $progress = null ): array {
+	public function publish( array $snapshot, array $export, bool $republish = false, ?Publication_Progress $progress = null, ?\Closure $final_guard = null ): array {
 		if ( ! empty( $export['bundle'] ) ) {
 			return $this->publish_bundle( $snapshot, $export, $republish, $progress );
 		}
@@ -312,7 +313,10 @@ final class GitHub {
 			. 'ZeroPress-Data-Hash: sha256:' . $export['data_hash'] . "\n"
 			. 'ZeroPress-WXR-Blob-SHA: ' . $blobs['wxr'] . "\n"
 			. 'ZeroPress-Base-Blob-SHA: ' . $blobs['base'];
-		return $this->commit_publication( $snapshot, $entries, $blobs, $message, $export['data_hash'], $progress );
+		if ( $final_guard ) {
+			Publisher::close_export( $export );
+		}
+		return $this->commit_publication( $snapshot, $entries, $blobs, $message, $export['data_hash'], $progress, $final_guard );
 	}
 
 	/**
@@ -358,10 +362,12 @@ final class GitHub {
 	 * @param string                    $message Commit message with comparison trailers.
 	 * @param string                    $data_hash Canonical logical export digest.
 	 * @param Publication_Progress|null $progress Optional publication stage feedback.
+	 * @param \Closure|null             $final_guard Optional final source and target check.
 	 * @return array
+	 * @throws Failure If the target changed before dispatch.
 	 * @throws \Throwable If validation, storage or the request budget fails.
 	 */
-	private function commit_publication( array $snapshot, array $entries, array $blobs, string $message, string $data_hash, ?Publication_Progress $progress ): array {
+	private function commit_publication( array $snapshot, array $entries, array $blobs, string $message, string $data_hash, ?Publication_Progress $progress, ?\Closure $final_guard = null ): array {
 		$progress?->update( 'committing' );
 		$tree = $this->request(
 			'POST',
@@ -382,6 +388,13 @@ final class GitHub {
 			)
 		);
 		$sha    = self::sha( $commit['sha'] ?? '' );
+		if ( $final_guard ) {
+			$this->verify_candidate( $sha, $snapshot['head'], self::sha( $tree['sha'] ?? '' ), $message );
+			$final_guard();
+			if ( $this->head( $snapshot['branch'] ) !== $snapshot['head'] ) {
+				throw new Failure( 'TARGET_CHANGED', 409 );
+			}
+		}
 
 		try {
 			$this->update_reference( $snapshot['branch'], $sha, $snapshot['head'], $blobs, $data_hash );

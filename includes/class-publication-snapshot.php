@@ -103,6 +103,10 @@ final class Publication_Snapshot {
 		hash_update( $blob, 'blob ' . $bytes . "\0" );
 		$written = 0;
 		try {
+			$stat = Publication_Store::private_stat( $directory . '/' . $name );
+			if ( ! Publication_Store::same_file( $stat, fstat( $file ) ) ) {
+				throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
+			}
 			foreach ( $chunks as $chunk ) {
 				$this->budget->check( strlen( $chunk ) );
 				if ( $written + strlen( $chunk ) > $bytes ) {

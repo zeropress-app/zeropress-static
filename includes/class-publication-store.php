@@ -34,6 +34,16 @@ final class Publication_Store {
 	 * @var resource|null
 	 */
 	private $lock;
+	/** Connection-owned exclusion for memory jobs.
+	 *
+	 * @var Memory_Lock|null
+	 */
+	private ?Memory_Lock $memory_lock = null;
+	/** Owned backend-change reservation.
+	 *
+	 * @var string|null
+	 */
+	private ?string $switch_id = null;
 	/** Validated private storage root.
 	 *
 	 * @var string
@@ -75,6 +85,9 @@ final class Publication_Store {
 			! isset( $value['not_before'] ) || ! is_numeric( $value['not_before'] ) || ! is_finite( (float) $value['not_before'] ) ) {
 			throw new Failure( 'PUBLICATION_INVALID', 409 );
 		}
+		if ( isset( $value['backend_switch'] ) && ( ! is_string( $value['backend_switch'] ) || ! preg_match( '/\A[a-f0-9]{32}\z/', $value['backend_switch'] ) || null !== $value['job'] ) ) {
+			throw new Failure( 'PUBLICATION_INVALID', 409 );
+		}
 		if ( null !== $value['job'] ) {
 			$job = $value['job'];
 			if ( ! is_string( $job['id'] ?? null ) || ! preg_match( '/\A[a-f0-9]{32}\z/', $job['id'] ) ||
@@ -100,10 +113,23 @@ final class Publication_Store {
 	 */
 	public function save(): void {
 		global $wpdb;
-		$next     = $this->data;
+		$next = $this->data;
+		$this->require_switch_owner( $next );
+		if ( $this->memory_lock ) {
+			$this->memory_lock->check();
+		} elseif ( Publication_Runtime::memory() ) {
+			// Cancellation alone may be requested while another worker owns the lock.
+			$cancel = $next;
+			$prior  = $this->baseline;
+			unset( $cancel['job']['cancel_requested'], $prior['job']['cancel_requested'] );
+			if ( empty( $next['job']['cancel_requested'] ) || ! empty( $prior['job']['intent'] ) || $cancel !== $prior ) {
+				throw new Failure( 'MEMORY_LOCK_UNAVAILABLE', 503 );
+			}
+		}
 		$old      = $this->raw;
 		$baseline = $this->baseline;
 		$this->reload();
+		$this->require_switch_owner( $this->data );
 		if ( $old !== $this->raw ) {
 			$prior   = $baseline;
 			$current = $this->data;
@@ -123,12 +149,19 @@ final class Publication_Store {
 		if ( strlen( $encoded ) > self::MAX_BYTES ) {
 			throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
 		}
-		if ( null === $this->raw ) {
+		$predicate = $this->memory_lock ? ' AND ' . $this->memory_lock->predicate() : '';
+		if ( null === $this->raw && $this->memory_lock ) {
+			$query = $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) SELECT %s, %s, 'no' WHERE 1=1", self::OPTION, $encoded ) . $predicate;
+			// phpcs:ignore WordPress.DB -- Prepared values and connection-owned predicate.
+			$ok = 1 === $wpdb->query( $query );
+		} elseif ( null === $this->raw ) {
 			$ok = add_option( self::OPTION, $encoded, '', false );
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$ok = 1 === $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s", $encoded, self::OPTION, $this->raw ) );
+			$query = $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s", $encoded, self::OPTION, $this->raw ) . $predicate;
+			// phpcs:ignore WordPress.DB -- Prepared values and optional connection-owned predicate.
+			$ok = 1 === $wpdb->query( $query );
 		}
+		$this->memory_lock?->check();
 		if ( ! $ok ) {
 			throw new Failure( 'PUBLICATION_CONFLICT', 409 );
 		}
@@ -139,38 +172,109 @@ final class Publication_Store {
 		$this->baseline = $next;
 	}
 
+	/** Only the settings worker may write during a backend transition.
+	 *
+	 * @param array $value Journal to validate.
+	 * @throws Failure If another operation owns the reservation.
+	 */
+	private function require_switch_owner( array $value ): void {
+		if ( isset( $value['backend_switch'] ) && $value['backend_switch'] !== $this->switch_id ) {
+			throw new Failure( 'PUBLICATION_BUSY', 409, array( 'processing_change' => true ) );
+		}
+	}
+
+	/** Serialize a backend change with job creation, without requiring private files.
+	 * The memory lock is needed only for switching (one side is always memory).
+	 * File publications retain their existing host requirements and CAS gate.
+	 *
+	 * @param callable $persist Revision-checked settings update under the reservation.
+	 * @return array Saved public settings.
+	 * @throws Failure If a live request or unfinished publication blocks switching.
+	 */
+	public function change_backend( callable $persist ): array {
+		$this->memory_lock = new Memory_Lock();
+		$this->reload();
+		if ( $this->data['job'] ) {
+			throw new Failure( ! empty( $this->data['job']['intent'] ) ? 'PUBLICATION_VERIFY_REQUIRED' : 'PUBLICATION_ACTIVE', 409 );
+		}
+		// The exclusive DB lock proves a prior switch no longer owns this site.
+		// Revoking its token fences even a late reconnect before any settings write.
+		if ( isset( $this->data['backend_switch'] ) ) {
+			$this->switch_id = $this->data['backend_switch'];
+			unset( $this->data['backend_switch'] );
+			$this->save();
+		}
+		$this->switch_id              = bin2hex( random_bytes( 16 ) );
+		$this->data['backend_switch'] = $this->switch_id;
+		$this->save();
+		try {
+			return $persist( $this );
+		} finally {
+			// Never clear another worker's reservation after losing ownership.
+			$this->check_lock();
+			$this->reload();
+			if ( ( $this->data['backend_switch'] ?? null ) === $this->switch_id ) {
+				unset( $this->data['backend_switch'] );
+				$this->save();
+			}
+		}
+	}
+
+	/** Bind the settings CAS to this exact journal and original DB connection.
+	 *
+	 * @return string Prepared SQL predicate for the control table alias.
+	 * @throws Failure If switch ownership was lost.
+	 */
+	public function settings_predicate(): string {
+		global $wpdb;
+		$this->check_lock();
+		if ( ! $this->switch_id || ( $this->data['backend_switch'] ?? null ) !== $this->switch_id ) {
+			throw new Failure( 'PUBLICATION_CONFLICT', 409 );
+		}
+		return $wpdb->prepare( 'control.option_name = %s AND BINARY control.option_value = BINARY %s AND ', self::OPTION, $this->raw ) . $this->memory_lock->predicate();
+	}
+
 	/** Acquire local cross-worker exclusion without a timestamp-based takeover.
 	 *
 	 * @throws Failure If validation, transport or a durable checkpoint fails.
 	 */
 	public function acquire(): void {
+		$this->reload();
+		$this->require_switch_owner( $this->data );
+		if ( $this->data['job'] && ( $this->data['job']['backend'] ?? 'files' ) !== Publication_Runtime::backend() ) {
+			throw new Failure( 'PUBLICATION_BACKEND_CHANGED', 409 );
+		}
+		if ( Publication_Runtime::memory() ) {
+			$this->memory_lock ??= new Memory_Lock();
+			$this->memory_lock->check();
+			$this->reload();
+			if ( $this->data['job'] && ( $this->data['job']['backend'] ?? 'files' ) !== 'memory' ) {
+				throw new Failure( 'PUBLICATION_BACKEND_CHANGED', 409 );
+			}
+			return;
+		}
 		if ( is_resource( $this->lock ) ) {
 			$this->reload();
 			return;
 		}
 		global $wpdb;
-		$base = realpath( sys_get_temp_dir() );
-		if ( false === $base ) {
+		// Apply the existing host override before inspecting the selected parent.
+		$base = defined( 'ZEROPRESS_STATIC_PRIVATE_DIR' ) ? ZEROPRESS_STATIC_PRIVATE_DIR : sys_get_temp_dir();
+		if ( ! is_string( $base ) ) {
 			throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
 		}
 		$root = $base . '/zeropress-publication-' . substr( hash( 'sha256', ABSPATH . '|' . $wpdb->prefix ), 0, 32 );
 		// A host can select a private shared path; every choice still passes these checks.
 		$root = apply_filters( 'zeropress_static_publication_directory', $root );
-		if ( ! is_string( $root ) || ! str_starts_with( $root, '/' ) || str_contains( $root, "\0" ) || is_link( $root ) ) {
+		if ( ! is_string( $root ) || ! Private_Filesystem::absolute( $root ) || is_link( $root ) ) {
 			throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
 		}
 		$parent = realpath( dirname( $root ) );
 		if ( false === $parent || in_array( basename( $root ), array( '.', '..', '' ), true ) ) {
 			throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
 		}
-		$root    = $parent . '/' . basename( $root );
-		$uploads = wp_upload_dir( null, false );
-		foreach ( array( ABSPATH, WP_CONTENT_DIR, $uploads['basedir'], isset( $_SERVER['DOCUMENT_ROOT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) : '' ) as $public ) {
-			$public = $public ? realpath( $public ) : false;
-			if ( $public && ( $root === $public || str_starts_with( $root, rtrim( $public, '/' ) . '/' ) ) ) {
-				throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
-			}
-		}
+		$root = $parent . '/' . basename( $root );
+		Private_Filesystem::outside_public( $root, 'PUBLICATION_STORAGE_UNAVAILABLE' );
 		$this->root = $root;
 		if ( ! is_dir( $root ) ) {
 			if ( ! empty( $this->data['job'] ) || ! @mkdir( $root, 0700 ) ) {
@@ -214,6 +318,30 @@ final class Publication_Store {
 		}
 	}
 
+	/** Acquire only DB exclusion for verifying an older backend's final intent.
+	 *
+	 * @throws Failure If there is no existing intent or the DB lock is unavailable.
+	 */
+	public function acquire_verification(): void {
+		$this->reload();
+		if ( empty( $this->data['job']['intent'] ) ) {
+			throw new Failure( 'PUBLICATION_BACKEND_CHANGED', 409 );
+		}
+		if ( Publication_Runtime::memory() ) {
+			$this->memory_lock ??= new Memory_Lock();
+			$this->memory_lock->check();
+			$this->reload();
+		}
+	}
+
+	/** Assert an acquired memory lock immediately before HTTP work.
+	 *
+	 * @throws Failure If a worker lost its original DB connection.
+	 */
+	public function check_lock(): void {
+		$this->memory_lock?->check();
+	}
+
 	/**
 	 * Require private ordinary files/directories, rejecting aliases and permissive modes.
 	 *
@@ -222,13 +350,7 @@ final class Publication_Store {
 	 * @throws Failure If validation, transport or a durable checkpoint fails.
 	 */
 	public static function private_stat( string $path, bool $directory = false ): array {
-		clearstatcache( true, $path );
-		$stat = @lstat( $path );
-		$type = $directory ? 0040000 : 0100000;
-		if ( ! $stat || ( $stat['mode'] & 0170000 ) !== $type || ( $stat['mode'] & 0777 ) !== ( $directory ? 0700 : 0600 ) || ( ! $directory && 1 !== $stat['nlink'] ) || ( function_exists( 'posix_geteuid' ) && posix_geteuid() !== $stat['uid'] ) ) {
-			throw new Failure( 'PUBLICATION_STORAGE_UNAVAILABLE', 503 );
-		}
-		return $stat;
+		return Private_Filesystem::stat( $path, $directory, 'PUBLICATION_STORAGE_UNAVAILABLE' );
 	}
 
 	/**
@@ -238,7 +360,7 @@ final class Publication_Store {
 	 * @param mixed $b Opened-handle stat to compare.
 	 */
 	public static function same_file( array $a, $b ): bool {
-		return is_array( $b ) && $a['dev'] === $b['dev'] && $a['ino'] === $b['ino'] && $a['mode'] === $b['mode'] && $a['nlink'] === $b['nlink'];
+		return Private_Filesystem::same( $a, $b );
 	}
 
 	/**

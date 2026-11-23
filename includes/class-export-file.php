@@ -1,13 +1,13 @@
 <?php
 /**
- * Request-owned disk storage for an export, never published as a temporary URL.
+ * Request-owned bounded storage for an export, never published as a temporary URL.
  *
  * @package ZeroPressStatic
  */
 
 namespace ZeroPress\StaticPublisher;
 
-/** Checked temporary-file I/O with bounded replay and explicit string materialization. */
+/** Checked file or memory I/O with bounded replay and explicit string materialization. */
 final class Export_File {
 	/** Replay buffer size in bytes. */
 	private const CHUNK_BYTES = 65536;
@@ -34,9 +34,28 @@ final class Export_File {
 	 * @var Resource_Budget
 	 */
 	private Resource_Budget $budget;
+	/** Whether this artifact is confined to request memory.
+	 *
+	 * @var bool
+	 */
+	private bool $memory = false;
+	/** Retain download exclusion through the last response byte.
+	 *
+	 * @var Memory_Lock|null
+	 */
+	private ?Memory_Lock $operation_lock = null;
+
+	/** Transfer a download's operation lifetime to its artifact.
+	 *
+	 * @param Memory_Lock|null $lock Request-owned exclusion.
+	 */
+	public function retain_lock( ?Memory_Lock $lock ): void {
+		$lock?->check();
+		$this->operation_lock = $lock;
+	}
 
 	/**
-	 * Open a registered private file, without an uploads-directory fallback.
+	 * Open the selected private file or bounded memory stream.
 	 *
 	 * @param Resource_Budget $budget Request limits.
 	 * @throws Failure If temporary storage is unavailable.
@@ -44,8 +63,17 @@ final class Export_File {
 	public function __construct( Resource_Budget $budget ) {
 		$this->budget = $budget;
 		$this->budget->check();
-		$this->storage = Export_Storage::allocate( $budget );
-		$this->stream  = $this->storage->stream();
+		$this->memory = Publication_Runtime::memory();
+		if ( $this->memory ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- PHP-only memory stream; never creates a file.
+			$this->stream = fopen( 'php://memory', 'w+b' );
+			if ( ! is_resource( $this->stream ) ) {
+				throw new Failure( 'MEMORY_LIMIT_EXCEEDED', 503 );
+			}
+		} else {
+			$this->storage = Export_Storage::allocate( $budget );
+			$this->stream  = $this->storage->stream();
+		}
 	}
 
 	/**
@@ -56,6 +84,9 @@ final class Export_File {
 	 */
 	public function write( string $value ): void {
 		$this->require_open();
+		if ( $this->memory ) {
+			Publication_Runtime::check_size( $this->size + strlen( $value ) );
+		}
 		$this->budget->check( strlen( $value ) );
 		if ( 0 !== fseek( $this->stream, 0, SEEK_END ) ) {
 			throw new Failure( 'EXPORT_STORAGE_UNAVAILABLE', 500 );
@@ -192,6 +223,7 @@ final class Export_File {
 	 * @throws Failure If already closed.
 	 */
 	private function require_open(): void {
+		$this->operation_lock?->check();
 		if ( ! is_resource( $this->stream ) ) {
 			throw new Failure( 'INTERNAL_ERROR', 500 );
 		}
@@ -199,9 +231,14 @@ final class Export_File {
 
 	/** Close and remove the request's temporary file; safe to call repeatedly. */
 	public function close(): void {
+		if ( $this->memory && is_resource( $this->stream ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Close our PHP-only memory stream.
+			fclose( $this->stream );
+		}
 		$this->storage?->close();
-		$this->storage = null;
-		$this->stream  = null;
+		$this->storage        = null;
+		$this->stream         = null;
+		$this->operation_lock = null;
 	}
 
 	/** Release handles if a caller exits without an explicit close. */

@@ -7,14 +7,14 @@
 
 namespace ZeroPress\StaticPublisher;
 
-/** Send only the completed private file; the browser verifies receipt byte counts. */
+/** Send only the completed export; the browser verifies receipt byte counts. */
 final class Download_Response {
 
 	/**
 	 * Emit bounded chunks and always release their existing owner lock.
 	 * The caller must exit after this method, including interrupted transfers.
 	 *
-	 * @param Export_File $content Validated, completely generated attachment.
+	 * @param Export_File $content Validated, completely generated memory or file attachment.
 	 * @param string      $file Allowlisted logical file name.
 	 * @throws Failure If validation or the original resource budget fails before output.
 	 * @throws \Throwable Before any attachment bytes have been attempted.

@@ -123,6 +123,9 @@ final class Exporter {
 	 * @return array
 	 */
 	public function generate_files( array $settings, ?int $now = null, string $mode = 'single' ): array {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => $this->generate_files( $settings, $now, $mode ) );
+		}
 		$this->budget->check();
 		$writer    = new Wxr_Writer( $this->budget, $mode );
 		$runtime   = wp_cache_supports( 'flush_runtime' );

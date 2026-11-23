@@ -61,22 +61,36 @@ final class Publication_Session {
 	 * Return only safe progress; status does not resume a job or renew approval.
 	 *
 	 * @param string $id Opaque server-issued job identifier.
+	 * @param string $request_id Optional originating request ID for a lost response.
 	 */
-	public function status( string $id = '' ): array {
+	public function status( string $id = '', string $request_id = '' ): array {
 		self::authorize();
 		$this->store->reload();
 		if ( '' !== $id ) {
 			self::identifier( $id );
+		}
+		if ( '' !== $request_id ) {
+			self::identifier( $request_id );
+			foreach ( array_reverse( $this->store->data['history'] ) as $entry ) {
+				if ( $entry['request_id'] === $request_id && get_current_user_id() === $entry['owner'] ) {
+					return $entry['result'] + array( 'revision' => $this->store->data['revision'] );
+				}
+			}
 		}
 		$job = $this->store->data['job'];
 		if ( $job && ( '' === $id || $id === $job['id'] ) ) {
 			if ( get_current_user_id() !== $job['owner'] ) {
 				return array( 'state' => 'busy' );
 			}
-			$state     = ! empty( $job['intent'] ) ? 'unknown' : ( ! empty( $job['cancel_requested'] ) ? 'cancel_pending' : ( time() > $job['expires'] ? 'expired' : ( ! empty( $job['paused'] ) ? 'paused' : 'active' ) ) );
+			$state       = ! empty( $job['intent'] ) ? 'unknown' : ( ! empty( $job['cancel_requested'] ) ? 'cancel_pending' : ( time() > $job['expires'] ? 'expired' : ( ! empty( $job['paused'] ) ? 'paused' : 'active' ) ) );
+			$interrupted = 'memory' === ( $job['backend'] ?? '' ) && empty( $job['intent'] ) && 'active' === $state && ! Memory_Lock::busy();
+			if ( $interrupted ) {
+				$state = 'paused';
+			}
 			$artifacts = $job['artifacts'] ?? array();
 			$confirmed = $job['confirmed'] ?? array();
 			$result    = array(
+				'backend'               => $job['backend'] ?? 'files',
 				'state'                 => $state,
 				'job_id'                => $job['id'],
 				'revision'              => $this->store->data['revision'],
@@ -90,6 +104,9 @@ final class Publication_Session {
 				'next_operation'        => ! empty( $job['intent'] ) ? 'publication_verify' : ( 'ready' === $job['phase'] ? 'publication_finalize' : 'publication_advance' ),
 				'can_continue'          => empty( $job['legacy'] ) && 'capturing' !== $job['phase'] && in_array( $state, array( 'active', 'paused' ), true ),
 			);
+			if ( $interrupted ) {
+				$result['code'] = 'MEMORY_PUBLICATION_INTERRUPTED';
+			}
 			if ( ! empty( $job['error'] ) ) {
 				$result['code']    = $job['error'];
 				$result['details'] = $job['details'] ?? array();
@@ -168,6 +185,9 @@ final class Publication_Session {
 	 * @throws \Throwable If an unexpected error interrupts the request.
 	 */
 	public function start( string $receipt, bool $republish, string $request_id ): array {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => $this->start( $receipt, $republish, $request_id ) );
+		}
 		self::authorize();
 		self::identifier( $request_id );
 		$fingerprint = hash( 'sha256', $receipt . ( $republish ? ':republish' : ':publish' ) );
@@ -191,6 +211,12 @@ final class Publication_Session {
 			if ( $job['request_id'] !== $request_id || $job['fingerprint'] !== $fingerprint ) {
 				throw new Failure( 'PUBLICATION_ACTIVE', 409 );
 			}
+			if ( 'memory' === ( $job['backend'] ?? '' ) ) {
+				if ( empty( $job['intent'] ) ) {
+					return $this->store->finish( 'failed', array( 'code' => 'MEMORY_PUBLICATION_INTERRUPTED' ) );
+				}
+				return $this->status( $job['id'] );
+			}
 			if ( 'capturing' !== $job['phase'] ) {
 				return $this->status( $job['id'] );
 			}
@@ -200,6 +226,9 @@ final class Publication_Session {
 			$this->store->save();
 		}
 		$this->id = $job['id'];
+		if ( Publication_Runtime::memory() ) {
+			return $this->publish_memory( $receipt, $republish );
+		}
 		try {
 			$now                = $republish ? time() : $prepared['generated_at'];
 			list( , , $export ) = Publisher::validate( $receipt, $this->budget, $republish, true, $now );
@@ -237,6 +266,34 @@ final class Publication_Session {
 		}
 	}
 
+	/** Complete a single publication request, preserving its durable final-write fence.
+	 *
+	 * @param string $receipt Signed approval.
+	 * @param bool   $republish Explicit unchanged republication choice.
+	 * @return array Safe terminal result or read-only verification state.
+	 */
+	private function publish_memory( string $receipt, bool $republish ): array {
+		$this->store->data['job']['legacy'] = true;
+		$this->store->data['job']['phase']  = 'publishing';
+		$this->store->save();
+		$this->budget->reserve_checkpoint( 2, null );
+		try {
+			$result = Publisher::publish_once( $receipt, $republish, $this->budget, null, $this->observer() );
+			if ( 'unknown' === $result['state'] ) {
+				return $this->status( $this->id );
+			}
+			return $this->store->finish( $result['state'], isset( $result['commit_url'] ) ? array( 'commit_url' => $result['commit_url'] ) : array() );
+		} catch ( \Throwable $error ) {
+			// Never clear a recorded intent on an unexpected failure or lost DB lock.
+			$this->store->reload();
+			$code = $error instanceof Failure ? $error->reason : 'INTERNAL_ERROR';
+			if ( ! empty( $this->store->data['job']['intent'] ) && GitHub::uncertain( $error ) ) {
+				return $this->status( $this->id );
+			}
+			return $this->store->finish( 'failed', array( 'code' => $code ) );
+		}
+	}
+
 	/**
 	 * Bind a fresh job to the preparation without storing credentials or bodies.
 	 *
@@ -251,6 +308,7 @@ final class Publication_Session {
 			throw new Failure( 'PUBLICATION_BUSY', 409 );
 		}
 		return array(
+			'backend'           => Publication_Runtime::backend(),
 			'id'                => bin2hex( random_bytes( 16 ) ),
 			'request_id'        => $request_id,
 			'fingerprint'       => $fingerprint,
@@ -346,6 +404,7 @@ final class Publication_Session {
 	 */
 	private function observer(): \Closure {
 		return function ( string $event, string $method, ?array $context, float $timeout ): void {
+			$this->store->check_lock();
 			$this->store->reload();
 			$job = $this->store->data['job'];
 			if ( ! $job || $job['id'] !== $this->id ) {
@@ -394,6 +453,9 @@ final class Publication_Session {
 	 * @throws Failure If validation, transport or a durable checkpoint fails.
 	 */
 	public function advance( string $operation, string $id, string $request_id, int $revision ): array {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => $this->advance( $operation, $id, $request_id, $revision ) );
+		}
 		self::authorize();
 		$this->id = self::identifier( $id );
 		self::identifier( $request_id );
@@ -406,9 +468,10 @@ final class Publication_Session {
 			}
 			// Read-only reconciliation can survive lost temp storage; DB CAS still
 			// serializes checkpoints and no final mutation can be issued here.
-			if ( ! $verify || empty( $this->store->data['job']['intent'] ) || 'PUBLICATION_STORAGE_UNAVAILABLE' !== $error->reason ) {
+			if ( ! $verify || empty( $this->store->data['job']['intent'] ) || ! in_array( $error->reason, array( 'PUBLICATION_STORAGE_UNAVAILABLE', 'PUBLICATION_BACKEND_CHANGED' ), true ) ) {
 				throw $error;
 			}
+			$this->store->acquire_verification();
 		}
 		$job = $this->store->data['job'];
 		if ( ! $job || $job['id'] !== $id ) {
@@ -423,6 +486,9 @@ final class Publication_Session {
 			return $this->status( $id );
 		}
 		if ( $revision !== $this->store->data['revision'] || ( ! empty( $job['intent'] ) && ! $verify ) ) {
+			return $this->status( $id );
+		}
+		if ( ! $verify && ! empty( $job['legacy'] ) ) {
 			return $this->status( $id );
 		}
 		if ( ! $verify && empty( $job['intent'] ) ) {
@@ -779,6 +845,12 @@ final class Publication_Session {
 	 * @throws \Throwable If an unexpected error interrupts the request.
 	 */
 	public static function legacy( string $receipt, bool $republish, Resource_Budget $budget, ?Publication_Progress $progress ): array {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => self::legacy( $receipt, $republish, $budget, $progress ) );
+		}
+		if ( Publication_Runtime::memory() ) {
+			return ( new self( $budget ) )->start( $receipt, $republish, bin2hex( random_bytes( 16 ) ) );
+		}
 		Publisher::receipt( $receipt );
 		self::authorize();
 		$self = new self( $budget );

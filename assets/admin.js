@@ -16,6 +16,8 @@
 	const dirty = new Set();
 	const loadingIndicators = new Map();
 	let settings = config.settings;
+	let processingBlocked = !!$('processing');
+	let processingStatusError = '';
 	let prepared = null;
 	let session = null;
 	let busy = false;
@@ -203,7 +205,7 @@
 			const value = settings[input.name];
 			if (input.name === 'comment_verification') input.checked = value === 'turnstile';
 			else if (input.type === 'checkbox') input.checked = !!value;
-			else input.value = value || '';
+			else input.value = input.name === 'publication_backend' && config.runtime?.fixed ? config.runtime.backend : value || '';
 		}
 		const section = form.dataset.section;
 		if (section === 'media') {
@@ -218,12 +220,33 @@
 			validateMenus();
 		}
 		if (section === 'github') { tokenLink(); repositoryLink(); }
+		processingControls();
 		if (section === 'comments') commentControls();
 		if (section === 'newsletter' || section === 'discovery') featureControls();
 		if (section === 'turnstile') { turnstileEditing = false; turnstileControls(); }
 		baselines.set(section, JSON.stringify(values(form)));
 		dirty.delete(section);
 		$(section + '-dirty').hidden = true;
+	}
+	function processingControls() {
+		const runtime = config.runtime || { backend: config.memory_publication ? 'memory' : 'files', fixed: '' };
+		const fixed = $('processing-fixed');
+		if (fixed) {
+			fixed.hidden = !runtime.fixed;
+			fixed.textContent = runtime.fixed ? message('processing_' + runtime.fixed) : '';
+			$('publication_backend').disabled = !!runtime.fixed || busy || processingBlocked;
+			$('save-processing').disabled = !!runtime.fixed || busy || processingBlocked;
+			if (runtime.fixed) $('publication_backend').value = runtime.backend;
+		}
+		if ($('processing-job')) {
+			$('processing-job').hidden = !processingBlocked;
+			$('processing-job').querySelector('span').textContent = processingStatusError || message('processing_busy');
+		}
+		const format = $('wxr_publish_format');
+		if (format) {
+			format.querySelector('option[value="bundle"]').disabled = runtime.backend === 'memory';
+			$('wxr_publish_format-help').textContent = message(runtime.backend === 'memory' ? 'memory_format_help' : 'files_format_help');
+		}
 	}
 	function commentControls() {
 		if (!$('comments')) return;
@@ -379,6 +402,7 @@
 			labelElement.textContent = label;
 			scope.removeAttribute('aria-busy');
 			busy = false;
+			processingControls();
 			commentControls();
 			featureControls();
 			turnstileControls();
@@ -398,13 +422,14 @@
 			const input = { ...values(form), revision: settings.revision };
 			const saved = await run(event.submitter || [...form.elements].find((input) => input.type === 'submit'), section, 'saving', async () => {
 				settings = await request('save', { section, settings: input });
+				prepared = null;
 				fill(form); // Never replace another panel's unsaved input, including tokens.
 				if (section === 'media') {
 					root.querySelectorAll('[data-publishing-icon]').forEach((element) => {
 						element.textContent = settings.publishing_icons[element.dataset.publishingIcon] || '';
 					});
 				}
-				const feedback = section === 'api' ? 'saved_api' : section === 'comments' ? (settings.restrict_public_rest_api ? 'saved_comments_api' : 'saved_comments') : section === 'turnstile' ? 'saved_runtime' : section === 'github' ? 'saved' : 'saved_publish';
+				const feedback = section === 'processing' ? 'saved_processing' : section === 'api' ? 'saved_api' : section === 'comments' ? (settings.restrict_public_rest_api ? 'saved_comments_api' : 'saved_comments') : section === 'turnstile' ? 'saved_runtime' : section === 'github' ? 'saved' : 'saved_publish';
 				notice(section, message(feedback));
 			}, form);
 			if (saved && section === 'turnstile') $('save-turnstile').focus();
@@ -414,7 +439,24 @@
 			}
 		});
 		form.querySelector('fieldset').disabled = false;
+		processingControls();
 	});
+	async function refreshProcessingStatus() {
+		if (!$('processing') || busy) return;
+		try {
+			const status = await publication.sessionStatus();
+			processingBlocked = !['idle', 'published', 'unchanged', 'cancelled', 'failed'].includes(status.state);
+			processingStatusError = '';
+		} catch (error) {
+			processingBlocked = true;
+			processingStatusError = error.message;
+		}
+		processingControls();
+	}
+	if ($('processing')) {
+		refreshProcessingStatus();
+		window.addEventListener('focus', refreshProcessingStatus);
+	}
 	const settingsNav = root.querySelector('.zpsp-settings-nav');
 	if (settingsNav) {
 		const links = [...settingsNav.querySelectorAll('a')];
@@ -574,7 +616,7 @@
 	function updatePublicationControl(control) {
 		publicationControl = control;
 		if (livePause) {
-			livePause.hidden = !control; livePause.disabled = !control?.pause;
+			livePause.hidden = !control?.pause && !control?.pausing; livePause.disabled = !control?.pause;
 			livePause.textContent = message(control?.pausing ? 'session_pausing' : 'session_pause');
 		}
 		if (recovery) recovery.hidden = !!control || !session;

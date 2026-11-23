@@ -13,6 +13,9 @@ msgstr ""
 msgid "A post or page exceeds the 4 MiB body limit. Split or shorten its body, then prepare again."
 msgstr ""
 
+msgid "A processing-method change is in progress or was interrupted. Reload settings and save the processing method again before preparing."
+msgstr ""
+
 msgid "A publication is in progress. Continue it here if the previous page was closed."
 msgstr ""
 
@@ -44,6 +47,9 @@ msgid "Allow comment writing on the static site"
 msgstr ""
 
 msgid "Allow search engine crawling"
+msgstr ""
+
+msgid "An unfinished publication uses the previous processing method. Resolve it before changing methods. An uncertain result can still be checked."
 msgstr ""
 
 msgid "Another publication is in progress."
@@ -92,6 +98,9 @@ msgid "Check your GitHub settings before publishing."
 msgstr ""
 
 msgid "Checking the GitHub repository…"
+msgstr ""
+
+msgid "Choose how this WordPress server prepares, downloads and publishes exports. WXR publishing format controls the files sent to GitHub separately."
 msgstr ""
 
 msgid "Click “Save publishing target” to save these changes."
@@ -274,7 +283,13 @@ msgstr ""
 msgid "Export inputs must be regular files, not directories, symlinks or submodules."
 msgstr ""
 
+msgid "Export processing"
+msgstr ""
+
 msgid "Files to update"
+msgstr ""
+
+msgid "Finish or cancel the current publication before changing methods. If its result is uncertain, check the result first."
 msgstr ""
 
 msgid "Generate RSS feed"
@@ -334,6 +349,9 @@ msgstr ""
 msgid "Learn more about API protection"
 msgstr ""
 
+msgid "Learn more about export processing"
+msgstr ""
+
 msgid "Leave blank to omit <code>sitemap.xml</code>, <code>feed.xml</code> and the <code>&lt;link rel=\"canonical\"&gt;</code> tag specifying the preferred page URL."
 msgstr ""
 
@@ -353,6 +371,18 @@ msgid "Media URL replacements"
 msgstr ""
 
 msgid "Media URLs are replaced according to your rules."
+msgstr ""
+
+msgid "Memory (small sites)"
+msgstr ""
+
+msgid "Memory processing supports single XML only. Select Single XML in WXR publishing format, or select Temporary files on Linux for split publishing."
+msgstr ""
+
+msgid "Memory processing uses single XML, including Automatic. To replace an existing split export, select Single XML. Split XML requires Temporary files."
+msgstr ""
+
+msgid "Memory: publishes a single XML without temporary export files. Pausing and continuing publication are unavailable."
 msgstr ""
 
 msgid "Menu ID"
@@ -430,10 +460,19 @@ msgstr ""
 msgid "Private temporary storage is unavailable. Ask your host to check its permissions and shared storage, then try again."
 msgstr ""
 
+msgid "Processing method"
+msgstr ""
+
+msgid "Processing method saved. Prepare again before downloading or publishing."
+msgstr ""
+
 msgid "Public access to this REST API is restricted."
 msgstr ""
 
 msgid "Publication cancelled. The branch was not updated."
+msgstr ""
+
+msgid "Publication is running in one request. Refresh the status if its response was lost."
 msgstr ""
 
 msgid "Publication needs verification. Use Check publication result; do not publish again until the result is confirmed."
@@ -532,6 +571,9 @@ msgstr ""
 msgid "Review prepared data"
 msgstr ""
 
+msgid "Safe publication locking is unavailable. Ask your host to check the WordPress database connection requirements in the publishing guide."
+msgstr ""
+
 msgid "Save API protection settings"
 msgstr ""
 
@@ -557,6 +599,9 @@ msgid "Save menu settings"
 msgstr ""
 
 msgid "Save newsletter settings"
+msgstr ""
+
+msgid "Save processing method"
 msgstr ""
 
 msgid "Save publishing target"
@@ -664,6 +709,12 @@ msgstr ""
 msgid "Temporary export storage is unavailable. Ask your host to check free disk space and PHP temporary-file permissions, then prepare again."
 msgstr ""
 
+msgid "Temporary files (default)"
+msgstr ""
+
+msgid "Temporary files: uses private storage and supports larger exports, pausing and continuing publication."
+msgstr ""
+
 msgid "Test connection"
 msgstr ""
 
@@ -682,6 +733,9 @@ msgstr ""
 msgid "The confirmation dialog could not be loaded. Reload this page and try again."
 msgstr ""
 
+msgid "The database connection changed during publication. Check the publication status before trying again."
+msgstr ""
+
 msgid "The download could not be completed, so no file was saved. Try downloading again. If it keeps failing, ask your host to check connection and request time limits."
 msgstr ""
 
@@ -689,6 +743,9 @@ msgid "The download is ready. Check your browser downloads."
 msgstr ""
 
 msgid "The export files will be updated together in one commit."
+msgstr ""
+
+msgid "The memory limit is 8 MiB for XML and settings combined, and 8 MiB for each encoded upload. Server resources can limit smaller exports. No automatic switch to temporary files occurs."
 msgstr ""
 
 msgid "The preparation expired or settings changed. Prepare again."
@@ -715,6 +772,12 @@ msgstr ""
 msgid "The saved token cannot be decrypted. Delete it and register it again; WordPress secrets may have changed."
 msgstr ""
 
+msgid "The server configuration fixes the processing method to Memory."
+msgstr ""
+
+msgid "The server fixes the processing method to Memory. This setting cannot be changed here."
+msgstr ""
+
 msgid "The server time limit stopped this request. Ask your host to review the request time limit, then prepare again."
 msgstr ""
 
@@ -733,10 +796,16 @@ msgstr ""
 msgid "This WordPress installation: %s."
 msgstr ""
 
+msgid "This export exceeds the memory limit of 8 MiB for XML and settings combined or an encoded upload. On Linux, select Temporary files and prepare again."
+msgstr ""
+
 msgid "This export exceeds the supported split export limits. Review your export settings or contact support before trying again."
 msgstr ""
 
 msgid "This export is too large for a single GitHub file. Select Automatic or Split XML with a compatible starter, then prepare again."
+msgstr ""
+
+msgid "This export needs more available PHP memory. On Linux, select Temporary files and prepare again, or ask your host to review PHP memory."
 msgstr ""
 
 msgid "This export will be published as a single XML file."
@@ -773,6 +842,9 @@ msgid "This section is saved. Comment display changes take effect after the next
 msgstr ""
 
 msgid "This section is saved. Comment display changes take effect after the next publication; writing settings apply to new comment requests."
+msgstr ""
+
+msgid "This single-request publication stopped. Cancel it and prepare again. Its uploads cannot be resumed."
 msgstr ""
 
 msgid "This starter does not support split XML. Update the complete WXR starter, or select Automatic or Single XML, then prepare again."
@@ -866,6 +938,9 @@ msgid "When unchecked, <code>Disallow: /</code> is written to the static site's 
 msgstr ""
 
 msgid "When writing is off, only comments are shown. Your existing WordPress comment settings still apply."
+msgstr ""
+
+msgid "Windows supports Memory processing only."
 msgstr ""
 
 msgid "WordPress REST API URL"

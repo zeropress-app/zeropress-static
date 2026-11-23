@@ -34,8 +34,12 @@ final class Wxr_Writer {
 	 *
 	 * @param Resource_Budget $budget Shared request limits.
 	 * @param string          $mode Single, automatic or established bundle transport.
+	 * @throws Failure If memory mode cannot provide the requested format.
 	 */
 	public function __construct( Resource_Budget $budget, string $mode = 'single' ) {
+		if ( Publication_Runtime::memory() && 'single' !== $mode ) {
+			throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
+		}
 		$this->budget = $budget;
 		$this->mode   = $mode;
 		$this->items  = 'single' === $mode ? new Export_File( $budget ) : new Wxr_Record_Store( $budget );
@@ -141,6 +145,9 @@ final class Wxr_Writer {
 			}
 			hash_update( $hash, self::SUFFIX . "\0" . $base );
 			$digest = hash_final( $hash );
+			if ( Publication_Runtime::memory() ) {
+				Publication_Runtime::check_size( $logical_bytes + strlen( $base ) );
+			}
 			if ( $bundle ) {
 				$bundle->finish( $base, $digest, $time ?? time() );
 				$this->verify_plan( $bundle, $plan, $ordinal );

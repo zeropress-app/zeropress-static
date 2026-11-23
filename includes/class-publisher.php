@@ -16,6 +16,10 @@ final class Publisher {
 	 * @return array
 	 */
 	public static function prepare( ?Resource_Budget $budget = null ): array {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => self::prepare( $budget ) );
+		}
+		$lock     = Publication_Runtime::memory() ? new Memory_Lock() : null;
 		$budget ??= Resource_Budget::from_request();
 		Export_Storage::recover_once( $budget );
 		$settings         = Settings::read();
@@ -31,6 +35,7 @@ final class Publisher {
 				$error_details    = $error->details;
 			}
 		}
+		$lock?->check();
 		$mode = 'single';
 		if ( $snapshot ) {
 			try {
@@ -52,11 +57,15 @@ final class Publisher {
 		} finally {
 			self::close_export( $export );
 		}
+		// Do not issue approval after a connection change during generation.
+		$lock?->check();
 		// Commitments remain compact; per-part inventories never enter receipts.
 		if ( $snapshot ) {
 			unset( $snapshot['parts'] );
 		}
+		Publication_Runtime::assert_current();
 		$receipt = array(
+			'backend'      => Publication_Runtime::backend(),
 			'user'         => get_current_user_id(),
 			'revision'     => $settings['revision'],
 			'hash'         => $export['data_hash'],
@@ -67,6 +76,7 @@ final class Publisher {
 		);
 		$payload = base64_encode( wp_json_encode( $receipt ) );
 		$result  = array(
+			'runtime'          => Publication_Runtime::describe( $settings ),
 			'receipt'          => $payload . '.' . hash_hmac( 'sha256', $payload, Settings::key( 'preparation' ) ),
 			'counts'           => $export['counts'],
 			'bytes'            => $export['bytes'],
@@ -149,9 +159,13 @@ final class Publisher {
 			throw new Failure( 'PREPARATION_INVALID', 409 );
 		}
 		$value    = json_decode( (string) base64_decode( $payload, true ), true );
-		$settings = Settings::read();
+		$settings = Settings::fresh();
+		Publication_Runtime::assert_current();
 		if ( ! is_array( $value ) || ( $value['user'] ?? null ) !== get_current_user_id() ||
 			( $value['expires'] ?? 0 ) < time() || ( $value['revision'] ?? '' ) !== $settings['revision'] ) {
+			throw new Failure( 'PREPARATION_EXPIRED', 409 );
+		}
+		if ( ( $value['backend'] ?? 'files' ) !== Publication_Runtime::backend() ) {
 			throw new Failure( 'PREPARATION_EXPIRED', 409 );
 		}
 		return array( $settings, $value );
@@ -186,18 +200,24 @@ final class Publisher {
 	 * @throws \Throwable If writing build settings fails.
 	 */
 	public static function download_file( string $receipt, string $file, ?Resource_Budget $budget = null ): Export_File {
+		if ( ! Publication_Runtime::active() ) {
+			return Publication_Runtime::run( fn() => self::download_file( $receipt, $file, $budget ) );
+		}
+		$lock     = Publication_Runtime::memory() ? new Memory_Lock() : null;
 		$budget ??= Resource_Budget::from_request();
 		if ( ! isset( GitHub::FILES[ $file ] ) ) {
 			throw new Failure( 'INVALID_FILE' );
 		}
 		list( , , $export ) = self::validate( $receipt, $budget );
 		if ( 'wxr' === $file ) {
+			$export['wxr']->retain_lock( $lock );
 			return $export['wxr'];
 		}
 		$export['wxr']->close();
 		$content = new Export_File( $budget );
 		try {
 			$content->write( $export['base'] );
+			$content->retain_lock( $lock );
 			return $content;
 		} catch ( \Throwable $error ) {
 			$content->close();
@@ -214,6 +234,9 @@ final class Publisher {
 	 * @param Publication_Progress $progress Optional legacy progress reporter.
 	 */
 	public static function publish( string $receipt, bool $republish = false, ?Resource_Budget $budget = null, ?Publication_Progress $progress = null ): array {
+		if ( Publication_Runtime::memory() ) {
+			return ( new Publication_Session( $budget ) )->start( $receipt, $republish, bin2hex( random_bytes( 16 ) ) );
+		}
 		return Publication_Session::legacy( $receipt, $republish, $budget ?? Resource_Budget::from_request(), $progress );
 	}
 
@@ -260,7 +283,12 @@ final class Publisher {
 				list( , , $export ) = self::validate( $receipt, $budget, true, true );
 			}
 			// Include unrelated intervening commits by publishing on the current verified tree.
-			return $github->publish( $current, $export, $republish, $progress );
+			$guard = Publication_Runtime::memory() ? static function () use ( $receipt, $budget ): void {
+				// Upload buffers have been released before the final source check.
+				list( , , $checked ) = self::validate( $receipt, $budget, false, true );
+				self::close_export( $checked );
+			} : null;
+			return $github->publish( $current, $export, $republish, $progress, $guard );
 		} finally {
 			if ( isset( $export ) ) {
 				self::close_export( $export );
@@ -280,6 +308,12 @@ final class Publisher {
 		if ( ! in_array( $preference, array( 'auto', 'single', 'bundle' ), true ) ) {
 			throw new Failure( 'INVALID_SETTINGS' );
 		}
+		if ( Publication_Runtime::memory() ) {
+			if ( 'bundle' === $preference || ( 'auto' === $preference && 'bundle' === ( $snapshot['format'] ?? null ) ) ) {
+				throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
+			}
+			return 'single';
+		}
 		if ( 'bundle' === $preference && empty( $snapshot['capable'] ) ) {
 			throw new Failure( 'WXR_SPLIT_UNSUPPORTED', 409 );
 		}
@@ -297,6 +331,14 @@ final class Publisher {
 	 * @throws Failure If validation, storage or the request budget fails.
 	 */
 	public static function plan( array $export, Resource_Budget $budget ): array {
+		if ( Publication_Runtime::memory() ) {
+			if ( ! empty( $export['bundle'] ) ) {
+				throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
+			}
+			Publication_Runtime::check_size( $export['wxr']->size() + strlen( $export['base'] ) );
+			Publication_Runtime::check_size( $export['wxr']->request_size() );
+			Publication_Runtime::check_size( Wxr_Bundle::request_size( $export['base'] ) );
+		}
 		if ( ! empty( $export['bundle'] ) ) {
 			$bundle = $export['bundle'];
 			foreach ( $bundle->parts as $part ) {

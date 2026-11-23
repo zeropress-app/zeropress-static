@@ -68,21 +68,12 @@ final class Export_Storage {
 	 */
 	private function __construct() {
 		global $wpdb;
-		$base = realpath( sys_get_temp_dir() );
-		if ( false === $base ) {
-			self::fail();
-		}
+		$base       = Private_Filesystem::base( 'EXPORT_STORAGE_UNAVAILABLE' );
 		$wordpress  = realpath( ABSPATH );
 		$this->site = hash( 'sha256', ( false === $wordpress ? ABSPATH : $wordpress ) . '|' . $wpdb->prefix );
 		$this->key  = Settings::key( 'export-storage' );
 		$this->root = $base . '/zeropress-export-' . substr( $this->site, 0, 32 ) . '-' . substr( hash( 'sha256', $this->key ), 0, 16 );
-		$uploads    = wp_upload_dir( null, false );
-		foreach ( array( ABSPATH, WP_CONTENT_DIR, $uploads['basedir'], isset( $_SERVER['DOCUMENT_ROOT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) : '' ) as $public ) {
-			$public = $public ? realpath( $public ) : false;
-			if ( $public && ( $this->root === $public || str_starts_with( $this->root, rtrim( $public, '/' ) . '/' ) ) ) {
-				self::fail();
-			}
-		}
+		Private_Filesystem::outside_public( $this->root, 'EXPORT_STORAGE_UNAVAILABLE' );
 	}
 
 	/** Open and register one locked export; no body bytes precede registration.
@@ -92,6 +83,9 @@ final class Export_Storage {
 	 * @throws Failure If allocation, registration or the budget fails.
 	 */
 	public static function allocate( Resource_Budget $budget ): self {
+		if ( Publication_Runtime::memory() ) {
+			throw new Failure( 'MEMORY_SINGLE_REQUIRED', 409 );
+		}
 		$budget->check();
 		$self    = new self();
 		$created = array();
@@ -199,6 +193,9 @@ final class Export_Storage {
 	 * @return array Bounded internal diagnostics, never paths or content.
 	 */
 	public static function recover_once( Resource_Budget $budget ): array {
+		if ( Publication_Runtime::memory() ) {
+			return self::recover( $budget );
+		}
 		if ( self::$recovered ) {
 			return array();
 		}
@@ -226,8 +223,11 @@ final class Export_Storage {
 			'deferred'   => 0,
 			'errors'     => 0,
 		);
-		$self   = null;
-		$until  = hrtime( true ) + self::QUANTUM_NS;
+		if ( Publication_Runtime::memory() ) {
+			return $result;
+		}
+		$self  = null;
+		$until = hrtime( true ) + self::QUANTUM_NS;
 		try {
 			$budget->check( self::MAX_METADATA );
 			$budget->require_time( 2.05 );
@@ -620,12 +620,7 @@ final class Export_Storage {
 	 * @throws Failure If type, link count, permissions or ownership differ.
 	 */
 	private static function stat( string $path, bool $directory = false ): array {
-		clearstatcache( true, $path );
-		$stat = @lstat( $path );
-		if ( ! $stat || ( $stat['mode'] & 0170000 ) !== ( $directory ? 0040000 : 0100000 ) || ( $stat['mode'] & 0777 ) !== ( $directory ? 0700 : 0600 ) || ( ! $directory && 1 !== $stat['nlink'] ) || ( function_exists( 'posix_geteuid' ) && posix_geteuid() !== $stat['uid'] ) ) {
-			self::fail();
-		}
-		return $stat;
+		return Private_Filesystem::stat( $path, $directory, 'EXPORT_STORAGE_UNAVAILABLE' );
 	}
 
 	/** Exclude changing size/mtime and directory link counts from identity.

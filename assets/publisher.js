@@ -12,6 +12,7 @@ window.zeroPressPublication = function createPublication(config) {
 	}
 	const message = (key, values = {}) => (messages[key] || messages.error).replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
 	function failureMessage(code, details = {}) {
+		if (code === 'PUBLICATION_BUSY' && details?.processing_change === true) return message('processing_pending');
 		const numeric = (keys) => keys.every((key) => Number.isFinite(details?.[key]) && details[key] >= 0);
 		code = ({ PUBLICATION_INVALID: 'PREPARATION_INVALID', PUBLICATION_CONFLICT: 'session_paused', PUBLICATION_WAIT: 'session_paused', PUBLICATION_INTERRUPTED: 'session_paused', PUBLICATION_CANCELLED: 'session_cancelled', PUBLICATION_ACTIVE: 'session_active', PUBLICATION_BUSY: 'session_busy', PUBLICATION_VERIFY_REQUIRED: 'unknown' })[code] || code;
 		const insufficient = code === 'REQUEST_TIME_LIMIT_EXCEEDED' && numeric(['remaining_time_seconds', 'minimum_time_seconds']);
@@ -29,6 +30,7 @@ window.zeroPressPublication = function createPublication(config) {
 	}
 
 	function helpUrl(code) {
+		if (['MEMORY_EXPORT_TOO_LARGE', 'MEMORY_SINGLE_REQUIRED', 'MEMORY_LOCK_UNAVAILABLE', 'MEMORY_LOCK_LOST', 'MEMORY_PUBLICATION_INTERRUPTED', 'PUBLICATION_BACKEND_CHANGED'].includes(code) || (config.memory_publication && code === 'WXR_SINGLE_MEMORY_LIMIT')) return 'https://github.com/zeropress-app/zeropress-static#export-processing';
 		if (['CONTENT_BODY_TOO_LARGE', 'SOURCE_READ_UNBOUNDED', 'DOWNLOAD_INCOMPLETE', 'REQUEST_TIME_LIMIT_EXCEEDED', 'PUBLICATION_STORAGE_UNAVAILABLE'].includes(code)) return 'https://github.com/zeropress-app/zeropress-static#export-scope-and-limits';
 		return ['WXR_SPLIT_REQUIRED', 'WXR_SINGLE_MEMORY_LIMIT', 'WXR_SPLIT_UNSUPPORTED', 'WXR_TARGET_INVALID', 'WXR_RECORD_TOO_LARGE', 'WXR_BUNDLE_LIMIT_EXCEEDED', 'EXPORT_STORAGE_UNAVAILABLE', 'GITHUB_PAYLOAD_TOO_LARGE', 'MEMORY_LIMIT_EXCEEDED'].includes(code)
 			? 'https://github.com/zeropress-app/zeropress-starter-wxr#split-wxr-input' : '';
@@ -80,6 +82,10 @@ window.zeroPressPublication = function createPublication(config) {
 			error.uncertain = operation === 'publish' && !error.code && (response.status >= 500 || response.ok);
 			throw error;
 		}
+		if (['files', 'memory'].includes(result.data?.runtime?.backend)) {
+			config.runtime = result.data.runtime;
+			config.memory_publication = config.runtime.backend === 'memory';
+		}
 		return result.data;
 	}
 	function watchPublication(publicationId, onStage) {
@@ -126,18 +132,19 @@ window.zeroPressPublication = function createPublication(config) {
 		}
 	}
 	const requestId = () => [...window.crypto.getRandomValues(new Uint8Array(16))].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-	const sessionStatus = (jobId = '') => request('publication_status', { job_id: jobId });
+	const sessionStatus = (jobId = '', requestId = '') => request('publication_status', { job_id: jobId, request_id: requestId });
 	const cancel = (jobId) => request('publication_cancel', { job_id: jobId });
 	function resultMessage(result) {
 		if (result.state === 'idle') return '';
 		if (result.state === 'unknown') return message('unknown');
+		if (result.backend === 'memory' && result.state === 'active') return message('memory_active');
 		if (result.state === 'paused' && result.code === 'REQUEST_TIME_LIMIT_EXCEEDED') return message('session_time_paused');
 		if (result.code) return failureMessage(result.code, result.details);
 		if (result.state === 'paused' && result.pause_reason === 'requested') return message('session_paused_by_user');
 		return message(['active', 'paused', 'expired', 'cancel_pending', 'cancelled', 'busy'].includes(result.state) ? 'session_' + result.state : result.state);
 	}
 	const pausable = (state) => !!state?.job_id && ['active', 'paused'].includes(state.state) && state.can_continue && !state.busy;
-	const paused = (state) => state.state === 'active' ? { ...state, state: 'paused' } : state;
+	const paused = (state) => state.state === 'active' && state.can_continue !== false ? { ...state, state: 'paused' } : state;
 	// A requested pause stops this page's loop at a confirmed request boundary.
 	// Keep the server job, its approval deadline and acknowledged progress intact.
 	const requestedPause = (state) => pausable(state) && !state.code ? { ...state, state: 'paused', pause_reason: 'requested' } : state;
@@ -208,14 +215,15 @@ window.zeroPressPublication = function createPublication(config) {
 		if (!config.session_publication) return legacyPublish(receipt, republish, onStage);
 		return runPublication(async (run) => {
 			let state;
-			try { state = await request('publication_start', { receipt, republish, request_id: requestId() }); }
+			const id = requestId();
+			try { state = await request('publication_start', { receipt, republish, request_id: id }); }
 			catch (error) {
-				const found = await sessionStatus().catch(() => null);
+				const found = await sessionStatus('', id).catch(() => null);
 				if (found && found.state !== 'idle') return paused(found);
 				throw error;
 			}
 			return continueSession(state, onStage, run);
-		}, onStage, onControl);
+		}, onStage, onControl, !config.memory_publication);
 	}
 
 	function formatSummary(prepared) {

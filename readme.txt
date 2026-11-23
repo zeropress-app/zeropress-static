@@ -134,7 +134,7 @@ File downloads are available for custom build and hosting workflows.
 
 = Can I choose one XML file or split files for publishing? =
 
-Yes. Under **Settings → GitHub publishing**, choose **WXR publishing format**. **Automatic** keeps small exports in one XML file and uses split files when needed; an existing split export stays split. Choose **Single XML** or **Split XML** to use that format instead. Split files require an up-to-date WXR Starter. Save the publishing target, prepare again and review the format before publishing. Downloads always remain a single XML file.
+Yes. Under **Settings → GitHub publishing**, choose **WXR publishing format**. **Automatic** keeps small exports in one XML file and uses split files when needed; an existing split export stays split. Choose **Single XML** or **Split XML** to use that format instead. Split files require an up-to-date WXR Starter. Save the publishing target, prepare again and review the format before publishing. Downloads always remain a single XML file. Memory processing supports single XML only. On Linux, use **Settings → Export processing** to choose temporary files or memory; Windows uses memory only. See the [processing guide](https://github.com/zeropress-app/zeropress-static#export-processing).
 
 = Is a static site URL required? =
 

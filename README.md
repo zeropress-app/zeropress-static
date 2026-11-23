@@ -396,7 +396,9 @@ before enabling this capability on an existing site. Adding only the marker
 does not upgrade the importer or build scripts.
 
 Choose **WXR publishing format** under **GitHub publishing** and save the publishing
-target before preparing again:
+target before preparing again. With **Temporary files** processing, the settings
+work as follows. **Memory** processing uses [single XML only](#export-processing).
+Selecting Single XML does not select Memory processing.
 
 | Setting | Behavior |
 | --- | --- |
@@ -468,8 +470,11 @@ survive retries, cancellation and new publication attempts.
 
 ### Interrupted publication and recovery
 
-The admin page and both post editors publish through a sequence of authenticated
-requests. Each ordinary request inspects one metadata object or uploads one
+With **Temporary files** processing, the admin page and both post editors publish
+through a sequence of authenticated requests. **Memory** processing uses
+[one publication request](#memory-processing) on both Linux/Unix and Windows.
+The pause and resume controls below apply to Temporary files processing.
+Each ordinary publication step inspects one metadata object or uploads one
 blob/tree/commit. The final request regenerates the source at the approved
 snapshot's timestamp, checks its full logical hash and transport plan, and checks
 the branch HEAD before one non-forced reference update. Unrelated branch changes
@@ -510,24 +515,29 @@ local journal is not a safe retry procedure.
 
 The server maintains one active job per WordPress installation. A bounded,
 non-autoloaded option holds IDs, hashes, progress and results, but no credentials,
-receipts or WXR bodies. A private snapshot directory holds the approved bytes;
+receipts or WXR bodies. With Temporary files processing, a private snapshot directory holds the approved bytes;
 files use mode `0600` and directories `0700`. Contents and file identity are
 checked again before upload. An exclusive per-site OS file lock prevents parallel
 workers; time passing never authorizes taking over a live worker's lock.
 Duplicate/stale request IDs return current status rather than repeating a step.
 
-Publication requires a Linux/Unix-style filesystem with POSIX file permissions
-and working cross-process locks. Windows drive-letter and UNC paths are not
-supported by the current private-storage implementation. PHP and WordPress
-version checks alone do not establish that this storage is supported.
+Temporary files processing requires private local storage with stable file identities,
+POSIX permissions and working cross-process locks. The following storage and
+cleanup requirements apply to that method. Memory processing uses a database
+connection lock; see [Memory processing](#memory-processing).
+PHP and WordPress version checks alone do not establish that either backend is supported.
 
 The default snapshot directory is under PHP's system temporary directory.
+`ZEROPRESS_STATIC_PRIVATE_DIR` can select an existing private parent for both
+export spools and publication snapshots. Its site-specific subdirectories remain
+separate. Without this constant, existing Unix paths and ownership records stay unchanged.
 It must remain available across requests, outside the web/document root and
 uploads, with private ownership, stable file identities and working exclusive
 locks. Multiple PHP workers must see the same supported filesystem; separate
 per-container temporary directories do not provide this guarantee. Hosts can
 select a suitable private directory with
-`zeropress_static_publication_directory`; public paths and permissive modes are
+`zeropress_static_publication_directory` for snapshots only; export spools still
+use the parent described above. Public paths and unsafe permissions are
 rejected. Storage without these guarantees, including unsupported filesystem
 semantics, stops publication with a controlled error rather than an unsafe
 fallback. Plan disk space for the snapshot plus export spools; capture checks
@@ -619,7 +629,7 @@ verification of an uncertain GitHub publication.
 
 Downloads are saved only after the browser has received the complete file and checked its decoded byte count against the preparation result. An interrupted transfer can still start with HTTP 200; the updated plugin does not treat that status alone as success or append an error document to a partial file. If no file was saved, retry the download. If it keeps failing, ask your host to review connection and request time limits. Expired or changed preparations require preparing again.
 
-The server retains bounded reads, the original request budget and the private file's ownership lock throughout delivery. It sends `Content-Length` only when PHP's output path is known to preserve bytes; the browser also checks downloads with compressed or reframed responses. This is a completion check, not a content checksum, a resumable download or an extension of hosting time limits. Download failures do not retry or clear a GitHub publication whose outcome is uncertain.
+The server retains bounded reads, the original request budget and the selected backend's ownership lock throughout delivery. It sends `Content-Length` only when PHP's output path is known to preserve bytes; the browser also checks downloads with compressed or reframed responses. This is a completion check, not a content checksum, a resumable download or an extension of hosting time limits. Download failures do not retry or clear a GitHub publication whose outcome is uncertain.
 
 
 The export includes published posts and pages without passwords, their used
@@ -635,13 +645,15 @@ Titles and other display text are decoded once to preserve characters such as
 apostrophes and ampersands.
 
 Publishing is a manual full export. Preparation, downloads and publication are
-separate operations. Downloads regenerate the data; publication captures a
+separate operations. Downloads regenerate the data; Temporary files publication captures a
 validated snapshot at start and regenerates it again before final dispatch.
+The memory path generates and revalidates the source within its single publication
+request without retaining an export snapshot between requests.
 Each request shares its original resource budget across generation and GitHub
 communication. The legacy PHP publication API still performs a single request,
 with the same site lock, durable final-write fence and pacing protections.
 
-WXR records are written to registered, request-owned files in a private subdirectory
+With Temporary files processing, WXR records are written to registered, request-owned files in a private subdirectory
 of PHP's system temporary directory, then assembled into a single XML or bounded
 parts. Downloads replay that file in bounded buffers after receipt and content
 validation. Each open file retains an exclusive lock until its last read and
@@ -658,9 +670,10 @@ or sweeps generic `php*` files. Deactivation and uninstall also attempt one
 bounded pass. Status polling and uncertain-result verification do not run a sweep;
 recovery never changes the publication journal or final-write fence.
 
-Export spools have the same Linux/Unix-style filesystem requirement as publication
+Export spools have the same private-filesystem requirements as publication
 snapshots. Both locations must be writable by the PHP worker. Export spools use
-PHP's `sys_get_temp_dir()`; WordPress's `WP_TEMP_DIR` does not redirect them.
+PHP's `sys_get_temp_dir()` unless `ZEROPRESS_STATIC_PRIVATE_DIR` is set;
+WordPress's `WP_TEMP_DIR` does not redirect them.
 
 The host must provide private local temporary storage with stable file identities,
 working cross-process locks, and room for the item spool and assembled WXR
@@ -737,6 +750,119 @@ If the server terminates a publication request before returning its result,
 read the retained status and use the recovery actions above. The plugin cannot
 infer whether the branch was updated from a lost response.
 
+### Export processing
+
+In **ZeroPress → Settings → Export processing**, choose **Temporary files** or
+**Memory**, then select **Save processing method**. No MU plugin is needed on
+Linux/Unix. This setting controls preparation, downloads and publication on the
+WordPress server. **WXR publishing format** separately controls the file layout
+published to GitHub; it does not choose the processing method.
+
+| Method | Use and limits |
+| --- | --- |
+| **Temporary files** (Linux/Unix default) | Uses private temporary storage. Supports single or split XML and pausing/continuing publication. Existing storage, resource and ownership checks apply. |
+| **Memory** (small sites) | Uses PHP memory without temporary export files. Supports single XML only, with no pause/continue. XML and base settings combined, and each encoded upload request, must fit 8 MiB. Available memory or time can stop smaller exports. |
+
+Choose Single XML before switching from an explicit Split XML preference to
+Memory. Automatic uses single XML in Memory processing, but an existing split
+export still requires explicitly choosing Single XML and reviewing its replacement.
+Changing the processing method does not itself write to GitHub or delete files.
+There is no size-based or error-triggered automatic switch between methods.
+
+Finish or cancel an unfinished publication before switching. A paused or expired
+job must also be resolved; a pending cancellation must finish. If the final branch
+update is uncertain, use **Check publication result** first. An unresolved intent
+cannot be bypassed by switching methods. Saving a method invalidates earlier
+preparations; prepare again before downloading or publishing. If saving was
+interrupted, reload Settings and save the displayed processing method again to
+complete recovery before preparing. Already-running
+preparation/download operations retain their original backend and file ownership.
+
+Switching uses a connection-owned database lock and an atomic reservation in the
+publication journal. A publication start and a settings change cannot both win.
+The settings write is bound to the reservation, settings revision and original
+DB connection. A worker lost during switching leaves a fenced reservation that a
+later settings save can recover; no timestamp grants ownership to a live worker.
+A new Memory selection does not require a working private directory. The database
+requirements below apply to Memory and method changes, not ordinary file-backed
+publication. Export bodies and credentials never enter the reservation.
+
+#### Memory processing
+
+Memory processing supports small single-XML exports using **PHP memory only**.
+Preparation, downloads and publication use `php://memory`; no WXR body or
+publication snapshot is written to the filesystem. A private temporary directory
+is not required. Linux/Unix administrators can select this method in Settings;
+Windows/IIS always uses it.
+
+**Automatic** uses one XML file. **Split XML** is unavailable with this method. If the
+repository already contains a split export, select **Single XML** and prepare
+again to approve its replacement. The existing manifest and parts are removed in
+the same final Git commit as the single XML is installed. Existing single-WXR
+starters do not need a capability marker or an input change.
+
+The memory path limits the combined XML and base settings to **8 MiB** and each
+encoded GitHub file-upload request to **8 MiB**. JSON escaping can reach the latter
+limit first. These are byte limits, not post-count limits, and do not guarantee
+that every export below them fits the host's available memory or time. The existing
+4 MiB individual-body limit, metadata/query guards, UTF-8 request sizing and PHP
+headroom checks also apply. If the publication plan cannot fit but generation
+succeeds, preparation offers downloads with the reason publishing was blocked.
+An export above the memory limit is stopped; there is no automatic disk fallback.
+
+Publication uses one authenticated HTTP request. Its final branch update still
+requires the approved content/settings, verified candidate commit and current
+branch HEAD, followed by one non-forced GitHub update. The same ten-minute
+approval, permission checks, unchanged-file reuse, mutation pacing and cancellation
+checks remain in force. **Pause publication** and **Continue publication** are
+not offered for this path. If a worker exits before final dispatch, cancel the
+interrupted job and prepare again. Closing the page does not prove that the server
+stopped: check its retained status first.
+
+A small, non-autoloaded database journal retains IDs, hashes and results, never
+export bodies, credentials or receipts. A MySQL/MariaDB connection-owned advisory
+lock excludes simultaneous preparation, download and publication. There is no
+expiring lease that another worker can take over while the original is running.
+The host must use WordPress's standard `wpdb`, a nonpersistent connection and one
+authoritative database connection supporting `GET_LOCK`, `IS_USED_LOCK` and
+`CONNECTION_ID`. Persistent connections and custom `wpdb` implementations are
+rejected. Database routing/proxy configurations that cannot retain the same
+physical connection across statements are unsupported. Query errors or a lost
+connection stop the request; ownership checks accompany journal writes so an
+automatic reconnect cannot continue the old worker's publication.
+
+Before final dispatch, the candidate and expected files are durably recorded.
+A missing final response requires **Check publication result**, not another write.
+An unresolved final-write intent survives approval expiry, cancellation,
+deactivation and uninstall. Read-only verification uses the original target and
+commitments; a candidate that exists but is not proven published is insufficient.
+If access cannot be restored, investigate with the maintainer rather than deleting
+the journal. This protection does not depend on temporary files.
+
+Use the effective PHP memory and request-time budgets described above. A 30-second
+PHP setting leaves a 25-second shared work budget, including WordPress startup,
+source checks and GitHub waits; publication reserves a further two seconds for
+local checkpoints. IIS/FastCGI and proxies may impose shorter hard deadlines.
+A larger memory allowance does not increase the 8 MiB memory-path limit. Reduce
+the export or, on Linux/Unix, select Temporary files for larger or slower publications.
+
+The existing `zeropress_static_memory_publication` filter remains compatible.
+Returning `true` fixes Memory processing on Linux/Unix and locks the selector with
+a server-configuration explanation. Returning `false` leaves the saved preference
+in control; it does not force Temporary files. Windows always uses Memory.
+The effective method is sealed into
+preparation receipts and jobs; a storage error never silently selects another
+backend. Resolve or cancel pre-dispatch work on the original backend before
+changing it. If a final update is uncertain, retain the journal; read-only result
+verification remains available even when the old private files cannot be read.
+
+#### Windows/IIS storage
+
+Windows/IIS always uses **Memory** with the limits and recovery behavior above.
+The settings screen displays the fixed method, and server validation prevents
+selecting Temporary files. The plugin does not invoke PowerShell, start an
+external process, or inspect or modify Windows ACLs.
+
 ## Stored data and external services
 
 The plugin does not send your site's content or usage statistics to ZeroPress.
@@ -748,7 +874,8 @@ GitHub tokens and Turnstile secrets use authenticated AES-256-GCM encryption wit
 separate keys derived from WordPress secrets. Their plaintext is never
 returned to the admin screen. If the WordPress secrets change, register the
 credentials again. Deactivation retains settings; uninstall removes the plugin's
-settings, credentials and temporary verification records.
+settings, credentials and temporary verification records. The bounded publication
+journal remains to protect any unresolved final update.
 
 ### GitHub
 
