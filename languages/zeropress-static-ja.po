@@ -67,6 +67,9 @@ msgstr "Apple Touch アイコン"
 msgid "Applying changes on GitHub…"
 msgstr "GitHub に変更を反映中…"
 
+msgid "Approval expired"
+msgstr "承認期限切れ"
+
 msgid "Approval expired. Cancel this publication and prepare the data again."
 msgstr "公開の承認期限が切れました。この公開をキャンセルし、データを再準備してください。"
 
@@ -88,8 +91,14 @@ msgstr "キャンセル"
 msgid "Cancel publication"
 msgstr "公開をキャンセル"
 
+msgid "Cancellation requested"
+msgstr "キャンセル申請済み"
+
 msgid "Cancellation requested. Waiting for the current request to finish."
 msgstr "キャンセルを要求しました。現在のリクエストの完了を待っています。"
+
+msgid "Cancelled"
+msgstr "キャンセル済み"
 
 msgid "Cancelling publication…"
 msgstr "公開をキャンセル中…"
@@ -160,6 +169,9 @@ msgstr "公開を続行"
 msgid "Create a GitHub token"
 msgstr "GitHub トークンを作成"
 
+msgid "Delete record"
+msgstr "履歴を削除"
+
 msgid "Delete saved keys"
 msgstr "保存済みキーを削除"
 
@@ -175,11 +187,20 @@ msgstr "保存済みの Site Key と Secret Key を削除し、Cloudflare Turnst
 msgid "Delete the saved Turnstile keys?"
 msgstr "保存済みの Turnstile キーを削除しますか ?"
 
+msgid "Delete this publication record?"
+msgstr "この発行履歴を削除しますか？"
+
 msgid "Delete token"
 msgstr "トークンを削除"
 
+msgid "Deleted user"
+msgstr "削除されたユーザー"
+
 msgid "Deleting keys…"
 msgstr "キーを削除中…"
+
+msgid "Deleting record…"
+msgstr "履歴を削除中…"
 
 msgid "Deleting token…"
 msgstr "トークンを削除中…"
@@ -198,6 +219,9 @@ msgstr "リンク先はサイトのビルド時に決定されます。"
 
 msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
 msgstr "保存済みのサイト設定に基づくリンク先です。準備時に、利用できない項目や非公開の項目は除外されます。"
+
+msgid "Details"
+msgstr "詳細"
 
 msgid "Display and credits"
 msgstr "表示とクレジット"
@@ -493,6 +517,9 @@ msgstr "ニュースレター連携"
 msgid "Next"
 msgstr "次へ"
 
+msgid "Next page"
+msgstr "次のページ"
+
 msgid "No GitHub token is registered. Reload this page to check its current status."
 msgstr "GitHub トークンが登録されていません。このページを再読み込みして、現在の状態を確認してください。"
 
@@ -504,6 +531,12 @@ msgstr "発行する変更はありません。"
 
 msgid "No items to show."
 msgstr "表示する項目はありません。"
+
+msgid "No publication history to display. New publication attempts will appear here."
+msgstr "表示する発行履歴はありません。新しい発行の試行はここに表示されます。"
+
+msgid "Not completed"
+msgstr "未完了"
 
 msgid "Not configured"
 msgstr "未設定"
@@ -523,11 +556,17 @@ msgstr "公開データの項目が大きすぎて、安全に送信できませ
 msgid "Only expose APIs needed for comments"
 msgstr "コメントに必要な API のみ公開"
 
+msgid "Only this history record will be removed. GitHub commits and the deployed site will not be changed."
+msgstr "この履歴だけが削除されます。GitHubのコミットや公開済みサイトには影響しません。"
+
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "<strong>Select repositories</strong> を開き、上の <strong>発行先 GitHub リポジトリ URL</strong> に入力したリポジトリのみを選択してください。"
 
 msgid "Open GitHub publishing"
 msgstr "GitHub の発行画面を開く"
+
+msgid "Open Publish"
+msgstr "公開画面を開く"
 
 msgid "Opens the signup page in a new tab."
 msgstr "登録ページを新しいタブで開きます。"
@@ -541,6 +580,9 @@ msgstr "PHP メモリー上限: {limit}。推定必要メモリー: {estimated}�
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 実行時間上限: {limit}秒。リクエストの処理時間上限: {budget}秒。経過時間: {elapsed}秒。"
 
+msgid "Page %1$d of %2$d"
+msgstr "%2$d ページ中 %1$d ページ"
+
 msgid "Pages: {pages}"
 msgstr "固定ページ: {pages}件"
 
@@ -549,6 +591,9 @@ msgstr "今回の準備データはチェックに合格しました。"
 
 msgid "Pause publication"
 msgstr "公開を一時停止"
+
+msgid "Paused"
+msgstr "一時停止中"
 
 msgid "Pausing…"
 msgstr "一時停止中…"
@@ -583,6 +628,9 @@ msgstr "ダウンロードを準備中…"
 msgid "Previous"
 msgstr "前へ"
 
+msgid "Previous page"
+msgstr "前のページ"
+
 msgid "Privacy Policy"
 msgstr "プライバシーポリシー"
 
@@ -610,6 +658,21 @@ msgstr "公開リポジトリ"
 msgid "Publication cancelled. The branch was not updated."
 msgstr "公開をキャンセルしました。ブランチは更新されていません。"
 
+msgid "Publication failed"
+msgstr "公開失敗"
+
+msgid "Publication history"
+msgstr "公開履歴"
+
+msgid "Publication history changed. Reload this page and try again."
+msgstr "発行履歴が変更されました。ページを再読み込みしてから再試行してください。"
+
+msgid "Publication history is unavailable. Try again later."
+msgstr "公開履歴を読み込めません。しばらくしてから再度お試しください。"
+
+msgid "Publication history pages"
+msgstr "公開履歴のページ"
+
 msgid "Publication is running in one request. Refresh the status if its response was lost."
 msgstr "1 回のリクエストで公開処理を実行中です。応答を受信できなかった場合は、状態を更新してください。"
 
@@ -621,6 +684,9 @@ msgstr "公開を一時停止しました。続行するか、この公開をキ
 
 msgid "Publication paused. Continue to retry the remaining steps."
 msgstr "公開処理が一時停止しました。続行すると残りの手順を再試行します。"
+
+msgid "Publication record deleted."
+msgstr "発行履歴を削除しました。"
 
 msgid "Publication status"
 msgstr "公開状況"
@@ -741,6 +807,12 @@ msgstr "リポジトリ、ブランチ、または必要な公開データファ
 
 msgid "Republish options"
 msgstr "再発行オプション"
+
+msgid "Result"
+msgstr "結果"
+
+msgid "Result needs checking"
+msgstr "結果の確認が必要"
 
 msgid "Review prepared data"
 msgstr "準備したデータを確認"
@@ -889,6 +961,12 @@ msgstr "分割XMLファイル：{parts}個"
 msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
 msgstr "WXR が 8 MiB を超える場合、または送信サイズやサーバーメモリの都合で必要な場合に分割します。既存の分割形式はそのまま維持します。"
 
+msgid "Started"
+msgstr "開始日時"
+
+msgid "Started by"
+msgstr "実行者"
+
 msgid "Static site URL"
 msgstr "静的サイト URL"
 
@@ -928,11 +1006,17 @@ msgstr "ダウンロードを完了できなかったため、ファイルは保
 msgid "The download is ready. Check your browser downloads."
 msgstr "ダウンロードの準備ができました。ブラウザーのダウンロード一覧を確認してください。"
 
+msgid "The latest 100 publication attempts are kept here. Publishing to GitHub and deploying the site are separate steps."
+msgstr "直近 100 件の公開操作を記録します。GitHub への公開とサイトのデプロイは別の手順です。"
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "準備したデータの有効期限が切れたか、設定が変更されました。もう一度準備してください。"
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "準備したデータが無効です。もう一度準備してください。"
+
+msgid "The publication record could not be deleted. Try again later."
+msgstr "発行履歴を削除できませんでした。しばらくしてから再試行してください。"
 
 msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
 msgstr "リポジトリ内の公開データファイルが不完全か、変更されています。スターターの入力ファイルを確認し、完全な公開データを復元してから再度準備してください。"
@@ -985,6 +1069,9 @@ msgstr "この WordPress のアドレス: %s。"
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "この WordPress は、サポート対象の <code>/wp-json/wp/v2</code> URL 形式を使用していません。このパスで訪問者がアクセスできる API を設定してください。クエリー形式の REST URL はサポートされていません。"
 
+msgid "This publication is not finished. Open Publish to check its status."
+msgstr "この発行はまだ完了していません。「発行」を開いて状態を確認してください。"
+
 msgid "This publication replaces the single XML file with split files."
 msgstr "今回の公開では、既存の単一 XML ファイルを分割ファイルに置き換えます。"
 
@@ -1023,6 +1110,9 @@ msgstr "このバージョンは WordPress のシングルサイト構成のみ�
 
 msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
 msgstr "残り時間: {remaining} 秒。リクエスト間の最小待機時間: {minimum} 秒。このほかに転送時間が必要です。"
+
+msgid "Time unavailable"
+msgstr "日時不明"
 
 msgid "Timezone"
 msgstr "タイムゾーン"

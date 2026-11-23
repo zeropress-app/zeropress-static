@@ -166,6 +166,12 @@ The plugin publishes saved content. It does not recreate page-builder layouts, s
 
 ZeroPress warns when a post or page body reaches 256 KiB and stops publication if it exceeds 4 MiB. Split or shorten that post, then prepare again. Markup and other text in the body count toward the size; linked image files do not. Your saved WordPress content is not changed. See the [publishing limits guide](https://github.com/zeropress-app/zeropress-static#export-scope-and-limits) for details.
 
+= Where can I see previous publications? =
+
+Open **ZeroPress → Publication history** to see the latest 100 publication attempts, 20 per page. Records show the time, result, publishing destination, user and commit link when available. Recording starts with new attempts after this feature is installed. GitHub publication and your hosting service's build and deployment are separate steps.
+
+Select **Delete record** to remove a finished attempt from this list. This does not change GitHub commits or the deployed site. Attempts still in progress or needing a result check are protected.
+
 = Can I restrict public REST API access? =
 
 Yes. Enable **Only expose APIs needed for comments** under **Settings → API protection** to keep only the APIs needed for ZeroPress Static comments publicly accessible. If comment display is off, all public REST API access is restricted.

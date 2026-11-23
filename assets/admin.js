@@ -52,7 +52,8 @@
 			label.textContent = text;
 			element.append(label);
 		}
-		element.className = 'zpsp-feedback' + (text ? ' notice notice-' + kind : '');
+		// Keep section feedback in place when WordPress relocates global notices.
+		element.className = 'zpsp-feedback' + (text ? ' notice inline notice-' + kind : '');
 		const help = publication.helpUrl(code);
 		if (commitUrl || help) {
 			const link = document.createElement('a');
@@ -920,5 +921,40 @@
 			notice('download', message('downloaded'));
 		});
 	}));
+	function initializeHistory() {
+		const panel = root.querySelector('.zpsp-history');
+		if (!panel) return;
+		const url = new URL(window.location.href);
+		if (url.searchParams.get('history_deleted') === '1') {
+			notice('history', message('history_deleted'), 'success');
+			$('history-notice').focus();
+			url.searchParams.delete('history_deleted');
+			window.history.replaceState(null, '', url);
+		}
+		panel.querySelectorAll('[data-history-delete]').forEach((button) => {
+			button.hidden = false;
+			button.addEventListener('click', () => {
+				if (busy || confirmation) return;
+				const cells = button.closest('tr').cells;
+				const started = cells[0].textContent.trim();
+				const destination = cells[2].innerText.trim();
+				confirmAction(button, {
+					title: message('history_delete_title'), confirmLabel: message('history_delete_confirm'),
+					description: message('history_delete_description'), feedback: 'history',
+					shouldCloseOnClickOutside: false,
+					content: (el) => el('div', { className: 'zpsp-history-confirm-target' }, el('p', null, started), el('p', null, destination)),
+					onConfirm: () => run(button, 'history', 'history_deleting', async () => {
+						const result = await request('history_delete', { id: button.dataset.historyDelete, page: Number(panel.dataset.historyPage) });
+						const next = new URL(window.location.href);
+						next.searchParams.set('history_page', String(result.page));
+						next.searchParams.set('history_deleted', '1');
+						next.hash = 'zpsp-history-notice';
+						window.location.assign(next.href);
+					}),
+				});
+			});
+		});
+	}
+	initializeHistory();
 	initializePrivacy();
 })();

@@ -170,6 +170,7 @@ final class Publication_Store {
 		$this->raw      = $encoded;
 		$this->data     = $next;
 		$this->baseline = $next;
+		Publication_History::checkpoint( $baseline['job'], $next );
 	}
 
 	/** Only the settings worker may write during a backend transition.

@@ -29,6 +29,25 @@
 }
 .zpsp [hidden] { display: none !important; }
 .zpsp .nav-tab-wrapper { margin-bottom: 20px; }
+.zpsp-history table { table-layout: fixed; }
+.zpsp-history td, .zpsp-history th { overflow-wrap: anywhere; }
+.zpsp-history td { vertical-align: top; }
+.zpsp .button-link.zpsp-history-delete { display: block; margin-top: 12px; text-align: start; }
+.zpsp-history-confirm-target { overflow-wrap: anywhere; }
+.zpsp-history-status { display: inline-flex; align-items: flex-start; gap: 6px; }
+.zpsp-history-status .dashicons { flex-shrink: 0; }
+.zpsp-history-status-success { color: #008a20; }
+.zpsp-history-status-warning { color: #996800; }
+.zpsp-history-status-error { color: #b32d2e; }
+.zpsp-history-status-info { color: #50575e; }
+.zpsp-history-pages { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+@media (max-width: 782px) {
+	.zpsp-history thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+	.zpsp-history table, .zpsp-history tbody, .zpsp-history tr { display: block; width: 100%; }
+	.zpsp-history tr + tr { border-top: 1px solid #c3c4c7; }
+	.zpsp-history td { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+	.zpsp-history td::before { content: attr(data-label); font-weight: 600; }
+}
 .zpsp .zpsp-footer { margin: 24px 0; color: #50575e; overflow-wrap: anywhere; }
 .zpsp .zpsp-footer p { margin: 6px 0; font-size: 13px; }
 .zpsp .zpsp-footer .dashicons { width: 14px; height: 14px; font-size: 14px; line-height: 1; vertical-align: text-bottom; }

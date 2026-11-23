@@ -313,6 +313,7 @@ final class Publication_Session {
 			'request_id'        => $request_id,
 			'fingerprint'       => $fingerprint,
 			'owner'             => get_current_user_id(),
+			'started_at'        => time(),
 			'expires'           => $prepared['expires'],
 			'settings_revision' => $prepared['revision'],
 			'target'            => array(

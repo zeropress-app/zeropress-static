@@ -25,12 +25,13 @@ final class Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( self::class, 'plugin_links' ) );
 	}
 
-	/** Register publishing and settings in navigation order. */
+	/** Register publishing, settings and history in navigation order. */
 	public static function menu(): void {
 		$slug                           = 'zeropress-static';
 		self::$screen_hooks['publish']  = add_menu_page( __( 'Publish', 'zeropress-static' ), __( 'ZeroPress', 'zeropress-static' ), 'manage_options', $slug, array( self::class, 'screen' ), 'dashicons-cloud-upload' );
 		self::$screen_hooks[]           = add_submenu_page( $slug, __( 'Publish', 'zeropress-static' ), __( 'Publish', 'zeropress-static' ), 'manage_options', $slug, array( self::class, 'screen' ) );
 		self::$screen_hooks['settings'] = add_submenu_page( $slug, __( 'Settings', 'zeropress-static' ), __( 'Settings', 'zeropress-static' ), 'manage_options', $slug . '-settings', array( self::class, 'settings_screen' ) );
+		self::$screen_hooks['history']  = add_submenu_page( $slug, __( 'Publication history', 'zeropress-static' ), __( 'Publication history', 'zeropress-static' ), 'manage_options', $slug . '-history', array( self::class, 'history_screen' ) );
 	}
 
 	/**
@@ -48,7 +49,7 @@ final class Admin {
 	/**
 	 * Resolve an admin destination without depending on the WordPress directory.
 	 *
-	 * @param string $page Publishing or settings.
+	 * @param string $page Publishing, settings or history.
 	 */
 	private static function page_url( string $page = 'publish' ): string {
 		return admin_url( 'admin.php?page=zeropress-static' . ( 'publish' === $page ? '' : '-' . $page ) );
@@ -118,7 +119,7 @@ final class Admin {
 				'link'   => get_permalink( $post ),
 				'public' => 'publish' === $post->post_status && '' === $post->post_password,
 			);
-		} else {
+		} elseif ( ( self::$screen_hooks['history'] ?? '' ) !== $hook ) {
 			$config['menus'] = Menus::catalog();
 		}
 		wp_add_inline_script( $handle, 'var zeroPressPublisher = ' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ';', 'before' );
@@ -147,6 +148,14 @@ final class Admin {
 				throw new Failure( 'INVALID_REQUEST' );
 			}
 			switch ( $input['operation'] ?? '' ) {
+				case 'history_delete':
+					if ( ! is_int( $input['page'] ?? null ) || $input['page'] < 1 ) {
+						throw new Failure( 'INVALID_REQUEST' );
+					}
+					Publication_History::delete( Settings::string( $input, 'id' ) );
+					$page   = Publication_History::page( $input['page'] );
+					$result = array( 'page' => $page['available'] ? $page['page'] : $input['page'] );
+					break;
 				case 'save':
 					$result = Settings::save( $input['settings'] ?? array(), Settings::string( $input, 'section' ) );
 					if ( 'media' === $input['section'] ) {
@@ -245,6 +254,11 @@ final class Admin {
 		self::render( 'settings' );
 	}
 
+	/** Render history with deletion of finished display records. */
+	public static function history_screen(): void {
+		self::render( 'history' );
+	}
+
 	/**
 	 * Render common navigation and the selected screen.
 	 *
@@ -262,6 +276,7 @@ final class Admin {
 				foreach ( array(
 					'publish'  => __( 'Publish', 'zeropress-static' ),
 					'settings' => __( 'Settings', 'zeropress-static' ),
+					'history'  => __( 'Publication history', 'zeropress-static' ),
 				) as $id => $label ) :
 					?>
 					<a class="nav-tab <?php echo $page === $id ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( self::page_url( $id ) ); ?>" <?php echo $page === $id ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
@@ -271,10 +286,14 @@ final class Admin {
 				<p><?php esc_html_e( 'This version supports single-site WordPress only.', 'zeropress-static' ); ?></p>
 			<?php elseif ( 'settings' === $page ) : ?>
 				<?php self::settings_panels(); ?>
+			<?php elseif ( 'history' === $page ) : ?>
+				<?php self::history_panel(); ?>
 			<?php else : ?>
 				<?php self::publish_panel(); ?>
 			<?php endif; ?>
-			<noscript><p><?php esc_html_e( 'Enable JavaScript to save settings and prepare publishing data.', 'zeropress-static' ); ?></p></noscript>
+			<?php if ( 'history' !== $page ) : ?>
+				<noscript><p><?php esc_html_e( 'Enable JavaScript to save settings and prepare publishing data.', 'zeropress-static' ); ?></p></noscript>
+			<?php endif; ?>
 			<div class="zpsp-footer">
 				<p><?php esc_html_e( 'Questions, bug reports, or feature ideas?', 'zeropress-static' ); ?> <a href="https://github.com/zeropress-app/zeropress-static/issues" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Share them on GitHub Issues', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
 				<p><a id="zpsp-privacy" href="https://github.com/zeropress-app/zeropress-static#stored-data-and-external-services" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Privacy Policy', 'zeropress-static' ); ?> <span class="dashicons dashicons-external" aria-hidden="true"></span></a></p>
@@ -297,6 +316,105 @@ final class Admin {
 		</div>
 		<?php
 		self::feedback( $section );
+	}
+
+	/** Render bounded history; pagination never starts publication work. */
+	private static function history_panel(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only pagination; no state change, credentials or remote requests.
+		$requested = isset( $_GET['history_page'] ) && is_scalar( $_GET['history_page'] ) ? (int) $_GET['history_page'] : 1;
+		$data      = Publication_History::page( $requested );
+		?>
+		<section class="zpsp-panel zpsp-history" aria-labelledby="zpsp-history-heading" data-history-page="<?php echo esc_attr( (string) ( $data['page'] ?? 1 ) ); ?>">
+			<h2 id="zpsp-history-heading"><?php esc_html_e( 'Publication history', 'zeropress-static' ); ?></h2>
+			<p><?php esc_html_e( 'The latest 100 publication attempts are kept here. Publishing to GitHub and deploying the site are separate steps.', 'zeropress-static' ); ?></p>
+			<?php self::feedback( 'history' ); ?>
+			<?php if ( ! $data['available'] ) : ?>
+				<p class="notice notice-warning"><?php esc_html_e( 'Publication history is unavailable. Try again later.', 'zeropress-static' ); ?></p>
+			<?php elseif ( 0 === $data['total'] ) : ?>
+				<p><?php esc_html_e( 'No publication history to display. New publication attempts will appear here.', 'zeropress-static' ); ?></p>
+			<?php else : ?>
+				<table class="widefat striped">
+					<thead><tr>
+						<th scope="col"><?php esc_html_e( 'Started', 'zeropress-static' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Result', 'zeropress-static' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Publishing destination', 'zeropress-static' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Started by', 'zeropress-static' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Details', 'zeropress-static' ); ?></th>
+					</tr></thead>
+					<tbody>
+					<?php foreach ( $data['entries'] as $entry ) : ?>
+						<?php self::history_row( $entry ); ?>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+				<nav class="zpsp-history-pages" aria-label="<?php esc_attr_e( 'Publication history pages', 'zeropress-static' ); ?>">
+					<?php if ( $data['page'] > 1 ) : ?>
+						<a class="button" href="<?php echo esc_url( add_query_arg( 'history_page', $data['page'] - 1, self::page_url( 'history' ) ) ); ?>"><?php esc_html_e( 'Previous page', 'zeropress-static' ); ?></a>
+					<?php endif; ?>
+					<span>
+					<?php
+						/* translators: 1: Current page, 2: Total pages. */
+						echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'zeropress-static' ), $data['page'], $data['pages'] ) );
+					?>
+					</span>
+					<?php if ( $data['page'] < $data['pages'] ) : ?>
+						<a class="button" href="<?php echo esc_url( add_query_arg( 'history_page', $data['page'] + 1, self::page_url( 'history' ) ) ); ?>"><?php esc_html_e( 'Next page', 'zeropress-static' ); ?></a>
+					<?php endif; ?>
+				</nav>
+			<?php endif; ?>
+		</section>
+		<?php
+	}
+
+	/** Render escaped display metadata without exposing recovery credentials.
+	 *
+	 * @param array $entry Summary for one publication attempt.
+	 */
+	private static function history_row( array $entry ): void {
+		$states                      = array(
+			'pending'        => array( __( 'Not completed', 'zeropress-static' ), 'info', 'info-outline' ),
+			'published'      => array( __( 'Published to GitHub', 'zeropress-static' ), 'success', 'yes-alt' ),
+			'unchanged'      => array( __( 'No changes to publish.', 'zeropress-static' ), 'info', 'info-outline' ),
+			'failed'         => array( __( 'Publication failed', 'zeropress-static' ), 'error', 'warning' ),
+			'cancelled'      => array( __( 'Cancelled', 'zeropress-static' ), 'info', 'info-outline' ),
+			'expired'        => array( __( 'Approval expired', 'zeropress-static' ), 'warning', 'clock' ),
+			'paused'         => array( __( 'Paused', 'zeropress-static' ), 'info', 'controls-pause' ),
+			'cancel_pending' => array( __( 'Cancellation requested', 'zeropress-static' ), 'info', 'info-outline' ),
+			'unknown'        => array( __( 'Result needs checking', 'zeropress-static' ), 'warning', 'warning' ),
+		);
+		list( $label, $kind, $icon ) = $states[ $entry['state'] ];
+		$user                        = get_user_by( 'id', $entry['owner'] );
+		$messages                    = self::messages();
+		?>
+		<tr data-history-id="<?php echo esc_attr( $entry['id'] ); ?>">
+			<td data-label="<?php esc_attr_e( 'Started', 'zeropress-static' ); ?>">
+				<?php if ( $entry['started_at'] ) : ?>
+					<time datetime="<?php echo esc_attr( gmdate( 'c', $entry['started_at'] ) ); ?>"><?php echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $entry['started_at'] ) ); ?></time>
+				<?php else : ?>
+					<?php esc_html_e( 'Time unavailable', 'zeropress-static' ); ?>
+				<?php endif; ?>
+			</td>
+			<td data-label="<?php esc_attr_e( 'Result', 'zeropress-static' ); ?>">
+				<span class="zpsp-history-status zpsp-history-status-<?php echo esc_attr( $kind ); ?>"><span class="dashicons dashicons-<?php echo esc_attr( $icon ); ?>" aria-hidden="true"></span><span><?php echo esc_html( $label ); ?></span></span>
+			</td>
+			<td data-label="<?php esc_attr_e( 'Publishing destination', 'zeropress-static' ); ?>"><?php echo esc_html( $entry['repository'] ); ?><br /><code><?php echo esc_html( $entry['branch'] ); ?></code></td>
+			<td data-label="<?php esc_attr_e( 'Started by', 'zeropress-static' ); ?>"><?php echo esc_html( $user ? $user->display_name : __( 'Deleted user', 'zeropress-static' ) ); ?></td>
+			<td data-label="<?php esc_attr_e( 'Details', 'zeropress-static' ); ?>">
+				<?php if ( 'published' === $entry['state'] && $entry['commit'] ) : ?>
+					<a href="<?php echo esc_url( 'https://github.com/' . $entry['repository'] . '/commit/' . $entry['commit'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'View commit', 'zeropress-static' ); ?></a>
+				<?php elseif ( in_array( $entry['state'], array( 'pending', 'paused', 'unknown', 'cancel_pending', 'expired' ), true ) ) : ?>
+					<a href="<?php echo esc_url( self::page_url() ); ?>"><?php esc_html_e( 'Open Publish', 'zeropress-static' ); ?></a>
+				<?php elseif ( $entry['code'] && isset( $messages[ $entry['code'] ] ) ) : ?>
+					<?php echo esc_html( $messages[ $entry['code'] ] ); ?>
+				<?php else : ?>
+					—
+				<?php endif; ?>
+				<?php if ( $entry['can_delete'] ) : ?>
+					<button type="button" class="button-link button-link-delete zpsp-history-delete" data-history-delete="<?php echo esc_attr( $entry['id'] ); ?>" aria-haspopup="dialog" hidden><?php esc_html_e( 'Delete record', 'zeropress-static' ); ?></button>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php
 	}
 
 	/** Build media prefix examples from the WordPress upload base URL. */
@@ -1057,6 +1175,14 @@ final class Admin {
 			'confirm_cancel'                  => __( 'Cancel', 'zeropress-static' ),
 			'confirm_close'                   => __( 'Close confirmation', 'zeropress-static' ),
 			'confirmation_unavailable'        => __( 'The confirmation dialog could not be loaded. Reload this page and try again.', 'zeropress-static' ),
+			'history_delete_title'            => __( 'Delete this publication record?', 'zeropress-static' ),
+			'history_delete_confirm'          => __( 'Delete record', 'zeropress-static' ),
+			'history_delete_description'      => __( 'Only this history record will be removed. GitHub commits and the deployed site will not be changed.', 'zeropress-static' ),
+			'history_deleting'                => __( 'Deleting record…', 'zeropress-static' ),
+			'history_deleted'                 => __( 'Publication record deleted.', 'zeropress-static' ),
+			'HISTORY_DELETE_BLOCKED'          => __( 'This publication is not finished. Open Publish to check its status.', 'zeropress-static' ),
+			'HISTORY_UNAVAILABLE'             => __( 'The publication record could not be deleted. Try again later.', 'zeropress-static' ),
+			'HISTORY_CONFLICT'                => __( 'Publication history changed. Reload this page and try again.', 'zeropress-static' ),
 			'privacy_title'                   => __( 'Privacy Policy', 'zeropress-static' ),
 			'privacy_intro'                   => __( 'ZeroPress Static does not send your site\'s content or usage statistics to ZeroPress.', 'zeropress-static' ),
 			'privacy_github_title'            => __( 'GitHub', 'zeropress-static' ),

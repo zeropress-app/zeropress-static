@@ -64,6 +64,9 @@ msgstr ""
 msgid "Applying changes on GitHub…"
 msgstr ""
 
+msgid "Approval expired"
+msgstr ""
+
 msgid "Approval expired. Cancel this publication and prepare the data again."
 msgstr ""
 
@@ -85,7 +88,13 @@ msgstr ""
 msgid "Cancel publication"
 msgstr ""
 
+msgid "Cancellation requested"
+msgstr ""
+
 msgid "Cancellation requested. Waiting for the current request to finish."
+msgstr ""
+
+msgid "Cancelled"
 msgstr ""
 
 msgid "Cancelling publication…"
@@ -157,6 +166,9 @@ msgstr ""
 msgid "Create a GitHub token"
 msgstr ""
 
+msgid "Delete record"
+msgstr ""
+
 msgid "Delete saved keys"
 msgstr ""
 
@@ -172,10 +184,19 @@ msgstr ""
 msgid "Delete the saved Turnstile keys?"
 msgstr ""
 
+msgid "Delete this publication record?"
+msgstr ""
+
 msgid "Delete token"
 msgstr ""
 
+msgid "Deleted user"
+msgstr ""
+
 msgid "Deleting keys…"
+msgstr ""
+
+msgid "Deleting record…"
 msgstr ""
 
 msgid "Deleting token…"
@@ -194,6 +215,9 @@ msgid "Destination will be determined during the site build."
 msgstr ""
 
 msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "Display and credits"
@@ -490,6 +514,9 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+msgid "Next page"
+msgstr ""
+
 msgid "No GitHub token is registered. Reload this page to check its current status."
 msgstr ""
 
@@ -500,6 +527,12 @@ msgid "No changes to publish."
 msgstr ""
 
 msgid "No items to show."
+msgstr ""
+
+msgid "No publication history to display. New publication attempts will appear here."
+msgstr ""
+
+msgid "Not completed"
 msgstr ""
 
 msgid "Not configured"
@@ -520,10 +553,16 @@ msgstr ""
 msgid "Only expose APIs needed for comments"
 msgstr ""
 
+msgid "Only this history record will be removed. GitHub commits and the deployed site will not be changed."
+msgstr ""
+
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr ""
 
 msgid "Open GitHub publishing"
+msgstr ""
+
+msgid "Open Publish"
 msgstr ""
 
 msgid "Opens the signup page in a new tab."
@@ -538,6 +577,9 @@ msgstr ""
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr ""
 
+msgid "Page %1$d of %2$d"
+msgstr ""
+
 msgid "Pages: {pages}"
 msgstr ""
 
@@ -545,6 +587,9 @@ msgid "Passed for this preparation."
 msgstr ""
 
 msgid "Pause publication"
+msgstr ""
+
+msgid "Paused"
 msgstr ""
 
 msgid "Pausing…"
@@ -580,6 +625,9 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
+msgid "Previous page"
+msgstr ""
+
 msgid "Privacy Policy"
 msgstr ""
 
@@ -607,6 +655,21 @@ msgstr ""
 msgid "Publication cancelled. The branch was not updated."
 msgstr ""
 
+msgid "Publication failed"
+msgstr ""
+
+msgid "Publication history"
+msgstr ""
+
+msgid "Publication history changed. Reload this page and try again."
+msgstr ""
+
+msgid "Publication history is unavailable. Try again later."
+msgstr ""
+
+msgid "Publication history pages"
+msgstr ""
+
 msgid "Publication is running in one request. Refresh the status if its response was lost."
 msgstr ""
 
@@ -617,6 +680,9 @@ msgid "Publication paused. Continue publishing or cancel this publication."
 msgstr ""
 
 msgid "Publication paused. Continue to retry the remaining steps."
+msgstr ""
+
+msgid "Publication record deleted."
 msgstr ""
 
 msgid "Publication status"
@@ -737,6 +803,12 @@ msgid "Repository, branch or required publishing data files not found. Check acc
 msgstr ""
 
 msgid "Republish options"
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "Result needs checking"
 msgstr ""
 
 msgid "Review prepared data"
@@ -886,6 +958,12 @@ msgstr ""
 msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
 msgstr ""
 
+msgid "Started"
+msgstr ""
+
+msgid "Started by"
+msgstr ""
+
 msgid "Static site URL"
 msgstr ""
 
@@ -925,10 +1003,16 @@ msgstr ""
 msgid "The download is ready. Check your browser downloads."
 msgstr ""
 
+msgid "The latest 100 publication attempts are kept here. Publishing to GitHub and deploying the site are separate steps."
+msgstr ""
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr ""
 
 msgid "The preparation is invalid. Prepare again."
+msgstr ""
+
+msgid "The publication record could not be deleted. Try again later."
 msgstr ""
 
 msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
@@ -982,6 +1066,9 @@ msgstr ""
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr ""
 
+msgid "This publication is not finished. Open Publish to check its status."
+msgstr ""
+
 msgid "This publication replaces the single XML file with split files."
 msgstr ""
 
@@ -1019,6 +1106,9 @@ msgid "This version supports single-site WordPress only."
 msgstr ""
 
 msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
+msgstr ""
+
+msgid "Time unavailable"
 msgstr ""
 
 msgid "Timezone"

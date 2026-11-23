@@ -67,6 +67,9 @@ msgstr "Apple 터치 아이콘"
 msgid "Applying changes on GitHub…"
 msgstr "GitHub에 변경사항을 반영하고 있습니다…"
 
+msgid "Approval expired"
+msgstr "승인 만료"
+
 msgid "Approval expired. Cancel this publication and prepare the data again."
 msgstr "발행 승인 시간이 만료되었습니다. 이 발행을 취소하고 데이터를 다시 준비해 주세요."
 
@@ -88,8 +91,14 @@ msgstr "취소"
 msgid "Cancel publication"
 msgstr "발행 취소"
 
+msgid "Cancellation requested"
+msgstr "취소 요청됨"
+
 msgid "Cancellation requested. Waiting for the current request to finish."
 msgstr "취소를 요청했습니다. 현재 요청이 끝나기를 기다리고 있습니다."
+
+msgid "Cancelled"
+msgstr "취소됨"
 
 msgid "Cancelling publication…"
 msgstr "발행 취소 중…"
@@ -160,6 +169,9 @@ msgstr "계속 발행"
 msgid "Create a GitHub token"
 msgstr "GitHub 토큰 생성"
 
+msgid "Delete record"
+msgstr "이력 삭제"
+
 msgid "Delete saved keys"
 msgstr "저장된 키 삭제"
 
@@ -175,11 +187,20 @@ msgstr "저장된 Site Key와 Secret Key를 삭제하고 Cloudflare Turnstile �
 msgid "Delete the saved Turnstile keys?"
 msgstr "저장된 Turnstile 키를 삭제할까요?"
 
+msgid "Delete this publication record?"
+msgstr "이 발행 이력을 삭제할까요?"
+
 msgid "Delete token"
 msgstr "토큰 삭제"
 
+msgid "Deleted user"
+msgstr "삭제된 사용자"
+
 msgid "Deleting keys…"
 msgstr "키 삭제 중…"
+
+msgid "Deleting record…"
+msgstr "이력 삭제 중…"
 
 msgid "Deleting token…"
 msgstr "토큰 삭제 중…"
@@ -198,6 +219,9 @@ msgstr "목적지 주소는 사이트 빌드 시 결정됩니다."
 
 msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
 msgstr "저장된 사이트 설정을 기준으로 목적지 주소를 표시합니다. 준비할 때 사용할 수 없거나 비공개인 항목을 제외합니다."
+
+msgid "Details"
+msgstr "상세"
 
 msgid "Display and credits"
 msgstr "표시 및 출처"
@@ -493,6 +517,9 @@ msgstr "뉴스레터 연결"
 msgid "Next"
 msgstr "다음"
 
+msgid "Next page"
+msgstr "다음 페이지"
+
 msgid "No GitHub token is registered. Reload this page to check its current status."
 msgstr "등록된 GitHub 토큰이 없습니다. 페이지를 새로고침하여 현재 상태를 확인하세요."
 
@@ -504,6 +531,12 @@ msgstr "발행할 변경 사항이 없습니다."
 
 msgid "No items to show."
 msgstr "표시할 항목이 없습니다."
+
+msgid "No publication history to display. New publication attempts will appear here."
+msgstr "표시할 발행 이력이 없습니다. 새로운 발행 시도가 여기에 표시됩니다."
+
+msgid "Not completed"
+msgstr "미완료"
 
 msgid "Not configured"
 msgstr "설정되지 않음"
@@ -523,11 +556,17 @@ msgstr "발행 데이터의 항목 하나가 너무 커서 안전하게 전송�
 msgid "Only expose APIs needed for comments"
 msgstr "댓글 기능에 필요한 API만 공개"
 
+msgid "Only this history record will be removed. GitHub commits and the deployed site will not be changed."
+msgstr "이력 목록에서만 삭제됩니다. GitHub 커밋과 배포된 사이트에는 영향을 주지 않습니다."
+
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "<strong>Select repositories</strong>를 열고 위의 <strong>발행 GitHub 저장소 URL</strong>에 입력한 저장소만 선택하세요."
 
 msgid "Open GitHub publishing"
 msgstr "GitHub 발행 창 열기"
+
+msgid "Open Publish"
+msgstr "발행 화면 열기"
 
 msgid "Opens the signup page in a new tab."
 msgstr "구독 페이지를 새 탭으로 엽니다."
@@ -541,6 +580,9 @@ msgstr "PHP 메모리 제한: {limit}. 추정 필요 메모리: {estimated}."
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "PHP 시간 제한: {limit}초. 요청 처리 예산: {budget}초. 경과 시간: {elapsed}초."
 
+msgid "Page %1$d of %2$d"
+msgstr "%2$d페이지 중 %1$d페이지"
+
 msgid "Pages: {pages}"
 msgstr "페이지 {pages}개"
 
@@ -549,6 +591,9 @@ msgstr "현재 준비 데이터의 검사를 통과했습니다."
 
 msgid "Pause publication"
 msgstr "발행 일시정지"
+
+msgid "Paused"
+msgstr "일시정지됨"
 
 msgid "Pausing…"
 msgstr "일시정지 대기 중…"
@@ -583,6 +628,9 @@ msgstr "다운로드 준비 중…"
 msgid "Previous"
 msgstr "이전"
 
+msgid "Previous page"
+msgstr "이전 페이지"
+
 msgid "Privacy Policy"
 msgstr "개인정보 보호 정책"
 
@@ -610,6 +658,21 @@ msgstr "공개 저장소"
 msgid "Publication cancelled. The branch was not updated."
 msgstr "발행을 취소했습니다. 브랜치는 갱신되지 않았습니다."
 
+msgid "Publication failed"
+msgstr "발행 실패"
+
+msgid "Publication history"
+msgstr "발행 이력"
+
+msgid "Publication history changed. Reload this page and try again."
+msgstr "발행 이력이 변경되었습니다. 페이지를 새로 고친 뒤 다시 시도해 주세요."
+
+msgid "Publication history is unavailable. Try again later."
+msgstr "발행 이력을 불러올 수 없습니다. 나중에 다시 시도해 주세요."
+
+msgid "Publication history pages"
+msgstr "발행 이력 페이지"
+
 msgid "Publication is running in one request. Refresh the status if its response was lost."
 msgstr "하나의 요청으로 발행 중입니다. 응답이 끊겼다면 상태를 새로고침하세요."
 
@@ -621,6 +684,9 @@ msgstr "발행이 일시정지되었습니다. 계속 발행하거나 취소할 
 
 msgid "Publication paused. Continue to retry the remaining steps."
 msgstr "발행이 일시 중단되었습니다. 계속하면 남은 단계를 다시 시도합니다."
+
+msgid "Publication record deleted."
+msgstr "발행 이력을 삭제했습니다."
 
 msgid "Publication status"
 msgstr "발행 상태"
@@ -741,6 +807,12 @@ msgstr "저장소, 브랜치 또는 필수 발행 데이터 파일을 찾을 수
 
 msgid "Republish options"
 msgstr "다시 발행 옵션"
+
+msgid "Result"
+msgstr "결과"
+
+msgid "Result needs checking"
+msgstr "결과 확인 필요"
 
 msgid "Review prepared data"
 msgstr "준비 결과 확인"
@@ -889,6 +961,12 @@ msgstr "분할 XML 파일 {parts}개"
 msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
 msgstr "WXR이 8 MiB를 초과하거나 전송 크기·서버 메모리상 필요하면 분할합니다. 기존 분할 형식은 유지합니다."
 
+msgid "Started"
+msgstr "시작 시각"
+
+msgid "Started by"
+msgstr "실행자"
+
 msgid "Static site URL"
 msgstr "정적 사이트 URL"
 
@@ -928,11 +1006,17 @@ msgstr "다운로드를 완료하지 못해 파일을 저장하지 않았습니�
 msgid "The download is ready. Check your browser downloads."
 msgstr "다운로드가 준비되었습니다. 브라우저의 다운로드 목록을 확인하세요."
 
+msgid "The latest 100 publication attempts are kept here. Publishing to GitHub and deploying the site are separate steps."
+msgstr "최근 발행 시도 100건을 보관합니다. GitHub 발행과 사이트 배포는 별도 단계입니다."
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "준비 결과가 만료되었거나 설정이 변경되었습니다. 다시 준비하세요."
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "유효하지 않은 준비 결과입니다. 다시 준비하세요."
+
+msgid "The publication record could not be deleted. Try again later."
+msgstr "발행 이력을 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요."
 
 msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
 msgstr "저장소의 발행 데이터 파일이 불완전하거나 변경되었습니다. 스타터 입력 파일을 확인하고 완전한 발행 데이터를 복원한 뒤 다시 준비하세요."
@@ -985,6 +1069,9 @@ msgstr "현재 WordPress REST API 주소: %s."
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "현재 설치의 REST API 주소는 지원하는 <code>/wp-json/wp/v2</code> 형식이 아닙니다. 방문자가 접근할 수 있는 해당 경로의 API를 구성하세요. 쿼리형 REST 주소는 지원하지 않습니다."
 
+msgid "This publication is not finished. Open Publish to check its status."
+msgstr "아직 종료되지 않은 발행입니다. 발행 화면에서 상태를 확인해 주세요."
+
 msgid "This publication replaces the single XML file with split files."
 msgstr "이번 발행은 기존 단일 XML 파일을 분할 파일로 교체합니다."
 
@@ -1023,6 +1110,9 @@ msgstr "이 버전은 단일 사이트 WordPress만 지원합니다."
 
 msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
 msgstr "남은 시간: {remaining}초. 요청 사이에 필요한 최소 대기 시간: {minimum}초. 전송 시간은 별도로 필요합니다."
+
+msgid "Time unavailable"
+msgstr "시각 확인 불가"
 
 msgid "Timezone"
 msgstr "시간대"

@@ -67,6 +67,9 @@ msgstr "Icône tactile Apple"
 msgid "Applying changes on GitHub…"
 msgstr "Application des modifications sur GitHub…"
 
+msgid "Approval expired"
+msgstr "Autorisation expirée"
+
 msgid "Approval expired. Cancel this publication and prepare the data again."
 msgstr "L’autorisation a expiré. Annulez cette publication et préparez à nouveau les données."
 
@@ -88,8 +91,14 @@ msgstr "Annuler"
 msgid "Cancel publication"
 msgstr "Annuler la publication"
 
+msgid "Cancellation requested"
+msgstr "Annulation demandée"
+
 msgid "Cancellation requested. Waiting for the current request to finish."
 msgstr "Annulation demandée. En attente de la fin de la requête en cours."
+
+msgid "Cancelled"
+msgstr "Annulée"
 
 msgid "Cancelling publication…"
 msgstr "Annulation de la publication…"
@@ -160,6 +169,9 @@ msgstr "Continuer la publication"
 msgid "Create a GitHub token"
 msgstr "Créer un jeton GitHub"
 
+msgid "Delete record"
+msgstr "Supprimer l’entrée"
+
 msgid "Delete saved keys"
 msgstr "Supprimer les clés enregistrées"
 
@@ -175,11 +187,20 @@ msgstr "Supprimez la clé de site et la clé secrète enregistrées et désactiv
 msgid "Delete the saved Turnstile keys?"
 msgstr "Supprimer les clés Turnstile enregistrées ?"
 
+msgid "Delete this publication record?"
+msgstr "Supprimer cette entrée de publication ?"
+
 msgid "Delete token"
 msgstr "Supprimer le jeton"
 
+msgid "Deleted user"
+msgstr "Utilisateur supprimé"
+
 msgid "Deleting keys…"
 msgstr "Suppression des clés…"
+
+msgid "Deleting record…"
+msgstr "Suppression de l’entrée…"
 
 msgid "Deleting token…"
 msgstr "Suppression du jeton…"
@@ -198,6 +219,9 @@ msgstr "La destination sera déterminée lors de la génération du site."
 
 msgid "Destinations use your saved site settings. Preparation excludes unavailable or non-public items."
 msgstr "Les destinations utilisent les réglages enregistrés du site. La préparation exclut les éléments indisponibles ou non publics."
+
+msgid "Details"
+msgstr "Détails"
 
 msgid "Display and credits"
 msgstr "Affichage et crédits"
@@ -493,6 +517,9 @@ msgstr "Connexion à la lettre d’information"
 msgid "Next"
 msgstr "Suivant"
 
+msgid "Next page"
+msgstr "Page suivante"
+
 msgid "No GitHub token is registered. Reload this page to check its current status."
 msgstr "Aucun jeton GitHub n’est enregistré. Rechargez cette page pour vérifier son état actuel."
 
@@ -504,6 +531,12 @@ msgstr "Aucune modification à publier."
 
 msgid "No items to show."
 msgstr "Aucun élément à afficher."
+
+msgid "No publication history to display. New publication attempts will appear here."
+msgstr "Aucun historique de publication à afficher. Les nouvelles tentatives de publication apparaîtront ici."
+
+msgid "Not completed"
+msgstr "Non terminée"
 
 msgid "Not configured"
 msgstr "Non configuré"
@@ -523,11 +556,17 @@ msgstr "Un élément des données de publication est trop volumineux pour être 
 msgid "Only expose APIs needed for comments"
 msgstr "Rendre publiques uniquement les API nécessaires aux commentaires"
 
+msgid "Only this history record will be removed. GitHub commits and the deployed site will not be changed."
+msgstr "Seule cette entrée de l’historique sera supprimée. Les commits GitHub et le site déployé ne seront pas modifiés."
+
 msgid "Open <strong>Select repositories</strong> and choose only the repository entered in <strong>Publishing GitHub repository URL</strong> above."
 msgstr "Ouvrez <strong>Select repositories</strong> et choisissez uniquement le dépôt indiqué ci-dessus dans <strong>URL du dépôt GitHub de publication</strong>."
 
 msgid "Open GitHub publishing"
 msgstr "Ouvrir la publication sur GitHub"
+
+msgid "Open Publish"
+msgstr "Ouvrir Publier"
 
 msgid "Opens the signup page in a new tab."
 msgstr "Ouvre la page d’inscription dans un nouvel onglet."
@@ -541,6 +580,9 @@ msgstr "Limite de mémoire PHP : {limit}. Mémoire nécessaire estimée : {estim
 msgid "PHP time limit: {limit} s. Request budget: {budget} s. Elapsed: {elapsed} s."
 msgstr "Limite de temps PHP : {limit} s. Temps alloué à la requête : {budget} s. Temps écoulé : {elapsed} s."
 
+msgid "Page %1$d of %2$d"
+msgstr "Page %1$d sur %2$d"
+
 msgid "Pages: {pages}"
 msgstr "Pages : {pages}"
 
@@ -549,6 +591,9 @@ msgstr "Vérification réussie pour cette préparation."
 
 msgid "Pause publication"
 msgstr "Mettre la publication en pause"
+
+msgid "Paused"
+msgstr "En pause"
 
 msgid "Pausing…"
 msgstr "Mise en pause…"
@@ -583,6 +628,9 @@ msgstr "Préparation du téléchargement…"
 msgid "Previous"
 msgstr "Précédent"
 
+msgid "Previous page"
+msgstr "Page précédente"
+
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
 
@@ -610,6 +658,21 @@ msgstr "Dépôt public"
 msgid "Publication cancelled. The branch was not updated."
 msgstr "Publication annulée. La branche n’a pas été mise à jour."
 
+msgid "Publication failed"
+msgstr "Échec de la publication"
+
+msgid "Publication history"
+msgstr "Historique des publications"
+
+msgid "Publication history changed. Reload this page and try again."
+msgstr "L’historique de publication a changé. Rechargez cette page et réessayez."
+
+msgid "Publication history is unavailable. Try again later."
+msgstr "L’historique des publications est indisponible. Réessayez plus tard."
+
+msgid "Publication history pages"
+msgstr "Pages de l’historique des publications"
+
 msgid "Publication is running in one request. Refresh the status if its response was lost."
 msgstr "La publication s’effectue en une seule requête. Actualisez l’état si la réponse a été perdue."
 
@@ -621,6 +684,9 @@ msgstr "Publication en pause. Vous pouvez la reprendre ou l’annuler."
 
 msgid "Publication paused. Continue to retry the remaining steps."
 msgstr "La publication est en pause. Continuez pour réessayer les étapes restantes."
+
+msgid "Publication record deleted."
+msgstr "Entrée de publication supprimée."
 
 msgid "Publication status"
 msgstr "État de la publication"
@@ -741,6 +807,12 @@ msgstr "Le dépôt, la branche ou les fichiers de données de publication requis
 
 msgid "Republish options"
 msgstr "Options de republication"
+
+msgid "Result"
+msgstr "Résultat"
+
+msgid "Result needs checking"
+msgstr "Résultat à vérifier"
 
 msgid "Review prepared data"
 msgstr "Vérifier les données préparées"
@@ -889,6 +961,12 @@ msgstr "Fichiers XML fractionnés : {parts}"
 msgid "Splits WXR files larger than 8 MiB, or when required by upload size or server memory. Existing split files stay split."
 msgstr "Divise le WXR au-delà de 8 MiB, ou si la taille de l’envoi ou la mémoire du serveur l’exige. Les fichiers déjà fractionnés le restent."
 
+msgid "Started"
+msgstr "Début"
+
+msgid "Started by"
+msgstr "Lancée par"
+
 msgid "Static site URL"
 msgstr "URL du site statique"
 
@@ -928,11 +1006,17 @@ msgstr "Le téléchargement n’a pas pu être terminé, donc aucun fichier n’
 msgid "The download is ready. Check your browser downloads."
 msgstr "Le téléchargement est prêt. Consultez les téléchargements de votre navigateur."
 
+msgid "The latest 100 publication attempts are kept here. Publishing to GitHub and deploying the site are separate steps."
+msgstr "Les 100 dernières tentatives de publication sont conservées ici. La publication sur GitHub et le déploiement du site sont des étapes distinctes."
+
 msgid "The preparation expired or settings changed. Prepare again."
 msgstr "Les données préparées ont expiré ou les réglages ont changé. Préparez à nouveau les données."
 
 msgid "The preparation is invalid. Prepare again."
 msgstr "Les données préparées ne sont pas valides. Préparez-les à nouveau."
+
+msgid "The publication record could not be deleted. Try again later."
+msgstr "Impossible de supprimer l’entrée de publication. Réessayez plus tard."
 
 msgid "The repository contains incomplete or modified publishing data files. Review the starter input files and restore complete publishing data before preparing again."
 msgstr "Le dépôt contient des fichiers de données de publication incomplets ou modifiés. Vérifiez les fichiers d’entrée du starter et restaurez les données de publication complètes avant de préparer à nouveau."
@@ -985,6 +1069,9 @@ msgstr "Cette installation WordPress : %s."
 msgid "This installation does not use the supported <code>/wp-json/wp/v2</code> URL format. Configure a visitor-accessible API using that path; query-style REST URLs are not supported."
 msgstr "Cette installation n’utilise pas le format d’URL pris en charge <code>/wp-json/wp/v2</code>. Configurez une API accessible aux visiteurs avec ce chemin ; les URL REST utilisant des paramètres de requête ne sont pas prises en charge."
 
+msgid "This publication is not finished. Open Publish to check its status."
+msgstr "Cette publication n’est pas terminée. Ouvrez Publier pour vérifier son état."
+
 msgid "This publication replaces the single XML file with split files."
 msgstr "Cette publication remplace le fichier XML unique par des fichiers fractionnés."
 
@@ -1023,6 +1110,9 @@ msgstr "Cette version prend uniquement en charge les installations WordPress ave
 
 msgid "Time remaining: {remaining} s. Minimum wait between requests: {minimum} s, plus transfer time."
 msgstr "Temps restant : {remaining} s. Attente minimale entre les requêtes : {minimum} s, plus le temps de transfert."
+
+msgid "Time unavailable"
+msgstr "Date indisponible"
 
 msgid "Timezone"
 msgstr "Fuseau horaire"

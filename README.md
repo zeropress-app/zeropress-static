@@ -405,6 +405,43 @@ depend on theme support.
 **Show ZeroPress generator information** adds `<meta name="generator">` to the
 HTML. Attribution and generator information both start on.
 
+## Publication history
+
+Open **ZeroPress → Publication history**, the third tab beside Publish and
+Settings, to review the latest 100 publication attempts, 20 per page. Each row
+shows its start time in the WordPress timezone, result, repository and branch,
+WordPress user, and a commit link or error explanation. **Published to GitHub**
+means the GitHub update was confirmed; the hosting service's build and deployment
+are separate steps.
+
+History starts with new publication attempts after this feature is installed.
+Preparing or downloading data and testing a connection do not create entries.
+Continuing or checking an existing job updates the same entry. **Not completed**
+covers unfinished work, including a pause requested in a browser.
+**Result needs checking** preserves uncertainty until the existing verification
+flow establishes an outcome. **Open Publish** returns to that flow; viewing
+history never resumes, cancels or verifies a publication.
+
+Use **Delete record** to remove a finished attempt from this list after confirming
+its time and publishing destination. This does not remove GitHub commits, undo
+publication, change the deployed site or erase recovery records. Unfinished,
+paused and uncertain attempts cannot be deleted. An expired approval is also
+protected while its recovery job still exists. Deletion keeps the current page,
+or returns to the previous page if the last row was removed. Viewing and paging
+through history still work without JavaScript; deletion requires JavaScript.
+
+The display history is stored separately from the recovery journal in a
+non-autoloaded option capped at 100 summaries and 256 KiB. Up to 100 deleted IDs
+and their observation revisions, plus a revision cutoff, prevent delayed writes
+from restoring deleted records. These markers contain no user, repository or
+commit metadata and share the same size limit. Recording and deletion use
+compare-and-swap updates so concurrent requests preserve each other's changes.
+The history stores no content bodies, tokens or preparation receipts. A failed summary write cannot turn a
+successful publication into a failure or release an uncertain job. Available
+recovery records supply current results when reading history; if summary
+storage fails, some older records may be unavailable. Deactivation retains
+history; uninstall removes it while preserving the existing recovery journal.
+
 ## Publishing behavior
 
 Prepare data again after changing settings or content. Preparation expires after
@@ -992,7 +1029,7 @@ external process, or inspect or modify Windows ACLs.
 
 ## Stored data and external services
 
-Select **Privacy Policy** at the bottom of **Publish** or **Settings**
+Select **Privacy Policy** at the bottom of **Publish**, **Settings** or **Publication history**
 for a short, translated summary with links to GitHub's and Cloudflare's privacy
 policies and this detailed English guide. Opening the summary makes no external
 request. Close it with **Close**, **X**, **Esc** or a click outside; focus returns
@@ -1011,6 +1048,13 @@ returned to the admin screen. If the WordPress secrets change, register the
 credentials again. Deactivation retains settings; uninstall removes the plugin's
 settings, credentials and temporary verification records. The bounded publication
 journal remains to protect any unresolved final update.
+
+The separate publication history stores up to 100 summaries with start times,
+WordPress user IDs, target repositories and branches, results and confirmed
+commit references. You can delete finished summaries individually; bounded
+deleted-ID markers prevent delayed updates from restoring them. These records
+stay in WordPress and are removed on uninstall. They do not contain content
+bodies or credentials.
 
 Preparation also caches a read-only menu/media summary in WordPress transients
 (database or the site's object cache) for at most ten minutes. Each cache is bound
